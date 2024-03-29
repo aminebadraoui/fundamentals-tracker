@@ -16,12 +16,22 @@ const performClickAction = async (page, element, offsetX, offsetY) => {
 
 export default async (req, res) => {
     const wait = (n) => new Promise((resolve) => setTimeout(resolve, n));
+
+    console.log(req.query)
+
+    const date = req.query["date"]
+
+    if (date) {
+      console.log(date)
+    } else {
+      res.status(500)
+    }
     
     const month = "jan"
     
     // Initialize Puppeteer
     const userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
-    const browser = await puppeteer.launch({ headless: false, defaultViewport: null});
+    const browser = await puppeteer.launch({ headless: true, defaultViewport: null});
     const page = await browser.newPage();
     
     await page.setUserAgent(userAgent)
@@ -33,7 +43,7 @@ export default async (req, res) => {
 
     startWaitingForEvents();
 
-    await page.goto(`https://www.forexfactory.com/calendar?week=mar3.2024`,  {waitUntil: 'networkidle0'});
+    await page.goto(`https://www.forexfactory.com/calendar?week=${date}`,  {waitUntil: 'networkidle0'});
     await Promise.all(promises);
     
     await performClickAction(page, ':scope >>> li.calendar__filters div', 7, 11)

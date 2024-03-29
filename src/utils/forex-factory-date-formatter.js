@@ -1,9 +1,7 @@
 // pass the factor to function
 // spit the formatted date
 
-
-
-const getForexFactoryFormattedDate = (weekFactor) => {
+function getForexFactoryFormattedDate(weekFactor) {
     const monthNames = ["jan", "feb", "mar", "apr", "may", "jun",
       "jul", "aug", "sep", "oct", "nov", "dec"
     ];
@@ -22,8 +20,6 @@ const getForexFactoryFormattedDate = (weekFactor) => {
 
     var formattedDate = `${month}${day}.${year}`
     
-    
-    
     console.log(new Date(curr.setDate(first)))
     console.log(monthNames[month]);
     console.log(day);
@@ -32,5 +28,7 @@ const getForexFactoryFormattedDate = (weekFactor) => {
 
     return formattedDate
 }
+
+export { getForexFactoryFormattedDate }
 
 
