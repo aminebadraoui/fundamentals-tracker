@@ -8,6 +8,7 @@ function findMostRecentEvent(data, eventName) {
 
 
   for (const week in data) {
+    console.log(week)
     const currencies = data[week];
     if (currencies["USD"]) {
       for (const day in currencies["USD"]) {

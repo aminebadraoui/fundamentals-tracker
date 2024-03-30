@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
-import { getForexFactoryFormattedDate } from '@/utils/forex-factory-date-formatter';
-import { performFetch } from '@/utils/perform-ff-fetch';
+
+
 import { findMostRecentEvent } from '@/utils/find-ff-event';
+
+import {DashboardLayout} from './layouts/dashboard-layout';
 
 import {
   Table,
@@ -12,9 +14,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import dashboardLayout from './layouts/dashboard-layout';
 
 const ForexEvents = () => {
-  const lookback = 13
+  
   // keep track of different arrays of events as part of one object
 
   const [events, setEvents] = useState({});
@@ -23,29 +26,21 @@ const ForexEvents = () => {
   const currentSalesEvents = []
   const currentEconomicEvents = []
   const currentHousingEvents = []
+
+   // get the combined data from the mongodb database
+    // if the combined data is not empty, then set the state to the combined data
+    const getCombinedData = async () => {
+      setLoading(true);
+      const response = await fetch('/api/get-data');
+      const data = await response.json();
+      console.log(data)
+      return data
+    }
   
 
   const handleDownload = async () => {
-    console.log("handleDownload")
-    setLoading(true);
-  
-    let combinedData = JSON.parse(localStorage.getItem('combinedData') || '{}');
-    
-    if (Object.keys(combinedData).length === 0 || Object.keys(combinedData).length - 1 !== lookback ) {
-      combinedData = {}
-      // If combinedData is empty, perform the fetch
-      for (let i = 0; i <= lookback; i++) {
-        const date = getForexFactoryFormattedDate(i);
-        const data = await performFetch(date);
-  
-        if (!combinedData[date]) {
-          combinedData[date] = data;
-        }
-      }
-      
-      // Store the fetched data for future use
-      localStorage.setItem('combinedData', JSON.stringify(combinedData));
-    }
+
+    const combinedData = await getCombinedData()
 
     const inflationData = [
       "Federal Funds Rate", 
@@ -159,7 +154,9 @@ const ForexEvents = () => {
   )
 
   return (
+   
     <div>
+       <DashboardLayout>
       {isLoading ? (
         <p>Loading...</p>
       ) : (
@@ -217,7 +214,10 @@ const ForexEvents = () => {
           </TableBody>
         </Table>
       )}
+      </DashboardLayout>
     </div>
+    
+   
   );
 };
 
