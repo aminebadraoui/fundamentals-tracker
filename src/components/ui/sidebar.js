@@ -9,7 +9,7 @@ export const SideBar = ({links}) => {
         links.map((link) => {
           return (
             <div className="flex flex-row">
-              <Button asChild variant="outline" >
+              <Button asChild variant="outline" className='border-b' >
               <Link href={link.href}> {link.name} </Link>
               </Button>
             </div>

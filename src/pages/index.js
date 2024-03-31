@@ -1,9 +1,7 @@
 import { useEffect, useState } from 'react';
-
-
-import { findMostRecentEvent } from '@/utils/find-ff-event';
-
 import {DashboardLayout} from '../components/ui/dashboard/dashboard-layout';
+import { getCurrentEventsPerCategory } from '@/utils/get-current-events-per-category';
+
 
 import {
   Table,
@@ -22,10 +20,6 @@ const ForexEvents = () => {
 
   const [events, setEvents] = useState({});
   const [isLoading, setLoading] = useState(false);
-  const currentInflationEvents = []
-  const currentSalesEvents = []
-  const currentEconomicEvents = []
-  const currentHousingEvents = []
 
    // get the combined data from the mongodb database
     // if the combined data is not empty, then set the state to the combined data
@@ -41,70 +35,15 @@ const ForexEvents = () => {
   const handleDownload = async () => {
 
     const combinedData = await getCombinedData()
-
-    const inflationData = [
-      "Federal Funds Rate", 
-      "CPI y/y", 
-      "Core CPI m/m",
-      "Core PCE Price Index m/m", 
-      "Core PPI m/m", 
-      ]
-
-    const salesData = [
-    "Final GDP q/q",
-    "Prelim GDP q/q", 
-    "Industrial Production m/m", 
-    "Core Durable Goods Orders m/m", 
-    "Core Retail Sales m/m"
-  ]
-
-    const laborData = [
-      "Unemployment Claims", 
-      "Non-Farm Employment Change"
-    ]
-    const housingData = [
-      "Existing Home Sales", 
-      "New Home Sales", 
-      "Pending Home Sales m/m"]
-
-
-    for (const event of inflationData) {
-      const inflationEvent = findMostRecentEvent(combinedData, event);
-      if (inflationEvent) {
-        currentInflationEvents.push(inflationEvent);
-      }
-    }
-
-    for (const event of salesData) {
-      const salesEvent = findMostRecentEvent(combinedData, event);
-      if (salesEvent) {
-        currentSalesEvents.push(salesEvent);
-      }
-    }
-
-    for (const event of laborData) {
-      const laborEvent = findMostRecentEvent(combinedData, event);
-      if (laborEvent) {
-        currentEconomicEvents.push(laborEvent);
-      }
-    }
-
-    for (const event of housingData) {
-      const housingEvent = findMostRecentEvent(combinedData, event);
-      if (housingEvent) {
-        currentHousingEvents.push(housingEvent);
-      }
-    }
-
+    const currentEventsPerCategory = getCurrentEventsPerCategory(combinedData)
 
     const temp_events = {}
 
-    temp_events["Inflation Data"] = currentInflationEvents;
-    temp_events["Retail Data"] = currentSalesEvents;
-    temp_events["Economic Growth Data"] = currentEconomicEvents;
-    temp_events["Housing Data"] = currentHousingEvents;
+    temp_events["Inflation Data"] = currentEventsPerCategory["Inflation Data"];
+    temp_events["Retail Data"] = currentEventsPerCategory["Retail Data"];
+    temp_events["Economic Growth Data"] = currentEventsPerCategory["Economic Growth Data"];
+    temp_events["Housing Data"] = currentEventsPerCategory["Housing Data"];
    
-    
     setEvents(temp_events);
     
     setLoading(false);
