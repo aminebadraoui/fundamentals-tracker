@@ -1,6 +1,8 @@
 import { Logo } from '@/components/ui/logo'
 import { SideBar } from '../sidebar'
 import React from 'react'
+import { usePathname } from 'next/navigation'
+import { Heading } from '../heading'
 
 
 export const DashboardLayout = ({ children }) => {
@@ -13,15 +15,24 @@ export const DashboardLayout = ({ children }) => {
     },
     {
       name: 'About',
-      href: '/',
+      href: '/about',
       icon: 'about',
     },
     {
       name: 'Contact',
-      href: '/',
+      href: '/contact',
       icon: 'contact',
     },  
   ]
+
+  const activeLink = links.find( (link) => {
+    if (link.href === usePathname()) {
+      return link
+    }
+  })
+
+  console.log(activeLink)
+
   return (
 
     <div className='flex flex-col'> 
@@ -31,9 +42,12 @@ export const DashboardLayout = ({ children }) => {
 
       <div className='flex flex-row'>
         
-          <SideBar links={ links }></SideBar>
+          <SideBar props={ {links, activeLink} }></SideBar>
         
         <div className="p-8 w-full" >
+          <Heading>
+           {activeLink.name}
+          </Heading>
           {children}
           </div>
       </div>
