@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 
 import { findMostRecentEvent } from '@/utils/find-ff-event';
 
-import {DashboardLayout} from './layouts/dashboard-layout';
+import {DashboardLayout} from '../components/ui/dashboard/dashboard-layout';
 
 import {
   Table,
@@ -14,7 +14,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import dashboardLayout from './layouts/dashboard-layout';
+import dashboardLayout from '../components/ui/dashboard/dashboard-layout';
 
 const ForexEvents = () => {
   
