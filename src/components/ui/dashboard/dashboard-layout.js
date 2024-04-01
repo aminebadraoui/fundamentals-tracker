@@ -14,9 +14,9 @@ export const DashboardLayout = ({ children }) => {
       icon: 'home',
     },
     {
-      name: 'About',
-      href: '/about',
-      icon: 'about',
+      name: 'Comparison Charts',
+      href: '/comparison-charts',
+      icon: 'comparison',
     },
     {
       name: 'Contact',
@@ -30,8 +30,6 @@ export const DashboardLayout = ({ children }) => {
       return link
     }
   })
-
-  console.log(activeLink)
 
   return (
 

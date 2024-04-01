@@ -76,4 +76,10 @@
   h1 {
     @apply text-4xl my-8 font-black;
   }
+  h2 {
+    @apply text-3xl my-8 font-black;
+  }
+  h3 {
+    @apply text-2xl my-8 font-black;
+  }
 }

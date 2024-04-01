@@ -5,6 +5,9 @@ const inflationData = [
   "Core CPI m/m",
   "Core PCE Price Index m/m", 
   "Core PPI m/m", 
+  "Core CPI Flash Estimate y/y",
+  "CPI Flash Estimate y/y",
+  "Spanish Flash CPI y/y"
   ]
 
 const salesData = [
