@@ -1,30 +1,48 @@
+const currencyList = ["USD", "EUR", "GBP", "CAD", "AUD", "NZD", "JPY", "CHF"]
+const eventCategoryList = ["Inflation", "Interest Rates", "Employment", "Growth", "Housing"]
 
-const inflationData = [
-  "Federal Funds Rate", 
-  "CPI y/y", 
-  "Core CPI m/m",
-  "Core PCE Price Index m/m", 
-  "Core PPI m/m", 
-  "Core CPI Flash Estimate y/y",
+const inflation = [
+  "Advance GDP Price Index q/q",
+  "Average Earnings Index 3m/y",
+  "Average Hourly Earnings m/m",, 
   "CPI Flash Estimate y/y",
-  "Spanish Flash CPI y/y"
-  ]
-
-const salesData = [
-"Final GDP q/q",
-"Prelim GDP q/q", 
-"Industrial Production m/m", 
-"Core Durable Goods Orders m/m", 
-"Core Retail Sales m/m"
+  "CPI m/m",
+  "CPI q/q",
+  "CPI y/y",
+  "Common CPI y/y",
+  "Core CPI Flash Estimate y/y",
+  "Core CPI m/m",
+  "Core PCE Price Index m/m",
+  "Core PPI m/m",
+  "Employment Cost Index q/q",
+  "Final GDP Price Index q/q",
+  "German Prelim CPI m/m",
+  "Median CPI y/y",
+  "National Core CPI y/y",
+  "PPI m/m",
+  "PPI y/y",
+  "Prelim GDP Price Index q/q",
+  "Spanish Flash CPI y/y",
+  "Tokyo Core CPI y/y",
+  "Trimmed CPI y/y",
+  "Trimmed Mean CPI q/q",
+  "Wage Price Index q/q"
 ]
 
-const laborData = [
-  "Unemployment Claims", 
-  "Non-Farm Employment Change"
+const interestRates = [
+  "Overnight Rate",
+  "Main Refinancing Rate",
+  "Cash Rate",
+  "BOJ Policy Rate",
+  "SNB Policy Rate",
+  "Official Bank Rate",
 ]
-const housingData = [
-  "Existing Home Sales", 
-  "New Home Sales", 
-  "Pending Home Sales m/m"]
 
-export { inflationData, salesData, laborData, housingData }
+const eventList = {}
+eventList["Inflation"] = inflation
+eventList["Interest Rates"] = interestRates
+
+
+
+
+export {currencyList, eventCategoryList, eventList}

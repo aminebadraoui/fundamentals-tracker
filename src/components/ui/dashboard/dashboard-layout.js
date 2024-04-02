@@ -9,7 +9,7 @@ export const DashboardLayout = ({ children }) => {
 
   const links = [
     {
-      name: 'DXY Monitor',
+      name: 'Economic Pulse',
       href: '/',
       icon: 'home',
     },

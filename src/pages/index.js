@@ -3,6 +3,10 @@ import {DashboardLayout} from '../components/ui/dashboard/dashboard-layout';
 import { getAllEventsForCurrency } from '@/utils/get-current-events-per-category';
 import { EventsTable } from '@/components/ui/events-table';
 import { Heading } from '@/components/ui/heading';
+import { ComposedChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { Card } from '@/components/ui/card';
+
+import { currencyList, eventCategoryList } from '@/utils/event-names' ;
 
 import {
   Accordion,
@@ -16,6 +20,7 @@ const ForexEvents = () => {
   // keep track of different arrays of events as part of one object
 
   const [events, setEvents] = useState({});
+  const [chartData, setChartData] = useState({});
   const [isLoading, setLoading] = useState(false);
 
    // get the combined data from the mongodb database
@@ -50,15 +55,31 @@ const ForexEvents = () => {
     
     
 
-    temp_events["inflation"] = {... GetEventWithScoreForCurrencies(combinedData, ["USD", "EUR", "GBP"], "Inflation Data")}
+    eventCategoryList.map((event) => {
+      temp_events[event] = {... GetEventWithScoreForCurrencies(combinedData, currencyList, event)}
+    })
 
-    // get total score from inflation data of each currency
-
-
-   
-    setEvents(temp_events);
+   // temp_events["inflation"] = {... GetEventWithScoreForCurrencies(combinedData, currencyList, "Inflation Data")}
 
     console.log(temp_events)
+
+    let data = {}
+
+    eventCategoryList.forEach((eventCategory) => {
+      data[eventCategory] =  currencyList.map((currency) => {
+        return {
+          name: currency,
+          score: temp_events[eventCategory][currency].totalScore
+        }
+      }
+      )
+  })
+
+    console.log(data)
+    
+    setEvents(temp_events);
+    setChartData(data)
+
     
     setLoading(false);
   };
@@ -67,31 +88,54 @@ const ForexEvents = () => {
     handleDownload()
   }, [])
 
+ 
   return (
     <div>
-       <DashboardLayout>
-      {isLoading ? 
-        <p>Loading...</p>
-       : 
-       <div>
-          <h2> Inflation </h2>
-          {
-            events.inflation && Object.keys(events.inflation).map((currency) => [
-              <div> 
-                <Accordion type="single" collapsible className="w-full">
-                  <AccordionItem value="item-1">
-                  <AccordionTrigger>{ <p> {currency} total score: {events.inflation[currency].totalScore}  </p>}</AccordionTrigger>
-                    <AccordionContent>
-                    <EventsTable events={events.inflation[currency].events}/>
-                    </AccordionContent>
-                    </AccordionItem>
-                </Accordion>
-              </div>
-          ])
-          }
-          
-       </div> 
-}
+      <DashboardLayout>
+        {isLoading ? (
+          <p>Loading...</p>
+        ) : (
+          <Card className="flex flex-row flex-wrap ">
+            {Object.keys(events).map((category, index) => (
+              <Card key={index} className="flex flex-col w-[calc(50%-4em)] p-8 m-4 ">
+                <h2>{category}</h2>
+
+                <ResponsiveContainer
+                  width="100%"
+                  height={500}
+                >
+                <ComposedChart
+                  layout="horizontal"
+                  data={chartData[category]}
+                  
+                >
+                  <CartesianGrid stroke="#f5f5f5" />
+                  <YAxis type="number" />
+                  <XAxis dataKey="name" type="category"  />
+                  <Tooltip />
+                  <Legend/>
+                  <Bar dataKey="score" barSize={20} fill="#413ea0" minPointSize={3} />
+                </ComposedChart>
+                </ResponsiveContainer>
+  
+                {Object.keys(events[category]).map((currency) => (
+                  <div key={currency}> 
+                    <Accordion type="single" collapsible className="">
+                      <AccordionItem value="item-1">
+                        <AccordionTrigger>
+                          {currency} total score: {events[category][currency].totalScore}
+                        </AccordionTrigger>
+                        <AccordionContent>
+                          <EventsTable events={events[category][currency].events}/>
+                        </AccordionContent>
+                      </AccordionItem>
+                    </Accordion>
+                  </div>
+                ))}
+              </Card>
+            ))}
+          </Card>
+        )}
       </DashboardLayout>
     </div>
   );
