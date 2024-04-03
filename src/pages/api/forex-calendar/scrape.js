@@ -4,7 +4,7 @@ import puppeteer from 'puppeteer-core';
 import chromium from '@sparticuz/chromium-min';
 
 
-export const runtime = 'edge' // 'nodejs' (default) | 'edge'
+
 
 export default async (req, res) => {
     console.log("scraping started")
