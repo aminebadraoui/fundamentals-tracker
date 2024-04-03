@@ -12,6 +12,7 @@ export default async (req, res) => {
   const lookback = 0
   const date = getForexFactoryFormattedDate(lookback);
   const request = `${baseUrl}/api/forex-calendar/scrape?date=${date}`
+  console.log("request", request)
   try {
     const response = await fetch(request);
     const data = await response.json();
