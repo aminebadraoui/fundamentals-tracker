@@ -1,7 +1,7 @@
 import { uploadFile } from "@/utils/aws/upload"
 import { getForexFactoryFormattedDate } from "@/utils/forex-factory-date-formatter"
 
-const baseUrl = process.env.VERCEL_URL ? 'https://' + process.env.VERCEL_URL : 'http://localhost:3000'
+const baseUrl = process.env.VERCEL_URL ? `https://fundamentals-tracker.vercel.app`: 'http://localhost:3000'
 
 export default async (req, res) => { 
   const historicalData = {}
