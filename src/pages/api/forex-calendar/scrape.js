@@ -23,7 +23,7 @@ export default async (req, res) => {
         ? await require('puppeteer').launch({ headless: true })
         // if we are running in AWS, download and use a compatible version of chromium at runtime
         : await puppeteer.launch({
-            args: [...chromium.args, '--hide-scrollbars', '--disable-web-security'],
+            args: [...chromium.args, '--hide-scrollbars', '--disable-web-security', '--no-sandbox'],
             defaultViewport: chromium.defaultViewport,
             executablePath: await chromium.executablePath(
                 'https://github.com/Sparticuz/chromium/releases/download/v119.0.2/chromium-v119.0.2-pack.tar',
