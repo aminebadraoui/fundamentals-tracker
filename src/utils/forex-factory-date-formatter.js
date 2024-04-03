@@ -19,12 +19,6 @@ function getForexFactoryFormattedDate(weekFactor) {
     var year = firstday.getFullYear()
 
     var formattedDate = `${month}${day}.${year}`
-    
-    console.log(new Date(curr.setDate(first)))
-    console.log(monthNames[month]);
-    console.log(day);
-    console.log(year);
-    console.log(formattedDate)
 
     return formattedDate
 }
