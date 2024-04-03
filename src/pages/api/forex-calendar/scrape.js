@@ -28,7 +28,7 @@ export default async (req, res) => {
             executablePath: await chromium.executablePath(
                 'https://github.com/Sparticuz/chromium/releases/download/v119.0.2/chromium-v119.0.2-pack.tar',
             ),
-            headless: false,
+            headless: true,
         });
     console.log('browser is up');
     
