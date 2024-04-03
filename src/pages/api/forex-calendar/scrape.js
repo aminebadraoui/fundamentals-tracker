@@ -33,11 +33,12 @@ export default async (req, res) => {
         });
     console.log('browser is up');
     
+    console.log("creating new page")
     const page = await browser.newPage();
 
-   
+    console.log("setting user agent")
     await page.setUserAgent(userAgent)
-    
+
     console.log(page)
     
     
