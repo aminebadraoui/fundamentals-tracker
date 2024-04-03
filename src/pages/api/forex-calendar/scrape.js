@@ -16,15 +16,7 @@ if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
 export default async (req, res) => {
     const wait = (n) => new Promise((resolve) => setTimeout(resolve, n));
 
-    console.log(req.query)
-
     const date = req.query["date"]
-
-    if (date) {
-      console.log(date)
-    } else {
-      res.status(500)
-    }
     
     // Initialize Puppeteer
     const userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
