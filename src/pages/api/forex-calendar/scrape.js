@@ -6,16 +6,16 @@ import chromium from '@sparticuz/chromium-min';
 
 
 export default async (req, res) => {
+    console.log("scraping started")
     const wait = (n) => new Promise((resolve) => setTimeout(resolve, n));
 
     const date = req.query["date"]
-
+    console.log("date", date)
     
     // Initialize Puppeteer
     const userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
     // identify whether we are running locally or in AWS
     const isLocal = process.env.AWS_EXECUTION_ENV === undefined;
-
     console.log('isLocal', isLocal)
 
     const browser = isLocal
