@@ -40,9 +40,7 @@ export default async (req, res) => {
     await page.setUserAgent(userAgent)
 
     console.log(page)
-    
-    
-    
+
     // await page.setUserAgent(userAgent)
     
     const promises = [];
@@ -73,66 +71,75 @@ export default async (req, res) => {
     });
     
     // Scrape the data
-    const dataByCurrency = await page.evaluate(() => { 
-        // Use an object to group events by currency
-        const events = {};
-        const eventRows = document.querySelectorAll('tr.calendar__row'); // Rows with event data
-        var lastUpdatedDate = ""
-        
-        eventRows.forEach(row => {
-            // Only consider rows with events, not headers or empty rows
-            const currencyCell = row.querySelector('td.calendar__currency');
-            const eventCell = row.querySelector('td.calendar__event');
-            const dateCell = row.querySelector('td.calendar__date');
-            const timeCell = row.querySelector('td.calendar__time');
+    try {
+        const dataByCurrency = await page.evaluate(() => { 
+            // Use an object to group events by currency
+            const events = {};
+            const eventRows = document.querySelectorAll('tr.calendar__row'); // Rows with event data
+            var lastUpdatedDate = ""
             
-            if (currencyCell && eventCell && timeCell) {
-                const currency = currencyCell.innerText.trim();
-                const eventTitle = eventCell.innerText.trim();
-                if (dateCell) {
-                    lastUpdatedDate = dateCell.innerText.trim().replace("\n", " ")
-                }
-         
-                // Add more details as needed from the other cells in the row
-                const actual = row.querySelector('td.calendar__actual')?.innerText.trim();
-                const forecast = row.querySelector('td.calendar__forecast')?.innerText.trim();
-                const previous = row.querySelector('td.calendar__previous')?.innerText.trim();
-
-                if (actual == "" && forecast == "" && previous == "") {
-                  return
-                }
+            eventRows.forEach(row => {
+                // Only consider rows with events, not headers or empty rows
+                const currencyCell = row.querySelector('td.calendar__currency');
+                const eventCell = row.querySelector('td.calendar__event');
+                const dateCell = row.querySelector('td.calendar__date');
+                const timeCell = row.querySelector('td.calendar__time');
                 
-                const eventDetail = {
-                    eventTitle,
-                    actual,
-                    forecast,
-                    previous
-                };
-                
-                // Initialize the currency array if it doesn't exist
-                if (!events[currency]) {
-                    events[currency] = {};
+                if (currencyCell && eventCell && timeCell) {
+                    const currency = currencyCell.innerText.trim();
+                    const eventTitle = eventCell.innerText.trim();
+                    if (dateCell) {
+                        lastUpdatedDate = dateCell.innerText.trim().replace("\n", " ")
+                    }
+             
+                    // Add more details as needed from the other cells in the row
+                    const actual = row.querySelector('td.calendar__actual')?.innerText.trim();
+                    const forecast = row.querySelector('td.calendar__forecast')?.innerText.trim();
+                    const previous = row.querySelector('td.calendar__previous')?.innerText.trim();
+    
+                    if (actual == "" && forecast == "" && previous == "") {
+                      return
+                    }
+                    
+                    const eventDetail = {
+                        eventTitle,
+                        actual,
+                        forecast,
+                        previous
+                    };
+                    
+                    // Initialize the currency array if it doesn't exist
+                    if (!events[currency]) {
+                        events[currency] = {};
+                    }
+                    
+                    if (!events[currency][lastUpdatedDate]) {
+                        events[currency][lastUpdatedDate] = []
+                    }
+                    
+                    // Push the event detail into the correct currency array
+                    events[currency][lastUpdatedDate].push(eventDetail);
                 }
-                
-                if (!events[currency][lastUpdatedDate]) {
-                    events[currency][lastUpdatedDate] = []
-                }
-                
-                // Push the event detail into the correct currency array
-                events[currency][lastUpdatedDate].push(eventDetail);
-            }
+            });
+    
+            return events;
         });
+        
+        
+        // Close Puppeteer
+        await browser.close();
+    
+        console.log("scraping finished")
+        console.log(dataByCurrency)
+        
+        // Return the scraped data grouped by currency
+        res.status(200).json(dataByCurrency);
 
-        return events;
-    });
+    }
+    catch (error) {
+        console.error("Error occurred while scraping")
+        console.error(error)
+        res.status(500).json({ message: `Error occurred while scraping: ${error}` });
+    }
     
-    
-    // Close Puppeteer
-    await browser.close();
-
-    console.log("scraping finished")
-    console.log(dataByCurrency)
-    
-    // Return the scraped data grouped by currency
-    res.status(200).json(dataByCurrency);
 };
