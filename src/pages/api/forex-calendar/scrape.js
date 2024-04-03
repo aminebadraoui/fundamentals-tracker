@@ -8,10 +8,7 @@ if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
   // running on the Vercel platform.
   chrome = require('chrome-aws-lambda');
   puppeteer = require('puppeteer-core');
-} else {
-  // running locally.
-  puppeteer = require('puppeteer');
-}
+} 
 
 export default async (req, res) => {
     const wait = (n) => new Promise((resolve) => setTimeout(resolve, n));
@@ -21,7 +18,7 @@ export default async (req, res) => {
     // Initialize Puppeteer
     const userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
     const browser = await  puppeteer.launch({
-        args: [ '--hide-scrollbars', '--disable-web-security'],
+        args: chrome.args,
         defaultViewport: chrome.defaultViewport,
         executablePath: await chrome.executablePath,
         headless: true,
