@@ -1,24 +1,39 @@
 import { scrollToBottom } from '@/utils/pupeeteer/scroller';
 import { performClickAction } from '@/utils/pupeeteer/clicker';
+import puppeteer from 'puppeteer-core';
+import chromium from '@sparticuz/chromium-min';
 
-const chrome = require('chrome-aws-lambda');
-const puppeteer = require('puppeteer-core');
+
 
 export default async (req, res) => {
     const wait = (n) => new Promise((resolve) => setTimeout(resolve, n));
 
     const date = req.query["date"]
+
     
     // Initialize Puppeteer
     const userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
-    const browser = await  puppeteer.launch({
-        args: [...chrome.args, '--hide-scrollbars', '--disable-web-security'],
-        defaultViewport: chrome.defaultViewport,
-        executablePath: await chrome.executablePath,
-        headless: false,
-        ignoreHTTPSErrors: true,
-      });
+    // identify whether we are running locally or in AWS
+    const isLocal = process.env.AWS_EXECUTION_ENV === undefined;
+
+    console.log('isLocal', isLocal)
+
+    const browser = isLocal
+        // if we are running locally, use the puppeteer that is installed in the node_modules folder
+        ? await require('puppeteer').launch({ headless: true })
+        // if we are running in AWS, download and use a compatible version of chromium at runtime
+        : await puppeteer.launch({
+            args: chromium.args,
+            defaultViewport: chromium.defaultViewport,
+            executablePath: await chromium.executablePath(
+                'https://github.com/Sparticuz/chromium/releases/download/v119.0.2/chromium-v119.0.2-pack.tar',
+            ),
+            headless: false,
+        });
+    console.log('browser is up');
+    
     const page = await browser.newPage();
+    await page.setUserAgent(userAgent)
     
     // await page.setUserAgent(userAgent)
     
@@ -30,6 +45,7 @@ export default async (req, res) => {
     startWaitingForEvents();
 
     await page.goto(`https://www.forexfactory.com/calendar?week=${date}`,  {waitUntil: 'networkidle0'});
+    await page.waitForFunction('document.querySelector("body")');
     await Promise.all(promises);
     
     await performClickAction(page, ':scope >>> li.calendar__filters div', 7, 11)
