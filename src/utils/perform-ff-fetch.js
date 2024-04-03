@@ -3,7 +3,7 @@ const performFetch = async (date) => {
     
     console.log("hello")
   
-    const request = `/api/forex-events?date=${date}`
+    const request = `/api/forex-calendar/scrape?date=${date}`
     const response = await fetch(request);
     
     if (!response.ok) throw new Error('Network response was not ok');

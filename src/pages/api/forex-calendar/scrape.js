@@ -1,18 +1,7 @@
 import puppeteer from 'puppeteer';
-import { scrollToBottom } from '@/utils/pupeteer-scroller';
+import { scrollToBottom } from '@/utils/pupeeteer/scroller';
+import { performClickAction } from '@/utils/pupeeteer/clicker';
 
-const performClickAction = async (page, element, offsetX, offsetY) => {
-  await page.waitForSelector(element, {
-      visible: true,
-  });
-  await page.locator(element)
-  .click({
-      offset: {
-          x: offsetX,
-          y: offsetY,
-      },
-  });
-}
 
 export default async (req, res) => {
     const wait = (n) => new Promise((resolve) => setTimeout(resolve, n));
@@ -26,8 +15,6 @@ export default async (req, res) => {
     } else {
       res.status(500)
     }
-    
-    const month = "jan"
     
     // Initialize Puppeteer
     const userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
@@ -87,7 +74,6 @@ export default async (req, res) => {
                 const actual = row.querySelector('td.calendar__actual')?.innerText.trim();
                 const forecast = row.querySelector('td.calendar__forecast')?.innerText.trim();
                 const previous = row.querySelector('td.calendar__previous')?.innerText.trim();
-                const time = row.querySelector('td.calendar__time')?.innerText.trim();
 
                 if (actual == "" && forecast == "" && previous == "") {
                   return
@@ -113,14 +99,17 @@ export default async (req, res) => {
                 events[currency][lastUpdatedDate].push(eventDetail);
             }
         });
+
         return events;
     });
     
     
     // Close Puppeteer
     await browser.close();
-    
+
+    console.log("scraping finished")
     console.log(dataByCurrency)
+    
     // Return the scraped data grouped by currency
     res.status(200).json(dataByCurrency);
 };
