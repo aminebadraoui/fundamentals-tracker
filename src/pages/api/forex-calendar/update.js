@@ -20,6 +20,7 @@ export default async (req, res) => {
     uploadFile(bucketName, fileName, file)
 
   } catch (error) {
+    console.log("Error occurred while in update endpoint")
     console.error(error)
   }
  
