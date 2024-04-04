@@ -48,7 +48,7 @@ export default async (req, res) => {
 
     startWaitingForEvents();
 
-    await page.goto(`https://www.forexfactory.com/calendar?week=${date}`,  {waitUntil: 'networkidle0'});
+    await page.goto(`https://www.forexfactory.com/calendar?week=${date}`);
     await page.waitForFunction('document.querySelector("body")');
     await Promise.all(promises);
 
