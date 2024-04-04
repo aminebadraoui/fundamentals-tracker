@@ -1,0 +1,7 @@
+{
+  "functions": {
+    "api/forex-calender/scrape.js": {
+      "runtime": "edge"
+    }
+  }
+}
