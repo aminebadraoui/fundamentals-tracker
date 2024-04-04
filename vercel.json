@@ -1,9 +1,9 @@
 {
   "functions": {
-    "api/forex-calender/scrape.js": {
+    "api/forex-calendar/scrape.js": {
       "runtime": "edge@2.5.9"
     },
-    "api/forex-calender/update.js": {
+    "api/forex-calendar/update.js": {
       "runtime": "edge@2.5.9"
     }
   }
