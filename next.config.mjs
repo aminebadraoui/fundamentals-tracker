@@ -5,8 +5,9 @@ const nextConfig = {
     loader:"akamai",
     path: "/assets/",
   },
-  experimental: {
-    serverComponentsExternalPackages: ['puppeteer-core', '@sparticuz/chromium']
+    experimental: {
+    serverComponentsExternalPackages: ['puppeteer-core', '@sparticuz/chromium'],
+    runtime: 'experimental-edge',
   }
 };
 

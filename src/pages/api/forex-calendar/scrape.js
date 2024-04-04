@@ -3,12 +3,6 @@ import { performClickAction } from '@/utils/pupeeteer/clicker';
 import puppeteer from 'puppeteer-core';
 import chromium from '@sparticuz/chromium-min';
 
-
-
-export const config = {
-    runtime: 'edge',
-  }
-
 export default async (req, res) => {
     console.log("scraping started")
     const wait = (n) => new Promise((resolve) => setTimeout(resolve, n));
