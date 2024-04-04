@@ -1,7 +1,3 @@
 {
-  "functions": {
-    "api/**/*.js": {
-      "runtime": "edge@2.5.9"
-    }
-  }
+ 
 }

@@ -51,78 +51,91 @@ export default async (req, res) => {
     await page.goto(`https://www.forexfactory.com/calendar?week=${date}`,  {waitUntil: 'networkidle0'});
     await page.waitForFunction('document.querySelector("body")');
     await Promise.all(promises);
+
+    page.screenshot({ path: 'screenshot.png' });
     
-    await performClickAction(page, ':scope >>> li.calendar__filters div', 7, 11)
-    await performClickAction(page, ':scope >>> #impact_holiday_1', 6.515625, 8.3203125)
-    await performClickAction(page, ':scope >>> #impact_low_1', 6.515625, 5.3203125)
-    await performClickAction(page, '::-p-text(Apply Filter)', 53.1953125, 9.203125)
+    // await performClickAction(page, ':scope >>> li.calendar__filters div', 7, 11)
+    // await performClickAction(page, ':scope >>> #impact_holiday_1', 6.515625, 8.3203125)
+    // await performClickAction(page, ':scope >>> #impact_low_1', 6.515625, 5.3203125)
+    // await performClickAction(page, '::-p-text(Apply Filter)', 53.1953125, 9.203125)
   
-    await wait(1000)
+    // await wait(1000)
     
-    // Let's use the function
-    await scrollToBottom({
-        page,
-        distancePx: 100,
-        speedMs: 50,
-        scrollTimeoutMs: 10000,
-        eltToScroll: "body" 
-    });
+    // // Let's use the function
+    // await scrollToBottom({
+    //     page,
+    //     distancePx: 100,
+    //     speedMs: 50,
+    //     scrollTimeoutMs: 10000,
+    //     eltToScroll: "body" 
+    // });
     
-    // Scrape the data
-    try {
-        const dataByCurrency = await page.evaluate(() => { 
-            // Use an object to group events by currency
-            const events = {};
-            const eventRows = document.querySelectorAll('tr.calendar__row'); // Rows with event data
-            var lastUpdatedDate = ""
+    // // Scrape the data
+    // try {
+    //     const dataByCurrency = await page.evaluate(() => { 
+    //         // Use an object to group events by currency
+    //         const events = {};
+    //         const eventRows = document.querySelectorAll('tr.calendar__row'); // Rows with event data
+    //         var lastUpdatedDate = ""
             
-            eventRows.forEach(row => {
-                // Only consider rows with events, not headers or empty rows
-                const currencyCell = row.querySelector('td.calendar__currency');
-                const eventCell = row.querySelector('td.calendar__event');
-                const dateCell = row.querySelector('td.calendar__date');
-                const timeCell = row.querySelector('td.calendar__time');
+    //         eventRows.forEach(row => {
+    //             // Only consider rows with events, not headers or empty rows
+    //             const currencyCell = row.querySelector('td.calendar__currency');
+    //             const eventCell = row.querySelector('td.calendar__event');
+    //             const dateCell = row.querySelector('td.calendar__date');
+    //             const timeCell = row.querySelector('td.calendar__time');
                 
-                if (currencyCell && eventCell && timeCell) {
-                    const currency = currencyCell.innerText.trim();
-                    const eventTitle = eventCell.innerText.trim();
-                    if (dateCell) {
-                        lastUpdatedDate = dateCell.innerText.trim().replace("\n", " ")
-                    }
+    //             if (currencyCell && eventCell && timeCell) {
+    //                 const currency = currencyCell.innerText.trim();
+    //                 const eventTitle = eventCell.innerText.trim();
+    //                 if (dateCell) {
+    //                     lastUpdatedDate = dateCell.innerText.trim().replace("\n", " ")
+    //                 }
              
-                    // Add more details as needed from the other cells in the row
-                    const actual = row.querySelector('td.calendar__actual')?.innerText.trim();
-                    const forecast = row.querySelector('td.calendar__forecast')?.innerText.trim();
-                    const previous = row.querySelector('td.calendar__previous')?.innerText.trim();
+    //                 // Add more details as needed from the other cells in the row
+    //                 const actual = row.querySelector('td.calendar__actual')?.innerText.trim();
+    //                 const forecast = row.querySelector('td.calendar__forecast')?.innerText.trim();
+    //                 const previous = row.querySelector('td.calendar__previous')?.innerText.trim();
     
-                    if (actual == "" && forecast == "" && previous == "") {
-                      return
-                    }
+    //                 if (actual == "" && forecast == "" && previous == "") {
+    //                   return
+    //                 }
                     
-                    const eventDetail = {
-                        eventTitle,
-                        actual,
-                        forecast,
-                        previous
-                    };
+    //                 const eventDetail = {
+    //                     eventTitle,
+    //                     actual,
+    //                     forecast,
+    //                     previous
+    //                 };
                     
-                    // Initialize the currency array if it doesn't exist
-                    if (!events[currency]) {
-                        events[currency] = {};
-                    }
+    //                 // Initialize the currency array if it doesn't exist
+    //                 if (!events[currency]) {
+    //                     events[currency] = {};
+    //                 }
                     
-                    if (!events[currency][lastUpdatedDate]) {
-                        events[currency][lastUpdatedDate] = []
-                    }
+    //                 if (!events[currency][lastUpdatedDate]) {
+    //                     events[currency][lastUpdatedDate] = []
+    //                 }
                     
-                    // Push the event detail into the correct currency array
-                    events[currency][lastUpdatedDate].push(eventDetail);
-                }
-            });
+    //                 // Push the event detail into the correct currency array
+    //                 events[currency][lastUpdatedDate].push(eventDetail);
+    //             }
+    //         });
     
-            return events;
-        })
+    //         return events;
+    //     })
         
+    
+
+    // }
+
+    
+    // catch (error) {
+    //     console.error("Error occurred while scraping")
+    //     console.error(error)
+    //     res.status(500).json({ message: `Error occurred while scraping: ${error}` });
+    // }
+
         
         // Close Puppeteer
         await browser.close();
@@ -132,11 +145,4 @@ export default async (req, res) => {
         
         // Return the scraped data grouped by currency
         res.status(200).json(dataByCurrency);
-
-    }
-    catch (error) {
-        console.error("Error occurred while scraping")
-        console.error(error)
-        res.status(500).json({ message: `Error occurred while scraping: ${error}` });
-    }
 };
