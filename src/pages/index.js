@@ -156,7 +156,7 @@ const Pulse = () => {
                 <TableRow>
                   <TableHead className="border-l-0 border-t-0"> </TableHead>
                   <TableHead colspan={ 2 }>Interest Rates</TableHead>
-                  <TableHead colspan= { 2}> Inflation</TableHead>
+                  <TableHead colspan= { 3}> Core Inflation Rate YoY</TableHead>
                   <TableHead colspan = { 3 }> Scores </TableHead>
 
                   
@@ -172,6 +172,7 @@ const Pulse = () => {
                  
                   <TableHead>Current</TableHead>
                   <TableHead>Previous</TableHead>
+                  <TableHead>Goal</TableHead>
 
                   <TableHead>Interest Rate Score</TableHead>
                   <TableHead>Inflation Score</TableHead>
@@ -196,6 +197,7 @@ const Pulse = () => {
 
                         <TableCell>{ `${country.inflationRateActual}%` }</TableCell>
                         <TableCell>{ `${country.inflationRatePrevious}%` }</TableCell>
+                        <TableCell>{ `2%` }</TableCell>
 
                   
                         {getScoreCell(country.interestRateScore)}
