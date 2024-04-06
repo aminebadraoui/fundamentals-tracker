@@ -70,9 +70,4 @@ const flippedScoringKeys = [
   "Unemployment Rate",
 ]
 
-
-
-
-
-
 export {inflationKeys, eventCategoryList, countryList_Iso3166, interestRatesKeys, employmentKeys, flippedScoringKeys}

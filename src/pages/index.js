@@ -149,14 +149,92 @@ const Pulse = () => {
               <Loader />
           </div>
          :  
-         
-         <Card className="space-y-4 p-8 m-8">
+         <div className='flex flex-col'>
+
+            <div className='flex flex row'>
+              <Card className="space-y-4 p-8 m-8">
+                  <h2> Interest Rate Monitor </h2>
+
+                  <Table>
+                  <TableHeader>
+                    <TableRow >
+                      <TableHead className="border-0"> </TableHead>
+                      <TableHead colspan={ 2 }>Interest Rates</TableHead>
+                    </TableRow>
+
+                    <TableRow>
+                    <TableHead className="border-0"> </TableHead>
+                      <TableHead> Current</TableHead>
+                      <TableHead> Previous</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+
+                {
+                  Object.keys(totalScoresData).map((key) => {
+                    const country = totalScoresData[key]
+                    return (
+                      <TableRow>
+                        <TableCell className="font-medium">{key}</TableCell>
+                        <TableCell>{ `${country.interestRateActual}` }</TableCell>
+                        <TableCell>{ `${country.interestRatePrevious}` }</TableCell>
+                      </TableRow>
+                    )
+                  })
+                }
+              </TableBody>
+              </Table>
+
+              </Card>
+
+              <Card className="space-y-4 p-8 m-8">
+                <h2> Inflation Rate YoY Monitor </h2>
+
+                <Table>
+                  <TableHeader>
+                    <TableRow >
+                      <TableHead className="border-0"> </TableHead>
+                      <TableHead colspan= { 3}> Core Inflation Rate YoY</TableHead>
+                    </TableRow>
+
+                    <TableRow>
+                      <TableHead className="border-0"> </TableHead>
+                      <TableHead>Current</TableHead>
+                      <TableHead>Previous</TableHead>
+                      <TableHead>Goal</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+
+                {
+                  Object.keys(totalScoresData).map((key) => {
+                    const country = totalScoresData[key]
+                    return (
+                      <TableRow>
+                        <TableCell className="font-medium">{key}</TableCell>
+                        <TableCell>{ `${country.inflationRateActual}%` }</TableCell>
+                        <TableCell>{ `${country.inflationRatePrevious}%` }</TableCell>
+                        <TableCell>{ `2%` }</TableCell>
+                      </TableRow>
+                    )
+                  })
+                }
+              </TableBody>
+              </Table>
+
+              </Card>
+
+            </div>
+        
+
+          
+           <Card className="space-y-4 p-8 m-8">
           <h2> Economic Pulse </h2>
             <Table>
               <TableHeader>
                 <TableRow >
                   <TableHead className="border-0"> </TableHead>
-                  <TableHead colspan={ 2 }>Interest Rates</TableHead>
+               
                   <TableHead colspan= { 3}> Core Inflation Rate YoY</TableHead>
                   <TableHead colspan = { 3 }> Scores </TableHead>
                   <TableHead colspan = { 2 }> COT Positions </TableHead>
@@ -168,17 +246,10 @@ const Pulse = () => {
                 <TableRow>
                 <TableHead className="border-0"> </TableHead>
                   
-                  <TableHead> Current</TableHead>
-                  <TableHead> Previous</TableHead>
-                 
-                 
-                  <TableHead>Current</TableHead>
-                  <TableHead>Previous</TableHead>
-                  <TableHead>Goal</TableHead>
-
-                  <TableHead>Interest Rate Score</TableHead>
+           
                   <TableHead>Inflation Score</TableHead>
                   <TableHead>Economic Score</TableHead>
+                  <TableHead>Interest Rate Score</TableHead>
 
                   <TableHead>Retail</TableHead>
                   <TableHead>Institutions</TableHead>
@@ -197,18 +268,15 @@ const Pulse = () => {
                     return (
                       <TableRow>
                         <TableCell className="font-medium">{key}</TableCell>
-                        <TableCell>{ `${country.interestRateActual}` }</TableCell>
-                        <TableCell>{ `${country.interestRatePrevious}` }</TableCell>
+                     
 
-                        <TableCell>{ `${country.inflationRateActual}%` }</TableCell>
-                        <TableCell>{ `${country.inflationRatePrevious}%` }</TableCell>
-                        <TableCell>{ `2%` }</TableCell>
+                        
 
                   
-                        {getScoreCell(country.interestRateScore)}
-                        {getScoreCell(country.inflation)}
                         
+                        {getScoreCell(country.inflation)}
                         {getScoreCell(country.economicScore)}
+                        {getScoreCell(country.interestRateScore)}
 
                         { /* Positions */  }
                         <TableCell> Coming Soon </TableCell>
@@ -228,6 +296,9 @@ const Pulse = () => {
               </TableBody>
             </Table>
             </Card>
+
+         </div>
+        
 
           
         }
