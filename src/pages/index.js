@@ -235,7 +235,7 @@ const Pulse = () => {
                 <TableRow >
                   <TableHead className="border-0"> </TableHead>
                
-                  <TableHead colspan= { 3}> Core Inflation Rate YoY</TableHead>
+              
                   <TableHead colspan = { 3 }> Scores </TableHead>
                   <TableHead colspan = { 2 }> COT Positions </TableHead>
                   <TableHead colspan = { 2 } className="border-0">  </TableHead>
