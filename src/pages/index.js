@@ -81,7 +81,6 @@ const Pulse = () => {
             totalScoresData[key]["interestRateScore"] = 0
           }
         }
-        
       })
 
       Object.keys(employmentData).map((key) => { 
@@ -150,21 +149,24 @@ const Pulse = () => {
               <Loader />
           </div>
          :  
+         
          <Card className="space-y-4 p-8 m-8">
+          <h2> Economic Pulse </h2>
             <Table>
               <TableHeader>
-                <TableRow>
-                  <TableHead className="border-l-0 border-t-0"> </TableHead>
+                <TableRow >
+                  <TableHead className="border-0"> </TableHead>
                   <TableHead colspan={ 2 }>Interest Rates</TableHead>
                   <TableHead colspan= { 3}> Core Inflation Rate YoY</TableHead>
                   <TableHead colspan = { 3 }> Scores </TableHead>
-
-                  
-                  {/* <TableHead>Analysis</TableHead> */}
-                 
+                  <TableHead colspan = { 2 }> COT Positions </TableHead>
+                  <TableHead colspan = { 2 } className="border-0">  </TableHead>
+                
+         
                 </TableRow>
-                <TableRow >
-                <TableHead className="border-l-0 border-t-0"> </TableHead>
+
+                <TableRow>
+                <TableHead className="border-0"> </TableHead>
                   
                   <TableHead> Current</TableHead>
                   <TableHead> Previous</TableHead>
@@ -176,12 +178,15 @@ const Pulse = () => {
 
                   <TableHead>Interest Rate Score</TableHead>
                   <TableHead>Inflation Score</TableHead>
-                  
                   <TableHead>Economic Score</TableHead>
-                  <TableHead>Sentiment</TableHead>
 
-                  
-               
+                  <TableHead>Retail</TableHead>
+                  <TableHead>Institutions</TableHead>
+
+                  <TableHead colspan = { 1 }> Valuation </TableHead>
+                  <TableHead className=""> Final Score </TableHead>
+
+                 
                 </TableRow>
               </TableHeader>
               
@@ -204,7 +209,15 @@ const Pulse = () => {
                         {getScoreCell(country.inflation)}
                         
                         {getScoreCell(country.economicScore)}
-                      
+
+                        { /* Positions */  }
+                        <TableCell> Coming Soon </TableCell>
+                        <TableCell> Coming Soon </TableCell>
+
+                        { /* Valuation */  }
+                        <TableCell> Coming Soon </TableCell>
+
+                        { /* Final Score */  }
                         <TableCell> Coming Soon </TableCell>
                         {/* <TableCell>{country.analysis}</TableCell> */}
              

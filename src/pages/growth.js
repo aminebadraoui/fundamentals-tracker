@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import {DashboardLayout} from '../components/ui/dashboard/dashboard-layout';
 import { EconomicChartAccordion } from '@/components/ui/economic-chart-accordion';
 import { getDataSortedByTotalScore } from '@/utils/getDataSortedByTotalScore';
-import { employmentKeys, inflationKeys } from '@/utils/event-names';
+import { employmentKeys, inflationKeys, interestRatesKeys } from '@/utils/event-names';
 import { getChartData } from '@/utils/getChartData';
 import { Loader } from '@/components/ui/loader'
 
@@ -21,7 +21,7 @@ const Growth = () => {
 
       const jsonData = await data.json()
 
-      const growthData = getDataSortedByTotalScore(jsonData, null, inflationKeys.concat(employmentKeys))
+      const growthData = getDataSortedByTotalScore(jsonData, null, inflationKeys.concat(employmentKeys).concat(interestRatesKeys))
       const growthChartData = getChartData(growthData)
 
       console.log(growthData)

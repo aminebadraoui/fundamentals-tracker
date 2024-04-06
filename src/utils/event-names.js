@@ -23,6 +23,7 @@ const inflationKeys = [
   "Mid-month Inflation Rate",
   "Mid-month Core Inflation Rate",
   "Core PCE Prices QoQ Adv",
+  "Tokyo CPI"
 ]
 
 const interestRatesKeys = [
@@ -33,7 +34,9 @@ const interestRatesKeys = [
   "BoJ Interest Rate Decision",
   "SNB Interest Rate Decision",
   "BoC Interest Rate Decision",
-  "Interest Rate Decision"
+  "BoJ Interest Rate Decision",
+  "Interest Rate Decision",
+  "SNB Interest Rate Decison"
 ]
 
 const employmentKeys = [
@@ -50,7 +53,15 @@ const employmentKeys = [
  "Nonfarm Productivity",
  "Jobs/applications ratio",
  "Wage Price Index",
- "Average Cash Earnings"
+ "Average Cash Earnings",
+ "Wage Growth",
+ "Labour Cost Index",
+ "Part Time Employment Chg",
+ "Full Time Employment Chg",
+ "Labour Costs Index",
+ "Unit Labour Costs",
+ "Manufacturing Payrolls",
+ "Employment Cost Index",
 ]
 
 const flippedScoringKeys = [
