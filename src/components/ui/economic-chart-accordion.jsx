@@ -1,7 +1,7 @@
 import React from "react";
 import { EventsTable } from '@/components/ui/events-table';
 import { ComposedChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { Card } from '@/components/ui/card';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 
 import {
   Accordion,
@@ -64,10 +64,11 @@ import {
 export const EconomicChartAccordion = ({title, data, chartData}) => {
   
   return (
-            <Card className="space-y-4 p-8 m-8">
+            <div className="space-y-4 p-8 m-8">
               <h2> {title} </h2>
               <Card className="space-y-4 p-8 m-8">
-                <h3>Comparative Chart </h3>
+                <CardTitle>Comparative Chart </CardTitle>
+                <CardContent>
                 <ResponsiveContainer
                         width='100%'
                         height={500}
@@ -85,11 +86,13 @@ export const EconomicChartAccordion = ({title, data, chartData}) => {
                       <Bar dataKey="totalScore" fill="#414ea0" minPointSize={3} />
                     </ComposedChart>
                   </ResponsiveContainer>
+                  </CardContent>
               </Card>
 
               <Card className="space-y-4 p-8 m-8">
-                <h3>Details </h3>
-
+                <CardTitle>Details</CardTitle>  
+                <CardContent> 
+                  
                 { 
                   Object.keys({...data}).map((country) => {
                     return (
@@ -106,13 +109,13 @@ export const EconomicChartAccordion = ({title, data, chartData}) => {
                     )
                     })
                 }
-
+                 </CardContent>
               </Card>
            
 
              
 
-         </Card>
+         </div>
           )
       
   

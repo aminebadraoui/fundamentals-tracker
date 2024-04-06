@@ -33,7 +33,7 @@ export const DashboardLayout = ({ children }) => {
         <Logo />
       </div>
 
-      <div className='flex flex-row'>
+      <div className='flex flex-row '>
         <SideBar links={links} /> 
         <div className="w-full">
           {children}

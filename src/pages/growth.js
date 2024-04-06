@@ -4,6 +4,7 @@ import { EconomicChartAccordion } from '@/components/ui/economic-chart-accordion
 import { getDataSortedByTotalScore } from '@/utils/getDataSortedByTotalScore';
 import { employmentKeys, inflationKeys } from '@/utils/event-names';
 import { getChartData } from '@/utils/getChartData';
+import { Loader } from '@/components/ui/loader'
 
 
 const Growth = () => {
@@ -43,7 +44,9 @@ const Growth = () => {
       <DashboardLayout>
         {
         isLoading ? 
-          <p>Loading...</p>
+        <div className='flex flex-col w-full h-dvh justify-center items-center '> 
+          <Loader />
+        </div>
          :  
          <div>
           <EconomicChartAccordion title ="Growth" data={growthData} chartData={growthChartData} /> 

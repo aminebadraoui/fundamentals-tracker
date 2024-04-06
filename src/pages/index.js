@@ -9,6 +9,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 
 import { Card } from '@/components/ui/card'
 
+import { Loader } from '@/components/ui/loader'
+
 
 const Pulse = () => {
   // keep track of different arrays of events as part of one object
@@ -176,18 +178,27 @@ const Pulse = () => {
     handleDownload()
   }, [])
 
+  const getScoreCell = (score) => {
+    return <TableCell className={`${score > 0 ? 'bg-green-500' : score  ==  0 ? 'bg-gray-500' : 'bg-red-500'} text-white font-bold`}>
+     { score > 0 ? `+${score}` : score} 
+    </TableCell>
+  
+  }
+
   return (
     <div>
       <DashboardLayout>
         {
         isLoading ? 
-          <p>Loading...</p>
+          <div className='flex flex-col w-full h-dvh justify-center items-center'> 
+              <Loader />
+          </div>
          :  
          <Card className="space-y-4 p-8 m-8">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead> </TableHead>
+                  <TableHead className="border-l-0 border-t-0"> </TableHead>
                   <TableHead>Current Inflation Rate</TableHead>
                   <TableHead>Average Inflation Rate</TableHead>
                   <TableHead>Inflation Score</TableHead>
@@ -207,9 +218,11 @@ const Pulse = () => {
                         <TableCell>{key}</TableCell>
                         <TableCell>{ `${country.rate}%` }</TableCell>
                         <TableCell>{ `${country.averageRate}%` }</TableCell>
-                        <TableCell>{country.inflation}</TableCell>
-                        <TableCell>{country.economicScore}</TableCell>
-                        <TableCell>{country.sentiment}</TableCell>
+
+                        {getScoreCell(country.inflation)}
+                        {getScoreCell(country.economicScore)}
+                      
+                        <TableCell> Coming Soon </TableCell>
                         {/* <TableCell>{country.analysis}</TableCell> */}
              
                       </TableRow>

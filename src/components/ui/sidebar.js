@@ -10,7 +10,7 @@ export const SideBar = ({ links, activeLink }) => {
         const isActive = link.href === usePathname();
 
         return (
-          <div key={index} className="flex flex-col">
+          <div key={index} className="flex flex-col h-dvh">
             <Button asChild variant={isActive ? 'active' : 'outline'} className="border-b  bg-slate-100">
               {/* Update: Remove the <a> tag */}
               <Link className={link.href === usePathname()? "underline" : "no-underline"} href={link.href}>{link.name}</Link>
