@@ -9,26 +9,19 @@ const inflationKeys = [
   "PCE Price Index",
   "Core PCE Prices",
   "PCE Prices",
-  "Fed Interest Rate Decision",
   "Core PPI",
   "PPI",
-  "ECB Interest Rate Decision",
-  "BoC Interest Rate Decision",
   "CPI Trimmed-Mean",
   "CPI Median",
   "Monthly CPI Indicator",
   "RBA Interest Rate Decision",
   "RBA Weighted Median CPI",
   "RBA Trimmed Mean CPI",
-  "RBNZ Interest Rate Decision",
   "PPI Output",
   "PPI Input",
   "Tokyo Core CPI",
-  "BoJ Interest Rate Decision",
-  "SNB Interest Rate Decision",
   "Mid-month Inflation Rate",
   "Mid-month Core Inflation Rate",
-  "Interest Rate Decision",
   "Core PCE Prices QoQ Adv",
 ]
 
@@ -39,6 +32,7 @@ const interestRatesKeys = [
   "RBNZ Interest Rate Decision", 
   "BoJ Interest Rate Decision",
   "SNB Interest Rate Decision",
+  "BoC Interest Rate Decision",
   "Interest Rate Decision"
 ]
 

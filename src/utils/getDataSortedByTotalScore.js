@@ -85,7 +85,7 @@ const getDataSortedByTotalScore = (rawData, filter, antifilter) => {
       // set the state with the sorted data
       finalData = sortedData
 
-      console.log(finalData)
+      
   })
 
   return finalData

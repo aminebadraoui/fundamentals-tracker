@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import {DashboardLayout} from '../components/ui/dashboard/dashboard-layout';
 import { EconomicChartAccordion } from '@/components/ui/economic-chart-accordion';
 import { getDataSortedByTotalScore } from '@/utils/getDataSortedByTotalScore';
-import { inflationKeys, employmentKeys } from '@/utils/event-names';
+import { inflationKeys, employmentKeys, interestRatesKeys } from '@/utils/event-names';
 import { getChartData } from '@/utils/getChartData';
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
@@ -39,9 +39,9 @@ const Pulse = () => {
 
       const inflationData = getDataSortedByTotalScore(jsonData, inflationKeys, null)
       const employmentData = getDataSortedByTotalScore(jsonData, employmentKeys, null)
-      const growthData = getDataSortedByTotalScore(jsonData, null, inflationKeys.concat(employmentKeys))
+      const interestRateData = getDataSortedByTotalScore(jsonData, interestRatesKeys, null)
+      const growthData = getDataSortedByTotalScore(jsonData, null, inflationKeys.concat(employmentKeys).concat(interestRatesKeys))
    
-      console.log(inflationData)
 
       Object.keys(inflationData).map((key) => { 
         if (totalScoresData[key] === undefined) {
@@ -56,14 +56,32 @@ const Pulse = () => {
         )
 
         if (rateEvent) {
-          totalScoresData[key]["rate"] = rateEvent.actual
+          totalScoresData[key]["inflationRateActual"] = rateEvent.actual
+          totalScoresData[key]["inflationRatePrevious"] = rateEvent.previous
         }
 
         totalScoresData[key]["averageRate"] = 2.0
+      })
 
+      Object.keys(interestRateData).map((key) => { 
+        if (totalScoresData[key] === undefined) {
+          totalScoresData[key] = {}
+        }
 
+        console.log(interestRateData)
 
-
+        if(interestRateData[key]["events"][0]) {
+          totalScoresData[key]["interestRateActual"] = interestRateData[key]["events"][0]["actual"]
+          totalScoresData[key]["interestRatePrevious"] = interestRateData[key]["events"][0]["previous"]
+          if (interestRateData[key]["events"][0]["actual"] > interestRateData[key]["events"][0]["previous"]) {
+            totalScoresData[key]["interestRateScore"] = +1
+          } else if (interestRateData[key]["events"][0]["actual"] < interestRateData[key]["events"][0]["previous"]) {
+            totalScoresData[key]["interestRateScore"] = -1
+          } else {
+            totalScoresData[key]["interestRateScore"] = 0
+          }
+        }
+        
       })
 
       Object.keys(employmentData).map((key) => { 
@@ -87,68 +105,6 @@ const Pulse = () => {
         const country = totalScoresData[key]
         country["economicScore"] =  country.employment + country.growth
       })
-
-      // add a bullish or bearish sentiment for each country
-      Object.keys(totalScoresData).map((key) => { 
-        const country = totalScoresData[key]
-        
-       if (country.inflation > 0) {
-        // inflation increasing so we need to increase interest rates
-        // how is the economy doing? 
-        if (country.economicScore > 0) {
-          // economy is doing well, we can increase interest rates
-          country["sentiment"] = "Bullish"
-          country["analysis"] = "Inflation increasing and economy is doing well. Interest rates could be increased to lower inflation without hurting the economy."
-        } else if (country.economicScore < 0) {
-          // economy is doing poorly, we should decrease interest rates
-          country["sentiment"] = "Mixed-Bullish"
-          country["analysis"] = "Inflation increasing and economy is slowing down. Interest rates should be increased to lower inflation but that would hurt a slowing economy."
-        } else if (country.economicScore === 0) {
-          // economy is doing poorly, we should decrease interest rates
-          country["sentiment"] = "Mixed-Bullish"
-          country["analysis"] = "Inflation increasing and economy is stagnant. Interest rates should be increased to lower inflation but that would hurt a stagnant economy."
-        }
-       } 
-       
-       else if (country.inflation < 0) {
-        // in ifflation decreasing so we can decrease interest rates
-        // how is the economy doing? 
-        if (country.economicScore > 0) {
-          // economy is doing well, we can decrease interest rates
-          country["sentiment"] = "Bearish"
-          country["analysis"] = "Inflation decreasing and economy is doing well. Interest rates could continue dropping to improve the economy."
-        } else if (country.economicScore < 0) {
-          // economy is doing poorly, further reason to decrease interest rates
-          country["sentiment"] = "Bearish"
-          country["analysis"] = "Inflation decreasing and economy is slowing down. Since inflation is decreasing, interest rates could be decreased to stimulate the slow economy."
-        } else if (country.economicScore === 0) {
-          // economy is stagnant, further reason to decrease interest rates
-          country["sentiment"] = "Mixed-Bearish"
-          country["analysis"] = "Inflation decreasing and economy is stagnant. Since inflation is decreasing, interest rates could be decreased to stimulate the stagnant economy."
-        }
-       }  
-       
-       else if (country.inflation === 0) {
-        // inflation is stagnant so we need to increase interest rates
-        // how is the economy doing? 
-        if (country.economicScore > 0) {
-          // economy is doing well, we can increase interest rates
-          country["sentiment"] = "Bullish"
-          country["analysis"] = "Inflation stagnant and economy is doing well. Interest rates could be increased to lower inflation without hurting the economy."
-        } else if (country.economicScore < 0) {
-          // economy is doing poorly, we should decrease interest rates
-          country["sentiment"] = "Mixed"
-          country["analysis"] = "Inflation stagnant and economy is slowing down. Interest rates should be increased to lower inflation but that would hurt a slowing economy."
-          
-        } else if (country.economicScore === 0) {
-          // economy is stagnant, we should decrease interest rates
-          country["sentiment"] = "Mixed"
-          country["analysis"] = "Inflation stagnant and economy is stagnant. Interest rates could go either way depending on other factors."
-        }
-       } 
-      })
-
-
 
       console.log(totalScoresData)
 
@@ -199,13 +155,32 @@ const Pulse = () => {
               <TableHeader>
                 <TableRow>
                   <TableHead className="border-l-0 border-t-0"> </TableHead>
-                  <TableHead>Current Inflation Rate</TableHead>
-                  <TableHead>Average Inflation Rate</TableHead>
-                  <TableHead>Inflation Score</TableHead>
-                  <TableHead>Economic Score</TableHead>
-                  <TableHead>Sentiment</TableHead>
+                  <TableHead colspan={ 2 }>Interest Rates</TableHead>
+                  <TableHead colspan= { 2}> Inflation</TableHead>
+                  <TableHead colspan = { 3 }> Scores </TableHead>
+
+                  
                   {/* <TableHead>Analysis</TableHead> */}
                  
+                </TableRow>
+                <TableRow >
+                <TableHead className="border-l-0 border-t-0"> </TableHead>
+                  
+                  <TableHead> Current</TableHead>
+                  <TableHead> Previous</TableHead>
+                 
+                 
+                  <TableHead>Current</TableHead>
+                  <TableHead>Previous</TableHead>
+
+                  <TableHead>Interest Rate Score</TableHead>
+                  <TableHead>Inflation Score</TableHead>
+                  
+                  <TableHead>Economic Score</TableHead>
+                  <TableHead>Sentiment</TableHead>
+
+                  
+               
                 </TableRow>
               </TableHeader>
               
@@ -215,11 +190,17 @@ const Pulse = () => {
                     const country = totalScoresData[key]
                     return (
                       <TableRow>
-                        <TableCell>{key}</TableCell>
-                        <TableCell>{ `${country.rate}%` }</TableCell>
-                        <TableCell>{ `${country.averageRate}%` }</TableCell>
+                        <TableCell className="font-medium">{key}</TableCell>
+                        <TableCell>{ `${country.interestRateActual}` }</TableCell>
+                        <TableCell>{ `${country.interestRatePrevious}` }</TableCell>
 
+                        <TableCell>{ `${country.inflationRateActual}%` }</TableCell>
+                        <TableCell>{ `${country.inflationRatePrevious}%` }</TableCell>
+
+                  
+                        {getScoreCell(country.interestRateScore)}
                         {getScoreCell(country.inflation)}
+                        
                         {getScoreCell(country.economicScore)}
                       
                         <TableCell> Coming Soon </TableCell>
