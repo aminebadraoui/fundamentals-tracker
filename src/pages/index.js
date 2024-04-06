@@ -193,7 +193,7 @@ const Pulse = () => {
                   <TableHead>Inflation Score</TableHead>
                   <TableHead>Economic Score</TableHead>
                   <TableHead>Sentiment</TableHead>
-                  <TableHead>Analysis</TableHead>
+                  {/* <TableHead>Analysis</TableHead> */}
                  
                 </TableRow>
               </TableHeader>
@@ -210,7 +210,7 @@ const Pulse = () => {
                         <TableCell>{country.inflation}</TableCell>
                         <TableCell>{country.economicScore}</TableCell>
                         <TableCell>{country.sentiment}</TableCell>
-                        <TableCell>{country.analysis}</TableCell>
+                        {/* <TableCell>{country.analysis}</TableCell> */}
              
                       </TableRow>
                     )
