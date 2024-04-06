@@ -1,48 +1,73 @@
-const currencyList = ["USD", "EUR", "GBP", "CAD", "AUD", "NZD", "JPY", "CHF"]
-const eventCategoryList = ["Inflation", "Interest Rates", "Employment", "Growth", "Housing"]
+const countryList_Iso3166 = ["US", "EU", "CA", "AU", "NZ", "JP", "CH", "MX"]
+const eventCategoryList = ["Inflation", "Interest Rates", "Econmic Growth"]
 
-const inflation = [
-  "Advance GDP Price Index q/q",
-  "Average Earnings Index 3m/y",
-  "Average Hourly Earnings m/m",, 
-  "CPI Flash Estimate y/y",
-  "CPI m/m",
-  "CPI q/q",
-  "CPI y/y",
-  "Common CPI y/y",
-  "Core CPI Flash Estimate y/y",
-  "Core CPI m/m",
-  "Core PCE Price Index m/m",
-  "Core PPI m/m",
-  "Employment Cost Index q/q",
-  "Final GDP Price Index q/q",
-  "German Prelim CPI m/m",
-  "Median CPI y/y",
-  "National Core CPI y/y",
-  "PPI m/m",
-  "PPI y/y",
-  "Prelim GDP Price Index q/q",
-  "Spanish Flash CPI y/y",
-  "Tokyo Core CPI y/y",
-  "Trimmed CPI y/y",
-  "Trimmed Mean CPI q/q",
-  "Wage Price Index q/q"
+const inflationKeys = [
+  "Inflation Rate",
+  "Core Inflation Rate",
+  "CPI",
+  "Core PCE Price Index",
+  "PCE Price Index",
+  "Core PCE Prices",
+  "PCE Prices",
+  "Fed Interest Rate Decision",
+  "Core PPI",
+  "PPI",
+  "ECB Interest Rate Decision",
+  "BoC Interest Rate Decision",
+  "CPI Trimmed-Mean",
+  "CPI Median",
+  "Monthly CPI Indicator",
+  "RBA Interest Rate Decision",
+  "RBA Weighted Median CPI",
+  "RBA Trimmed Mean CPI",
+  "RBNZ Interest Rate Decision",
+  "PPI Output",
+  "PPI Input",
+  "Tokyo Core CPI",
+  "BoJ Interest Rate Decision",
+  "SNB Interest Rate Decision",
+  "Mid-month Inflation Rate",
+  "Mid-month Core Inflation Rate",
+  "Interest Rate Decision",
+  "Core PCE Prices QoQ Adv",
 ]
 
-const interestRates = [
-  "Overnight Rate",
-  "Main Refinancing Rate",
-  "Cash Rate",
-  "BOJ Policy Rate",
-  "SNB Policy Rate",
-  "Official Bank Rate",
+const interestRatesKeys = [
+  "Fed Interest Rate Decision",
+  "ECB Interest Rate Decision",
+  "RBA Interest Rate Decision",
+  "RBNZ Interest Rate Decision", 
+  "BoJ Interest Rate Decision",
+  "SNB Interest Rate Decision",
+  "Interest Rate Decision"
 ]
 
-const eventList = {}
-eventList["Inflation"] = inflation
-eventList["Interest Rates"] = interestRates
+const employmentKeys = [
+  "Unemployment Rate",
+ "Employment Change",
+ "Nonfarm Payrolls Private",
+ "Average Hourly Earnings",
+ "Non Farm Payrolls",
+ "Average Weekly Hours",
+ "Initial Jobless Claims",
+ "ADP Employment Change",
+ "JOLTs Job Openings",
+ "Continuing Jobless Claims",
+ "Nonfarm Productivity",
+ "Jobs/applications ratio",
+ "Wage Price Index",
+ "Average Cash Earnings"
+]
+
+const flippedScoringKeys = [
+  "Initial Jobless Claims",
+  "Continuing Jobless Claims",
+  "Unemployment Rate",
+]
 
 
 
 
-export {currencyList, eventCategoryList, eventList}
+
+
+export {inflationKeys, eventCategoryList, countryList_Iso3166, interestRatesKeys, employmentKeys, flippedScoringKeys}
