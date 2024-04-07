@@ -27,8 +27,8 @@ export const DashboardLayout = ({ children }) => {
 
   return (
     <div className='flex flex-col'>
-      <div className='bg-slate-50 h-20 p-4 flex items-center border-0'> {/* Assume bg-slate-50 is correct */}
-        <Logo />
+      <div className='bg-primary h-20 p-4 flex items-center border-b-2'> {/* Assume bg-slate-50 is correct */}
+       <h1 className='text-secondary'> Trend Pulse </h1>
       </div>
       <div className='flex flex-row '>
         <SideBar links={links} /> 

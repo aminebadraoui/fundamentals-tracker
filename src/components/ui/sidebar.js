@@ -5,13 +5,13 @@ import { usePathname } from 'next/navigation';
 
 export const SideBar = ({ links, activeLink }) => {
   return (
-    <div className="bg-slate-50 py-8 w-1/5 border-0">
+    <div className="bg-primary py-8 w-1/5 border-0">
       {links.map((link, index) => {
         const isActive = link.href === usePathname();
 
         return (
-          <div key={index} className="flex flex-col ">
-            <Button asChild variant={isActive ? 'active' : 'outline'} className="border-b  bg-slate-100">
+          <div key={index} className="flex flex-col bg-transparent">
+            <Button asChild variant={isActive ? 'active' : 'outline'} className="border-0 bg-transparent text-secondary  ">
               {/* Update: Remove the <a> tag */}
               <Link className={link.href === usePathname()? "underline" : "no-underline"} href={link.href}>{link.name}</Link>
             </Button>
