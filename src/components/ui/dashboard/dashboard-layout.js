@@ -31,10 +31,14 @@ export const DashboardLayout = ({ children }) => {
 
   return (
     <div className='flex flex-col'>
-      <div className='bg-primary h-20 p-4 flex items-center border-b-2'> {/* Assume bg-slate-50 is correct */}
+      <header className='bg-background p-4 h-20 w-full'> 
+       <h1 className='text-secondary'>  </h1>
+      </header>
+      <header className='bg-primary fixed top-0 z-50 p-4 w-full shadow-md'> 
        <h1 className='text-secondary'> Trend Pulse </h1>
-      </div>
-      <div className='flex flex-row '>
+      </header>
+
+      <div className='flex flex-row offset '>
         <SideBar links={links} /> 
         <div className="w-full">
           {children}
