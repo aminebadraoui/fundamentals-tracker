@@ -14,7 +14,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 232, 42%, 40%;
+    --primary: 218, 58%, 54%;
     --primary-foreground: 215.4 16.3% 90.9%;
 
     --secondary: 210 40% 96.1%;
@@ -34,14 +34,11 @@
     --ring: 221.2 83.2% 53.3%;
     --radius: 1rem;
 
-    --table-header: 232, 42%, 40%;
-    --table-header-foreground: 215.4 16.3% 90.9%;
-
     --table-cell: 210 40% 96.1%;
     --table-cell-foreground: 222.2 84% 4.9%;
 
-    --bullish: 114, 61%, 75%;
-    --bearish: 0, 61%, 80%;
+    --bullish: 113, 85%, 67%;
+    --bearish: 353, 84%, 69%;
     --neutral: 0, 0%, 90%;
 
  

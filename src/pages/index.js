@@ -154,15 +154,15 @@ const Pulse = () => {
             <Table>
               <TableHeader>
                 <TableRow className="!border-0">
-                  <TableHead className="bg-transparent border-0"> </TableHead>
-                  <TableHead colspan = { 3 }> Scores </TableHead>
+                  <TableHead className="bg-transparent border-0" font-bold> </TableHead>
+                  <TableHead className="font-bold"  colspan = { 3 }> Scores </TableHead>
                 </TableRow>
 
                 <TableRow>
-                <TableHead className="bg-transparent border-0"> </TableHead>
-                  <TableHead>Inflation Score</TableHead>
-                  <TableHead>Economic Score</TableHead>
-                  <TableHead>Interest Rate Score</TableHead>
+                <TableHead className="bg-transparent border-0 font-bold"> </TableHead>
+                  <TableHead className="font-bold" >Inflation Score</TableHead>
+                  <TableHead className="font-bold" >Economic Score</TableHead>
+                  <TableHead className="font-bold" >Interest Rate Score</TableHead>
                 </TableRow>
               </TableHeader>
               
@@ -172,7 +172,7 @@ const Pulse = () => {
                     const country = totalScoresData[key]
                     return (
                       <TableRow>
-                        <TableCell className=" text-tableHeader-foreground bg-tableHeader">{key}</TableCell>
+                        <TableCell className="text-primary-foreground bg-primary font-bold">{key}</TableCell>
                         
                         {getScoreCell(country.inflation.toFixed(2))}
                         {getScoreCell(country.economicScore.toFixed(2))}
@@ -196,14 +196,14 @@ const Pulse = () => {
                   <Table>
                   <TableHeader>
                     <TableRow className="!border-0">
-                      <TableHead className="bg-transparent border-0"  > "" </TableHead>
-                      <TableHead  colspan={ 2 }>Interest Rates</TableHead>
+                      <TableHead className="bg-transparent border-0"   > "" </TableHead>
+                      <TableHead className="font-bold"  colspan={ 2 }>Interest Rates</TableHead>
                     </TableRow>
 
                     <TableRow>
-                    <TableHead className=" border-0 bg-transparent"> </TableHead>
-                      <TableHead > Current</TableHead>
-                      <TableHead >  Previous</TableHead>
+                    <TableHead className=" border-0 bg-transparent "> </TableHead>
+                      <TableHead className="font-bold" > Current</TableHead>
+                      <TableHead className="font-bold"  >  Previous</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -216,7 +216,7 @@ const Pulse = () => {
                   
                     return (
                       <TableRow>
-                        <TableCell className="text-tableHeader-foreground bg-tableHeader">{key}</TableCell>
+                        <TableCell className=" bg-primary text-primary-foreground font-bold">{key}</TableCell>
                         <TableCell className={cellBg}>{ `${country.interestRateActual}` }</TableCell>
                         <TableCell className={cellBg}>{ `${country.interestRatePrevious}` }</TableCell>
                       </TableRow>
@@ -240,9 +240,9 @@ const Pulse = () => {
 
                     <TableRow>
                       <TableHead className="bg-transparent border-0"> </TableHead>
-                      <TableHead>Current</TableHead>
-                      <TableHead>Previous</TableHead>
-                      <TableHead>Goal</TableHead>
+                      <TableHead className="font-bold" >Current</TableHead>
+                      <TableHead className="font-bold" >Previous</TableHead>
+                      <TableHead className="font-bold" >Goal</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -255,7 +255,7 @@ const Pulse = () => {
                   
                     return (
                       <TableRow>
-                        <TableCell className="text-tableHeader-foreground bg-tableHeader">{key}</TableCell>
+                        <TableCell className="text-primary-foreground font-bold bg-primary">{key}</TableCell>
                         
                         <TableCell className={cellBg}>{ `${country.inflationRateActual}%` }</TableCell>
                         <TableCell className={cellBg}>{ `${country.inflationRatePrevious}%` }</TableCell>
