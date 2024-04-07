@@ -149,6 +149,49 @@ const Pulse = () => {
          :  
          <div className='flex flex-col'>
 
+        
+
+          
+           <Card className="space-y-4 p-8 m-8">
+          <h2> Economic Pulse </h2>
+            <Table>
+              <TableHeader>
+                <TableRow className="!border-0">
+                  <TableHead className="bg-transparent border-0"> </TableHead>
+                  <TableHead colspan = { 3 }> Scores </TableHead>
+                </TableRow>
+
+                <TableRow>
+                <TableHead className="bg-transparent border-0"> </TableHead>
+                  <TableHead>Inflation Score</TableHead>
+                  <TableHead>Economic Score</TableHead>
+                  <TableHead>Interest Rate Score</TableHead>
+                </TableRow>
+              </TableHeader>
+              
+              <TableBody>
+                {
+                  Object.keys(totalScoresData).map((key) => {
+                    const country = totalScoresData[key]
+                    return (
+                      <TableRow>
+                        <TableCell className="font-bold text-tableHeader-foreground bg-tableHeader">{key}</TableCell>
+                        
+                        {getScoreCell(country.inflation.toFixed(2))}
+                        {getScoreCell(country.economicScore.toFixed(2))}
+                        {getScoreCell(country.interestRateScore.toFixed(2))}
+
+                       
+             
+                      </TableRow>
+                    )
+                  })
+                }
+              </TableBody>
+            </Table>
+            </Card>
+
+
             <div className='flex flex row justify-left'>
               <Card className="space-y-4 p-8 m-8">
                   <h2> Interest Rate Monitor </h2>
@@ -230,47 +273,6 @@ const Pulse = () => {
               </Card>
 
             </div>
-        
-
-          
-           <Card className="space-y-4 p-8 m-8">
-          <h2> Economic Pulse </h2>
-            <Table>
-              <TableHeader>
-                <TableRow className="!border-0">
-                  <TableHead className="bg-transparent border-0"> </TableHead>
-                  <TableHead colspan = { 3 }> Scores </TableHead>
-                </TableRow>
-
-                <TableRow>
-                <TableHead className="bg-transparent border-0"> </TableHead>
-                  <TableHead>Inflation Score</TableHead>
-                  <TableHead>Economic Score</TableHead>
-                  <TableHead>Interest Rate Score</TableHead>
-                </TableRow>
-              </TableHeader>
-              
-              <TableBody>
-                {
-                  Object.keys(totalScoresData).map((key) => {
-                    const country = totalScoresData[key]
-                    return (
-                      <TableRow>
-                        <TableCell className="font-bold text-tableHeader-foreground bg-tableHeader">{key}</TableCell>
-                        
-                        {getScoreCell(country.inflation.toFixed(2))}
-                        {getScoreCell(country.economicScore.toFixed(2))}
-                        {getScoreCell(country.interestRateScore.toFixed(2))}
-
-                       
-             
-                      </TableRow>
-                    )
-                  })
-                }
-              </TableBody>
-            </Table>
-            </Card>
 
          </div>
         
