@@ -10,20 +10,18 @@ export const DashboardLayout = ({ children }) => {
     {
       name: 'Economic Pulse',
       href: '/',
-      sublinks: [
-        {
-          name: 'Inflation',
-          href: '/inflation',
-        },
-        {
-          name: 'Employment',
-          href: '/employment',
-        },
-        {
-          name: 'Growth',
-          href: '/growth',
-        },
-      ],
+    },
+    {
+      name: 'Inflation',
+      href: '/inflation',
+    },
+    {
+      name: 'Employment',
+      href: '/employment',
+    },
+    {
+      name: 'Growth',
+      href: '/growth',
     },
   ];
 
@@ -32,7 +30,6 @@ export const DashboardLayout = ({ children }) => {
       <div className='bg-slate-50 h-20 p-4 flex items-center border-0'> {/* Assume bg-slate-50 is correct */}
         <Logo />
       </div>
-
       <div className='flex flex-row '>
         <SideBar links={links} /> 
         <div className="w-full">

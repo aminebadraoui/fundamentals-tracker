@@ -237,31 +237,16 @@ const Pulse = () => {
           <h2> Economic Pulse </h2>
             <Table>
               <TableHeader>
-                <TableRow >
-                  <TableHead> </TableHead>
-               
-              
+                <TableRow className="!border-0">
+                  <TableHead className="bg-transparent border-0"> </TableHead>
                   <TableHead colspan = { 3 }> Scores </TableHead>
-                  <TableHead colspan = { 2 }> COT Positions </TableHead>
-                  <TableHead colspan = { 2 } >  </TableHead>
-                
-         
                 </TableRow>
 
                 <TableRow>
-                <TableHead> </TableHead>
-                  
+                <TableHead className="bg-transparent border-0"> </TableHead>
                   <TableHead>Inflation Score</TableHead>
                   <TableHead>Economic Score</TableHead>
                   <TableHead>Interest Rate Score</TableHead>
-
-                  <TableHead>Retail</TableHead>
-                  <TableHead>Institutions</TableHead>
-
-                  <TableHead colspan = { 1 }> Valuation </TableHead>
-                  <TableHead> Final Score </TableHead>
-
-                 
                 </TableRow>
               </TableHeader>
               
@@ -271,22 +256,13 @@ const Pulse = () => {
                     const country = totalScoresData[key]
                     return (
                       <TableRow>
-                        <TableCell className="font-medium">{key}</TableCell>
+                        <TableCell className="font-bold text-tableHeader-foreground bg-tableHeader">{key}</TableCell>
                         
                         {getScoreCell(country.inflation.toFixed(2))}
                         {getScoreCell(country.economicScore.toFixed(2))}
                         {getScoreCell(country.interestRateScore.toFixed(2))}
 
-                        { /* Positions */  }
-                        <TableCell> Coming Soon </TableCell>
-                        <TableCell> Coming Soon </TableCell>
-
-                        { /* Valuation */  }
-                        <TableCell> Coming Soon </TableCell>
-
-                        { /* Final Score */  }
-                        <TableCell> Coming Soon </TableCell>
-                        {/* <TableCell>{country.analysis}</TableCell> */}
+                       
              
                       </TableRow>
                     )
