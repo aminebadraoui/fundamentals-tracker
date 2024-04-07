@@ -14,6 +14,10 @@ const createSeparatorRow = () => (
   </TableRow>
 )
 
+const getCellColor = (event) => {
+ return event.score > 0 ? "bg-bullish" : event.score < 0 ? "bg-bearish" : "bg-neutral"
+}
+
 export const EventsTable = ({events}) => {
 
 
@@ -35,16 +39,18 @@ export const EventsTable = ({events}) => {
           </TableHeader>
           <TableBody>
            
-            {events.map((event, index) => (
+          {events.map((event, index) => (
+
                 <TableRow key={index}>
-                  <TableCell>{event.type}</TableCell>
-                  <TableCell>{event.comparison }</TableCell>
-                  <TableCell>{event.date }</TableCell>
-                  <TableCell>{event.actual}</TableCell>
-                  <TableCell>{event.previous}</TableCell>
-                  <TableCell>{event.estimate}</TableCell>
+                  <TableCell className={ getCellColor(event)}>{event.type}</TableCell>
+                  <TableCell className={ getCellColor(event)}>{event.comparison }</TableCell>
+                  <TableCell className={ getCellColor(event)}>{event.date }</TableCell>
+                  <TableCell className={ getCellColor(event)}>{event.actual}</TableCell>
+                  <TableCell className={ getCellColor(event)}>{event.previous}</TableCell>
+                  <TableCell className={ getCellColor(event)}>{event.estimate}</TableCell>
+                  <TableCell className={ getCellColor(event)}>{event.score}</TableCell>
                  
-                  {getScoreCell(event.score)}
+              
                 </TableRow>
               ))},
           </TableBody>

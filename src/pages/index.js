@@ -132,7 +132,7 @@ const Pulse = () => {
   }, [])
 
   const getScoreCell = (score) => {
-    return <TableCell className={`${score > 0 ? 'bg-bullish' : score  ==  0 ? 'bg-neutral' : 'bg-bearish'}  font-semibold`}>
+    return <TableCell className={`${score > 0 ? 'bg-bullish' : score  ==  0 ? 'bg-neutral' : 'bg-bearish'}  `}>
      { score > 0 ? `+${score}` : score} 
     </TableCell>
   
@@ -149,11 +149,8 @@ const Pulse = () => {
          :  
          <div className='flex flex-col'>
 
-        
-
-          
            <Card className="space-y-4 p-8 m-8">
-          <h2> Economic Pulse </h2>
+          <h2> Economic Overview </h2>
             <Table>
               <TableHeader>
                 <TableRow className="!border-0">
@@ -175,7 +172,7 @@ const Pulse = () => {
                     const country = totalScoresData[key]
                     return (
                       <TableRow>
-                        <TableCell className="font-bold text-tableHeader-foreground bg-tableHeader">{key}</TableCell>
+                        <TableCell className=" text-tableHeader-foreground bg-tableHeader">{key}</TableCell>
                         
                         {getScoreCell(country.inflation.toFixed(2))}
                         {getScoreCell(country.economicScore.toFixed(2))}
@@ -219,7 +216,7 @@ const Pulse = () => {
                   
                     return (
                       <TableRow>
-                        <TableCell className="font-bold text-tableHeader-foreground bg-tableHeader">{key}</TableCell>
+                        <TableCell className="text-tableHeader-foreground bg-tableHeader">{key}</TableCell>
                         <TableCell className={cellBg}>{ `${country.interestRateActual}` }</TableCell>
                         <TableCell className={cellBg}>{ `${country.interestRatePrevious}` }</TableCell>
                       </TableRow>
@@ -258,7 +255,7 @@ const Pulse = () => {
                   
                     return (
                       <TableRow>
-                        <TableCell className="font-bold text-tableHeader-foreground bg-tableHeader">{key}</TableCell>
+                        <TableCell className="text-tableHeader-foreground bg-tableHeader">{key}</TableCell>
                         
                         <TableCell className={cellBg}>{ `${country.inflationRateActual}%` }</TableCell>
                         <TableCell className={cellBg}>{ `${country.inflationRatePrevious}%` }</TableCell>

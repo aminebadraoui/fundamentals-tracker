@@ -92,14 +92,30 @@ export const EconomicChartAccordion = ({title, data, chartData}) => {
               <Card className="space-y-4 p-8 m-8">
                 <CardTitle>Details</CardTitle>  
                 <CardContent> 
-                  
+
                 { 
                   Object.keys({...data}).map((country) => {
+                    const scoreColor = data[country].totalScore > 0 ? 'bg-bullish' : data[country].totalScore < 0 ? 'bg-bearish' : 'bg-neutral'
                     return (
                       <Accordion type="single"  collapsible className="">
-                        <AccordionItem value={country}>
+                        <AccordionItem value={country} className={ ` bg-table px-8`} >
                           <AccordionTrigger>
-                          {country} ({data[country].totalScore})
+                            <div className="flex flex-row w-full justify-between px-8 ">
+                              <div className="px-4"> 
+                              <p> {country} </p> 
+                               </div> 
+                              <div className={`p-4 ${scoreColor} font-bold rounded space` }> 
+                              <p>
+                              ({data[country].totalScore.toFixed(2)})
+                              </p>
+                               </div>
+                            
+                            
+                            
+
+
+                            </div>
+                         
                           </AccordionTrigger>
                           <AccordionContent>
                           <EventsTable events={data[country].events} />

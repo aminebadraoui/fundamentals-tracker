@@ -34,14 +34,14 @@
     --ring: 221.2 83.2% 53.3%;
     --radius: 1rem;
 
-    --table-header: 232, 42%, 44%;
+    --table-header: 232, 42%, 40%;
     --table-header-foreground: 215.4 16.3% 90.9%;
 
     --table-cell: 210 40% 96.1%;
     --table-cell-foreground: 222.2 84% 4.9%;
 
-    --bullish: 114, 61%, 74%;
-    --bearish: 0, 61%, 74%;
+    --bullish: 114, 61%, 75%;
+    --bearish: 0, 61%, 80%;
     --neutral: 0, 0%, 90%;
 
  

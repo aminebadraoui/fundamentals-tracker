@@ -8,7 +8,7 @@ export const DashboardLayout = ({ children }) => {
   
   const links = [
     {
-      name: 'Economic Pulse',
+      name: 'Economic Overview',
       href: '/',
     },
     {
