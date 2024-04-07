@@ -2,14 +2,13 @@ import { useEffect, useState } from 'react';
 import {DashboardLayout} from '../components/ui/dashboard/dashboard-layout';
 import { EconomicChartAccordion } from '@/components/ui/economic-chart-accordion';
 import { getDataSortedByTotalScore } from '@/utils/getDataSortedByTotalScore';
-import { employmentKeys, inflationKeys, interestRatesKeys, housingKeys } from '@/utils/event-names';
+import { housingKeys } from '@/utils/event-names';
 import { getChartData } from '@/utils/getChartData';
 import { Loader } from '@/components/ui/loader'
 
-
-const Growth = () => {
+const Housing = () => {
   // keep track of different arrays of events as part of one object
-  const [{allData, growthData, growthChartData}, setEvents] = useState({});
+  const [{allData, housingData, housingChartData}, setEvents] = useState({});
   const [isLoading, setLoading] = useState(false);
 
   const handleDownload = async () => {
@@ -20,13 +19,21 @@ const Growth = () => {
       const data = await fetch('api/event-calendar')
 
       const jsonData = await data.json()
+      
+      // if data is not empty, classify data into categories and currencies and set state
+      // const blob = new Blob([JSON.stringify(jsonData, null, 2)], { type: 'application/json' });
+      // const url = URL.createObjectURL(blob);
+      // const a = document.createElement('a');
+      // a.href = url;
+      // a.download = 'events.json';
+      // a.click();
 
-      const growthData = getDataSortedByTotalScore(jsonData, null, inflationKeys.concat(employmentKeys).concat(interestRatesKeys).concat(housingKeys))
-      const growthChartData = getChartData(growthData)
+      const housingData = getDataSortedByTotalScore(jsonData, housingKeys, null)
+      const housingChartData = getChartData(housingData)
 
-      console.log(growthData)
+      console.log(housingData)
 
-      setEvents({jsonData, growthData, growthChartData});
+      setEvents({jsonData, housingData, housingChartData});
 
       setLoading(false);
       console.log("loading set to false")
@@ -49,7 +56,7 @@ const Growth = () => {
         </div>
          :  
          <div>
-          <EconomicChartAccordion title ="Growth" data={growthData} chartData={growthChartData} /> 
+          <EconomicChartAccordion title ="Housing" data={housingData} chartData={housingChartData} /> 
           </div>
         }
   
@@ -58,4 +65,4 @@ const Growth = () => {
   );
 };
 
-export default Growth;
+export default Housing;

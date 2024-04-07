@@ -70,4 +70,19 @@ const flippedScoringKeys = [
   "Unemployment Rate",
 ]
 
-export {inflationKeys, eventCategoryList, countryList_Iso3166, interestRatesKeys, employmentKeys, flippedScoringKeys}
+const housingKeys = [
+"Private House Approvals",
+"Home Loans",
+"Housing Starts",
+"New Housing Price Index",
+"Loans to Households",
+"Pending Home Sales",
+"S&P/Case-Shiller Home Price",
+"New Home Sales",
+"Existing Home Sales",
+
+
+
+]
+
+export {inflationKeys, eventCategoryList, countryList_Iso3166, interestRatesKeys, employmentKeys, housingKeys, flippedScoringKeys}

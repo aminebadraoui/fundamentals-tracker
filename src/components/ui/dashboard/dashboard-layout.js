@@ -20,6 +20,10 @@ export const DashboardLayout = ({ children }) => {
       href: '/employment',
     },
     {
+      name: 'Housing',
+      href: '/housing',
+    },
+    {
       name: 'Growth',
       href: '/growth',
     },
