@@ -24,7 +24,7 @@ module.exports = {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         fontFamily: {
-          sans: ["Segoe UI", 'sans-serif'],
+          sans: ["var(--font-sans)"],
         },
         primary: {
           DEFAULT: "hsl(var(--primary))",
@@ -53,6 +53,19 @@ module.exports = {
         card: {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
+        },
+        tableHeader: {
+          DEFAULT: "hsl(var(--table-header))",
+          foreground: "hsl(var(--table-header-foreground))",
+        },
+        bullish: {
+          DEFAULT: "hsl(var(--bullish))",
+        },
+        bearish: {
+          DEFAULT: "hsl(var(--bearish))",
+        },
+        neutral: {
+          DEFAULT: "hsl(var(--neutral))",
         },
       },
       borderRadius: {

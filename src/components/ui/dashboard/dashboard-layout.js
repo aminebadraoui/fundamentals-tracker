@@ -29,7 +29,7 @@ export const DashboardLayout = ({ children }) => {
 
   return (
     <div className='flex flex-col'>
-      <div className='bg-slate-50 h-20 p-4 flex items-center border'> {/* Assume bg-slate-50 is correct */}
+      <div className='bg-slate-50 h-20 p-4 flex items-center border-0'> {/* Assume bg-slate-50 is correct */}
         <Logo />
       </div>
 

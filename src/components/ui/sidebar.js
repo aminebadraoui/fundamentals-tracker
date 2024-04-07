@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 
 export const SideBar = ({ links, activeLink }) => {
   return (
-    <div className="bg-slate-50 py-8 w-1/5 border">
+    <div className="bg-slate-50 py-8 w-1/5 border-0">
       {links.map((link, index) => {
         const isActive = link.href === usePathname();
 
