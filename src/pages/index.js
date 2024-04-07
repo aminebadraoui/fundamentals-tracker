@@ -68,8 +68,6 @@ const Pulse = () => {
           totalScoresData[key] = {}
         }
 
-        console.log(interestRateData)
-
         if(interestRateData[key]["events"][0]) {
           totalScoresData[key]["interestRateActual"] = interestRateData[key]["events"][0]["actual"]
           totalScoresData[key]["interestRatePrevious"] = interestRateData[key]["events"][0]["previous"]
@@ -275,9 +273,9 @@ const Pulse = () => {
                       <TableRow>
                         <TableCell className="font-medium">{key}</TableCell>
                         
-                        {getScoreCell(country.inflation)}
-                        {getScoreCell(country.economicScore)}
-                        {getScoreCell(country.interestRateScore)}
+                        {getScoreCell(country.inflation.toFixed(2))}
+                        {getScoreCell(country.economicScore.toFixed(2))}
+                        {getScoreCell(country.interestRateScore.toFixed(2))}
 
                         { /* Positions */  }
                         <TableCell> Coming Soon </TableCell>
