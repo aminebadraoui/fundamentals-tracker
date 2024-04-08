@@ -5,10 +5,10 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
+    --background: 210 40% 96.1%;
     --foreground: 222.2 84% 4.9%;
 
-    --card: 210 40% 96.1%;
+    --card:   0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
 
     --popover: 0 0% 100%;
@@ -37,8 +37,8 @@
     --table-cell: 210 40% 96.1%;
     --table-cell-foreground: 222.2 84% 4.9%;
 
-    --bullish: 113, 85%, 67%;
-    --bearish: 353, 84%, 69%;
+    --bullish: 112, 82%, 83%;
+    --bearish: 0, 88%, 83%;
     --neutral: 0, 0%, 90%;
 
  
