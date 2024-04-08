@@ -81,8 +81,24 @@ const housingKeys = [
 "New Home Sales",
 "Existing Home Sales",
 
-
-
 ]
 
-export {inflationKeys, eventCategoryList, countryList_Iso3166, interestRatesKeys, employmentKeys, housingKeys, flippedScoringKeys}
+const USMajorEvents = [ 
+  "PPI",
+  "CPI",
+  "Initial Jobless Claims",
+  "PMI",
+  "Non Farm Payrolls",
+  "Fed Interest Rate Decision",
+]
+
+
+export {inflationKeys,
+  eventCategoryList, 
+  countryList_Iso3166, 
+  interestRatesKeys, 
+  employmentKeys, 
+  housingKeys, 
+  flippedScoringKeys,
+  USMajorEvents
+}

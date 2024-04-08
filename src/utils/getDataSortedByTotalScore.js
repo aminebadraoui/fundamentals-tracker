@@ -48,10 +48,12 @@ const getDataSortedByTotalScore = (rawData, filter, antifilter) => {
       Object.keys(eventArray).map((eventIndex) => { 
         const event = eventArray[eventIndex]
 
-        if (filter && filter.includes(event.type) || antifilter && !antifilter.includes(event.type)) {
+        if ((filter && filter.includes(event.type) || antifilter && !antifilter.includes(event.type)) && (event.actual && event.estimate && event.previous && event.date)) {
             finalData[key]["events"].push(event)
         }
       })
+
+
 
       // if there are duplicates in inflation[key], keep only the most recent event based on their date property's value
       const uniqueEvents = []

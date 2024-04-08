@@ -12,7 +12,7 @@ export default async (req, res) => {
       const finalData = {}
       for (const data in dataArray) {
         Object.keys(dataArray[data]).map((key) => {
-          finalData[key] = dataArray[data][key].filter(event => event.actual && event.estimate && event.previous)
+          finalData[key] = dataArray[data][key]
         })
       }
       console.log(finalData)

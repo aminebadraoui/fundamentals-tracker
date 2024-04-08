@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import {DashboardLayout} from '../components/ui/dashboard/dashboard-layout';
 import { EconomicChartAccordion } from '@/components/ui/economic-chart-accordion';
 import { getDataSortedByTotalScore } from '@/utils/getDataSortedByTotalScore';
-import { inflationKeys, employmentKeys, interestRatesKeys } from '@/utils/event-names';
+import { inflationKeys, employmentKeys, interestRatesKeys, USMajorEvents } from '@/utils/event-names';
 import { getChartData } from '@/utils/getChartData';
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
@@ -23,25 +23,28 @@ const Pulse = () => {
     try {
       console.log("fetching data")
       const data = await fetch('api/event-calendar')
-
       const jsonData = await data.json()
-      
-      // if data is not empty, classify data into categories and currencies and set state
-      // const blob = new Blob([JSON.stringify(jsonData, null, 2)], { type: 'application/json' });
-      // const url = URL.createObjectURL(blob);
-      // const a = document.createElement('a');
-      // a.href = url;
-      // a.download = 'events.json';
-      // a.click();
-
-      const totalScoresData = {}
-
 
       const inflationData = getDataSortedByTotalScore(jsonData, inflationKeys, null)
       const employmentData = getDataSortedByTotalScore(jsonData, employmentKeys, null)
       const interestRateData = getDataSortedByTotalScore(jsonData, interestRatesKeys, null)
       const growthData = getDataSortedByTotalScore(jsonData, null, inflationKeys.concat(employmentKeys).concat(interestRatesKeys))
-   
+
+      const totalScoresData = {}
+
+      Object.keys(jsonData).map((key) => {
+        const country = jsonData[key]
+        const upcomingEventsForCountry = country.filter((event) => event.actual === null && event.estimate !== null && event.previous !== null)
+
+        if (totalScoresData[key] === undefined) {
+          totalScoresData[key] = {}
+        }
+
+        totalScoresData[key]["upcomingEvents"] = upcomingEventsForCountry
+
+        console.log("upcomingEventsForCountry", upcomingEventsForCountry)
+       
+      })
 
       Object.keys(inflationData).map((key) => { 
         if (totalScoresData[key] === undefined) {
@@ -85,7 +88,6 @@ const Pulse = () => {
         if (totalScoresData[key] === undefined) {
           totalScoresData[key] = {}
         }
-
         totalScoresData[key]["employment"] = employmentData[key].totalScore
       })
 
@@ -93,7 +95,6 @@ const Pulse = () => {
         if (totalScoresData[key] === undefined) {
           totalScoresData[key] = {}
         }
-
         totalScoresData[key]["growth"] = growthData[key].totalScore
       })
 
@@ -112,16 +113,16 @@ const Pulse = () => {
         sortedData[key] = totalScoresData[key]
       })
 
-
+      console.log(sortedData)
 
       // set the state with the sorted data
-
-
       setEvents(sortedData);
 
-
-      setLoading(false);
-      console.log("loading set to false")
+      if (sortedData) {
+        setLoading(false);
+        console.log("loading set to false")
+      }
+      
     } catch (error) { 
       console.log(error)
     }
@@ -137,6 +138,11 @@ const Pulse = () => {
     </TableCell>
   
   }
+  
+  const Style = {
+    Wrapper : "flex flex-row flex-wrap justify-left p-8 space-x-4 space-y-4",
+    InternalCard: "space-y-4 p-8"
+  }
 
   return (
     <div>
@@ -147,9 +153,8 @@ const Pulse = () => {
               <Loader />
           </div>
          :  
-         <div className='flex flex-col'>
-
-           <Card className="space-y-4 p-8 m-8">
+            <div className={Style.Wrapper}>
+               <Card className={Style.InternalCard}>
           <h2> Economic Overview </h2>
             <Table>
               <TableHeader>
@@ -162,7 +167,7 @@ const Pulse = () => {
                 <TableHead className="bg-transparent border-0 font-bold"> </TableHead>
                   <TableHead className="font-bold" >Inflation Score</TableHead>
                   <TableHead className="font-bold" >Economic Score</TableHead>
-                  <TableHead className="font-bold" >Interest Rate Score</TableHead>
+                 
                 </TableRow>
               </TableHeader>
               
@@ -176,10 +181,7 @@ const Pulse = () => {
                         
                         {getScoreCell(country.inflation.toFixed(2))}
                         {getScoreCell(country.economicScore.toFixed(2))}
-                        {getScoreCell(country.interestRateScore.toFixed(2))}
-
                        
-             
                       </TableRow>
                     )
                   })
@@ -188,9 +190,39 @@ const Pulse = () => {
             </Table>
             </Card>
 
+            <Card className={Style.InternalCard}>
+                  <h2> US Upcoming Events </h2>
 
-            <div className='flex flex row justify-left'>
-              <Card className="space-y-4 p-8 m-8">
+                  <Table>
+                  <TableHeader>
+                    <TableRow className="!border-0">
+                      <TableHead className="font-bold" > Event</TableHead>
+                      <TableHead className="font-bold"> Date </TableHead>
+                      <TableHead className="font-bold" > Forecast </TableHead>
+                      <TableHead className="font-bold"> Previous </TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+
+                { 
+                  totalScoresData["US"] && totalScoresData["US"]["upcomingEvents"].map((event, index) => {
+                    if (USMajorEvents.includes(event.type)) {
+                    return (
+                      <TableRow>
+                        <TableCell className=" bg-background text- font-bold">{event.type} {event.comparison && `(${event.comparison})` }</TableCell>
+                        <TableCell className=" bg-background  ">{event.date}</TableCell>
+                        <TableCell className=" bg-background">{event.estimate}</TableCell>
+                        <TableCell className=" bg-background ">{event.previous}</TableCell>
+                      </TableRow>
+                    ) }
+                  })
+                } 
+              </TableBody>
+              </Table>
+
+              </Card>
+          
+              <Card className={Style.InternalCard}>
                   <h2> Interest Rate Monitor </h2>
 
                   <Table>
@@ -228,7 +260,7 @@ const Pulse = () => {
 
               </Card>
 
-              <Card className="space-y-4 p-8 m-8">
+              <Card className={Style.InternalCard}>
                 <h2> Inflation Rate YoY Monitor </h2>
 
                 <Table>
@@ -271,7 +303,7 @@ const Pulse = () => {
 
             </div>
 
-         </div>
+         
         
 
           
