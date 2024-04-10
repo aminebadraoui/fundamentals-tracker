@@ -1,14 +1,15 @@
 import React from "react";
 import { EventsTable } from '@/components/ui/events-table';
 import { ComposedChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/generic/card';
 
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui/accordion"
+} from "@/components/generic/accordion"
+import { TitledCard } from "../generic/titled-card";
 
 /*
   * EconomicChartAccordion
@@ -65,18 +66,22 @@ export const EconomicChartAccordion = ({title, data, chartData}) => {
   
   return (
             <div className="space-y-4 p-8 m-8">
-              <h2> {title} </h2>
-              <Card className="space-y-4 p-8 m-8">
-                <CardTitle>Comparative Chart </CardTitle>
+              <h2 className="text-secondary-foreground"> {title} </h2>
+              <TitledCard title={"Comparative Chart"} className="space-y-4 p-8 m-8">
+                
                 <CardContent>
                 <ResponsiveContainer
                         width='100%'
                         height={500}
+                        className={'bg-secondary-foreground'}
+                      
+                        
                       >
                       <ComposedChart
                         layout="horizontal"
                         data={ chartData }
                         barCategoryGap='40%'
+                        
                       >
                       <CartesianGrid stroke="#f5f5f5" />
                       <YAxis type="number" />
@@ -87,24 +92,24 @@ export const EconomicChartAccordion = ({title, data, chartData}) => {
                     </ComposedChart>
                   </ResponsiveContainer>
                   </CardContent>
-              </Card>
+              </TitledCard>
 
-              <Card className="space-y-4 p-8 m-8">
-                <CardTitle>Details</CardTitle>  
-                <CardContent> 
+              <TitledCard title={"Details"} className="space-y-4 p-8 m-8">
+                
+           
 
                 { 
                   Object.keys({...data}).map((country) => {
                     const scoreColor = data[country].totalScore > 0 ? 'bg-bullish' : data[country].totalScore < 0 ? 'bg-bearish' : 'bg-neutral'
                     return (
-                      <Accordion type="single"  collapsible className="">
+                      <Accordion key={country} type="single"  collapsible className="">
                         <AccordionItem value={country} className={ ` bg-table px-8`} >
                           <AccordionTrigger>
                             <div className="flex flex-row w-full justify-between px-8 ">
                               <div className="px-4"> 
                               <p> {country} </p> 
                                </div> 
-                              <div className={`p-4 ${scoreColor} font-bold rounded space` }> 
+                              <div className={`p-4 ${scoreColor} text-black font-bold rounded space` }> 
                               <p>
                               ({data[country].totalScore.toFixed(2)})
                               </p>
@@ -125,8 +130,8 @@ export const EconomicChartAccordion = ({title, data, chartData}) => {
                     )
                     })
                 }
-                 </CardContent>
-              </Card>
+               
+              </TitledCard>
            
 
              

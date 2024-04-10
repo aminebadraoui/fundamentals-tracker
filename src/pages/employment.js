@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import {DashboardLayout} from '../components/ui/dashboard/dashboard-layout';
+import {DashboardLayout} from '../components/layout/dashboard-layout';
 import { EconomicChartAccordion } from '@/components/ui/economic-chart-accordion';
 import { getDataSortedByTotalScore } from '@/utils/getDataSortedByTotalScore';
 import { employmentKeys, inflationKeys } from '@/utils/event-names';
@@ -56,7 +56,7 @@ const Employment = () => {
         </div>
          :  
          <div>
-          <EconomicChartAccordion title ="Employment" data={employmentData} chartData={employmentChartData} /> 
+          <EconomicChartAccordion key={"Employment"} title ="Employment" data={employmentData} chartData={employmentChartData} /> 
           </div>
         }
   

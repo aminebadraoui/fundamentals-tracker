@@ -1,4 +1,4 @@
-const countryList_Iso3166 = ["US", "EU", "CA", "AU", "NZ", "JP", "CH", "MX"]
+const countryList_Iso3166 = ["US", "EU", "CA", "AU", "NZ", "JP", "CH", "MX", "UK"]
 const eventCategoryList = ["Inflation", "Interest Rates", "Econmic Growth"]
 
 const inflationKeys = [
@@ -23,7 +23,10 @@ const inflationKeys = [
   "Mid-month Inflation Rate",
   "Mid-month Core Inflation Rate",
   "Core PCE Prices QoQ Adv",
-  "Tokyo CPI"
+  "Tokyo CPI",
+  "PPI Core Output",
+  "PPI Core Output"
+
 ]
 
 const interestRatesKeys = [
@@ -36,7 +39,8 @@ const interestRatesKeys = [
   "BoC Interest Rate Decision",
   "BoJ Interest Rate Decision",
   "Interest Rate Decision",
-  "SNB Interest Rate Decison"
+  "SNB Interest Rate Decison",
+  "BoE Interest Rate Decision"
 ]
 
 const employmentKeys = [
@@ -83,16 +87,31 @@ const housingKeys = [
 
 ]
 
-const USMajorEvents = [ 
+const majorEventsKeys = [ 
   "PPI",
   "CPI",
   "Initial Jobless Claims",
   "PMI",
   "Non Farm Payrolls",
   "Fed Interest Rate Decision",
+  "Inflation Rate",
+  ...interestRatesKeys,
+  "Core Inflation Rate (yoy)",
+  "FOMC Minutes",
 ]
 
+const majorForexPairs =  {
+  'EURUSD': ["EU", "US"],
+  'GBPUSD': ["UK", "US"],
 
+  'AUDUSD': ["AU", "US"],
+  'NZDUSD': ["NZ", "US"],
+
+  'USDCHF': ["US", "CH"],
+  'USDJPY': ["US", "JP"],
+  'USDCAD': ["US", "CA"],
+}
+ 
 export {inflationKeys,
   eventCategoryList, 
   countryList_Iso3166, 
@@ -100,5 +119,6 @@ export {inflationKeys,
   employmentKeys, 
   housingKeys, 
   flippedScoringKeys,
-  USMajorEvents
+  majorEventsKeys,
+  majorForexPairs
 }

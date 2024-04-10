@@ -2,31 +2,32 @@ import { countryList_Iso3166, eventCategoryList, inflationKeys, flippedScoringKe
 
 const getScore = (event) => {
   let score = 0
+  const scoreStep = 0.5 // 0.5 so score is between -1 and 1
   if (flippedScoringKeys.includes(event.type)) {
     if (event.actual > event.estimate) {
-      score -= 1
+      score -= scoreStep
     }
     if (event.actual < event.estimate) {
-      score += 1
+      score += scoreStep
     }
     if (event.actual > event.previous) {
-      score -= 1
+      score -= scoreStep
     }
     if (event.actual < event.previous) {
-      score += 1
+      score += scoreStep
     }
   } else {
     if (event.actual > event.estimate) {
-      score += 1
+      score += scoreStep
     }
     if (event.actual < event.estimate) {
-      score -= 1
+      score -= scoreStep
     }
     if (event.actual > event.previous) {
-      score += 1
+      score += scoreStep
     }
     if (event.actual < event.previous) {
-      score -= 1
+      score -= scoreStep
     }
   }
   return score
@@ -52,8 +53,6 @@ const getDataSortedByTotalScore = (rawData, filter, antifilter) => {
             finalData[key]["events"].push(event)
         }
       })
-
-
 
       // if there are duplicates in inflation[key], keep only the most recent event based on their date property's value
       const uniqueEvents = []
