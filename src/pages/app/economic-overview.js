@@ -8,11 +8,15 @@ import { MonitorDataTable } from '@/components/ui/monitor-data-table';
 import { majorForexPairs  } from '@/utils/event-names';
 import { ForexPairComparisonTable } from '@/components/ui/forex-pair-comparison-table';
 
+import { getEconomicOverviewData } from '@/utils/get-economic-overview-data';
+import { getInflationRateMonitorData } from '@/utils/get-inflation-rate-monitor-data';
+import { getInterestRateMonitorData } from '@/utils/get-interest-rate-monitor-data';
 
-const Pulse = () => {
+const EconomicOverview = () => {
   // keep track of different arrays of events as part of one object
-  const [totalScoresData , setEvents] = useState({});
-  const [upcomingEvents , setUpcomingEvents] = useState([]);
+  const [economicOverviewData , setEconomicOverview] = useState({});
+  const [interestRateMonitorData , setInterestRateMonitorData] = useState({});
+  const [inflationRateMonitorData , setInflationtRateMonitorData] = useState({});
   const [isLoading, setLoading] = useState(false);
 
   const handleDownload = async () => {
@@ -20,108 +24,49 @@ const Pulse = () => {
     setLoading(true);
     try {
       console.log("fetching data")
-      const data = await fetch('api/event-calendar')
-      const jsonData = await data.json()
+      const data = await fetch('../api/event-calendar')
+      const rawData = await data.json()
 
-      const inflationData = getDataSortedByTotalScore(jsonData, inflationKeys, null)
-      const employmentData = getDataSortedByTotalScore(jsonData, employmentKeys, null)
-      const interestRateData = getDataSortedByTotalScore(jsonData, interestRatesKeys, null)
-      const growthData = getDataSortedByTotalScore(jsonData, null, inflationKeys.concat(employmentKeys).concat(interestRatesKeys))
+      console.log("rawData", rawData)
 
-      const totalScoresData = {}
+      const inflationData = getDataSortedByTotalScore(rawData, inflationKeys, null)
+      const employmentData = getDataSortedByTotalScore(rawData, employmentKeys, null)
+      const growthData = getDataSortedByTotalScore(rawData, null, inflationKeys.concat(employmentKeys).concat(interestRatesKeys))
+      const interestRateData = getDataSortedByTotalScore(rawData, interestRatesKeys, null)
 
-      Object.keys(inflationData).map((key) => { 
-        if (totalScoresData[key] === undefined) {
-          totalScoresData[key] = {}
-        }
- 
-        totalScoresData[key]["inflationScore"] = inflationData[key].totalScore
-        // find the event with the type "rate" or "decision rate" or "rba decision rate" and get the actual value from it
-        const rateEvent = inflationData[key].events.find((event) => (event.type === "Inflation Rate" 
-        || event.type === "Core Inflation Rate")
-        && event.comparison === "yoy"
-        )
+      const economicOverviewData_local = getEconomicOverviewData(inflationData, employmentData, growthData)
+      setEconomicOverview(economicOverviewData_local)
 
-        if (rateEvent) {
-          totalScoresData[key]["inflationRateActual"] = rateEvent.actual
-          totalScoresData[key]["inflationRatePrevious"] = rateEvent.previous
-        }
+      const interestRateMontorData_local = getInterestRateMonitorData(interestRateData)
+      setInterestRateMonitorData(interestRateMontorData_local)
 
-        totalScoresData[key]["averageRate"] = 2.0
-      })
+      const inflationRateMontorData_local = getInflationRateMonitorData(inflationData)
+      setInflationtRateMonitorData(inflationRateMontorData_local)
 
-      Object.keys(interestRateData).map((key) => { 
-        if (totalScoresData[key] === undefined) {
-          totalScoresData[key] = {}
-        }
+      // const upcomingEventsForAllCountries = []
 
-        if(interestRateData[key]["events"][0]) {
-          totalScoresData[key]["interestRateActual"] = interestRateData[key]["events"][0]["actual"]
-          totalScoresData[key]["interestRatePrevious"] = interestRateData[key]["events"][0]["previous"]
-          if (interestRateData[key]["events"][0]["actual"] > interestRateData[key]["events"][0]["previous"]) {
-            totalScoresData[key]["interestRateScore"] = +1
-          } else if (interestRateData[key]["events"][0]["actual"] < interestRateData[key]["events"][0]["previous"]) {
-            totalScoresData[key]["interestRateScore"] = -1
-          } else {
-            totalScoresData[key]["interestRateScore"] = 0
-          }
-        }
-      })
+      // Object.keys(jsonData).map((key) => {
+      //   const country = jsonData[key]
+      //   const upcomingEventsForCountry = country.filter((event) => event.actual === null )
 
-      Object.keys(employmentData).map((key) => { 
-        if (totalScoresData[key] === undefined) {
-          totalScoresData[key] = {}
-        }
-        totalScoresData[key]["employmentScore"] = employmentData[key].totalScore
-      })
+      //   if (totalScoresData[key] === undefined) {
+      //     totalScoresData[key] = {}
+      //   }
 
-      Object.keys(growthData).map((key) => { 
-        if (totalScoresData[key] === undefined) {
-          totalScoresData[key] = {}
-        }
-        totalScoresData[key]["growthScore"] = growthData[key].totalScore
-      })
+      //   upcomingEventsForAllCountries.push(upcomingEventsForCountry)
+      // })
 
-      // add a total score for each country
-      Object.keys(totalScoresData).map((key) => { 
-        const country = totalScoresData[key]
-        country["economicScore"] =  country.employmentScore + country.growthScore
-      })
-
-      Object.keys(totalScoresData).map((key) => { 
-        const country = totalScoresData[key]
-        country["totalScore"] =  (country.inflationScore + country.economicScore) / 2
-      })
-
-      // sort totalScoresData by totalScore
-      const sortedKeys = Object.keys(totalScoresData).sort((a, b) => totalScoresData[b].totalScore - totalScoresData[a].totalScore)
-      const sortedData = {}
-      sortedKeys.map((key) => {
-        sortedData[key] = totalScoresData[key]
-      })
-
-      const upcomingEventsForAllCountries = []
-
-      Object.keys(jsonData).map((key) => {
-        const country = jsonData[key]
-        const upcomingEventsForCountry = country.filter((event) => event.actual === null )
-
-        if (totalScoresData[key] === undefined) {
-          totalScoresData[key] = {}
-        }
-
-        upcomingEventsForAllCountries.push(upcomingEventsForCountry)
-      })
-
-      // flat map the upcoming events for each country into one array
-      const upcomingEvents = upcomingEventsForAllCountries.flat()
+      // // flat map the upcoming events for each country into one array
+      // const upcomingEvents = upcomingEventsForAllCountries.flat()
 
       // set the state with the sorted data
-      setEvents(sortedData);
-      setUpcomingEvents(upcomingEvents)
+      // setEvents(sortedData);
+      // setUpcomingEvents(upcomingEvents)
 
 
-      if (sortedData) {
+      if (economicOverviewData 
+        && interestRateMonitorData 
+        && inflationRateMonitorData) {
         setLoading(false);
         console.log("loading set to false")
       }
@@ -159,11 +104,8 @@ const Pulse = () => {
          :  
       
             <div className={Style.Wrapper}>
-
-            
-
               <div className='col-span-2'> 
-              <EconomicOverviewDataTable key={"Overview Table"} title="Economic Overview" data={totalScoresData} />
+              <EconomicOverviewDataTable key={"Overview Table"} title="Economic Overview" data={economicOverviewData} />
               </div>
 
 
@@ -205,12 +147,6 @@ const Pulse = () => {
                     )
             })
 
-            
-
-            
-
-          
-          
               //  totalScoresData["upcomingEvents"]
               //  .filter((event) => {
               //   return diffDays(new Date(event.date), Date.now()) >= 0 && majorEventsKeys.includes(event.type) 
@@ -241,16 +177,12 @@ const Pulse = () => {
               <MonitorDataTable 
                 tableTitle="Interest Rate Monitor" 
                 valueTitle={"Interest Rates"} 
-                data={totalScoresData} 
-                actualKey={"interestRateActual"}
-                previousKey={"interestRatePrevious"} />
+                data={interestRateMonitorData}  />
 
               <MonitorDataTable 
                 tableTitle="Inflation Rate YoY Monitor" 
                 valueTitle={"Inflation Rate YoY"} 
-                data={totalScoresData} 
-                actualKey={"inflationRateActual"}
-                previousKey={"inflationRatePrevious"} />
+                data={inflationRateMonitorData}  />
             </div>
         }
   
@@ -259,4 +191,4 @@ const Pulse = () => {
   );
 };
 
-export default Pulse;
+export default EconomicOverview;

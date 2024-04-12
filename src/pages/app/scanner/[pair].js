@@ -20,7 +20,7 @@ const Scanner = ({pair}) => {
     setLoading(true);
 
     try {
-      const data = await fetch(`../api/event-calendar?countries=${countries}`)
+      const data = await fetch(`../../api/event-calendar?countries=${countries}`)
       const jsonData = await data.json()
       console.log("jsonData", jsonData)
 

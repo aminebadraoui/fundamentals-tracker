@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react';
-import {DashboardLayout} from '../components/layout/dashboard-layout';
+import {DashboardLayout} from '../../components/layout/dashboard-layout';
 import { EconomicChartAccordion } from '@/components/ui/economic-chart-accordion';
 import { getDataSortedByTotalScore } from '@/utils/getDataSortedByTotalScore';
-import { inflationKeys } from '@/utils/event-names';
+import { employmentKeys, inflationKeys } from '@/utils/event-names';
 import { getChartData } from '@/utils/getChartData';
 import { Loader } from '@/components/ui/loader'
 
-const Inflation = () => {
+const Employment = () => {
   // keep track of different arrays of events as part of one object
-  const [{allData, inflationData, inflationChartData}, setEvents] = useState({});
+  const [{allData, employmentData, employmentChartData}, setEvents] = useState({});
   const [isLoading, setLoading] = useState(false);
 
   const handleDownload = async () => {
@@ -16,7 +16,7 @@ const Inflation = () => {
     setLoading(true);
     try {
       console.log("fetching data")
-      const data = await fetch('api/event-calendar')
+      const data = await fetch('../api/event-calendar')
 
       const jsonData = await data.json()
       
@@ -28,12 +28,12 @@ const Inflation = () => {
       // a.download = 'events.json';
       // a.click();
 
-      const inflationData = getDataSortedByTotalScore(jsonData, inflationKeys, null)
-      const inflationChartData = getChartData(inflationData)
+      const employmentData = getDataSortedByTotalScore(jsonData, employmentKeys, null)
+      const employmentChartData = getChartData(employmentData)
 
-      console.log(inflationData)
+      console.log(employmentData)
 
-      setEvents({jsonData, inflationData, inflationChartData});
+      setEvents({jsonData, employmentData, employmentChartData});
 
       setLoading(false);
       console.log("loading set to false")
@@ -52,11 +52,11 @@ const Inflation = () => {
         {
         isLoading ? 
         <div className='flex flex-col w-full h-dvh justify-center items-center '> 
-          <Loader />
+            <Loader />
         </div>
          :  
          <div>
-          <EconomicChartAccordion key={"Inflation"} title ="Inflation" data={inflationData} chartData={inflationChartData} /> 
+          <EconomicChartAccordion key={"Employment"} title ="Employment" data={employmentData} chartData={employmentChartData} /> 
           </div>
         }
   
@@ -65,4 +65,4 @@ const Inflation = () => {
   );
 };
 
-export default Inflation;
+export default Employment;

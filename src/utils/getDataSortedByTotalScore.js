@@ -54,6 +54,7 @@ const getDataSortedByTotalScore = (rawData, filter, antifilter) => {
         }
       })
 
+
       // if there are duplicates in inflation[key], keep only the most recent event based on their date property's value
       const uniqueEvents = []
       finalData[key].events.map((event) => {
@@ -74,18 +75,9 @@ const getDataSortedByTotalScore = (rawData, filter, antifilter) => {
 
       // calculate the total score for the country's event category
       finalData[key]['events'] = uniqueEvents
-      const score = uniqueEvents.reduce((acc, event) => acc + event.score, 0) / uniqueEvents.length;
+      const score = uniqueEvents.reduce((acc, event) =>   acc + event.score, 0) / uniqueEvents.length;
       finalData[key]['totalScore'] = score ? score : 0  
       
-     
-      // round to 2 decimal places without using math.round or math.floor 
-
-
-
-
-
-      
-
       // sort the countries by totalScore
       const sortedKeys = Object.keys(finalData).sort((a, b) => finalData[b].totalScore - finalData[a].totalScore)
       const sortedData = {}

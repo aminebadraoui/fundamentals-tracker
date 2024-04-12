@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react';
-import {DashboardLayout} from '../components/layout/dashboard-layout';
+import {DashboardLayout} from '../../components/layout/dashboard-layout';
 import { EconomicChartAccordion } from '@/components/ui/economic-chart-accordion';
 import { getDataSortedByTotalScore } from '@/utils/getDataSortedByTotalScore';
-import { employmentKeys, inflationKeys } from '@/utils/event-names';
+import { housingKeys } from '@/utils/event-names';
 import { getChartData } from '@/utils/getChartData';
 import { Loader } from '@/components/ui/loader'
 
-const Employment = () => {
+const Housing = () => {
   // keep track of different arrays of events as part of one object
-  const [{allData, employmentData, employmentChartData}, setEvents] = useState({});
+  const [{allData, housingData, housingChartData}, setEvents] = useState({});
   const [isLoading, setLoading] = useState(false);
 
   const handleDownload = async () => {
@@ -16,7 +16,7 @@ const Employment = () => {
     setLoading(true);
     try {
       console.log("fetching data")
-      const data = await fetch('api/event-calendar')
+      const data = await fetch('../api/event-calendar')
 
       const jsonData = await data.json()
       
@@ -28,12 +28,12 @@ const Employment = () => {
       // a.download = 'events.json';
       // a.click();
 
-      const employmentData = getDataSortedByTotalScore(jsonData, employmentKeys, null)
-      const employmentChartData = getChartData(employmentData)
+      const housingData = getDataSortedByTotalScore(jsonData, housingKeys, null)
+      const housingChartData = getChartData(housingData)
 
-      console.log(employmentData)
+      console.log(housingData)
 
-      setEvents({jsonData, employmentData, employmentChartData});
+      setEvents({jsonData, housingData, housingChartData});
 
       setLoading(false);
       console.log("loading set to false")
@@ -52,11 +52,11 @@ const Employment = () => {
         {
         isLoading ? 
         <div className='flex flex-col w-full h-dvh justify-center items-center '> 
-            <Loader />
+          <Loader />
         </div>
          :  
          <div>
-          <EconomicChartAccordion key={"Employment"} title ="Employment" data={employmentData} chartData={employmentChartData} /> 
+          <EconomicChartAccordion key={"Housing"} title ="Housing" data={housingData} chartData={housingChartData} /> 
           </div>
         }
   
@@ -65,4 +65,4 @@ const Employment = () => {
   );
 };
 
-export default Employment;
+export default Housing;

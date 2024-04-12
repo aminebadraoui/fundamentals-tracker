@@ -7,10 +7,14 @@
   :root {
     /* --background: 222, 68%, 9%; */
     --primary: 222, 68%, 9%;
-    --primary-foreground: 226, 27%, 70%;
-
     --secondary: 225, 54%, 20%;
+
+    --primary-foreground: 226, 27%, 70%;
     --secondary-foreground: 0, 0%, 85%;;
+
+    --bullish: 126, 93%, 50%;
+    --bearish: 0, 100%, 60%;
+    --neutral: 0, 0%, 90%;
 
     /* --card:   134, 38%, 20%; */
 
@@ -41,9 +45,7 @@
     --table-cell: 210 40% 96.1%;
     --table-cell-foreground: 222.2 84% 4.9%;
 
-    --bullish: 126, 93%, 50%;
-    --bearish: 0, 100%, 60%;
-    --neutral: 0, 0%, 90%;
+ 
 
  
   }

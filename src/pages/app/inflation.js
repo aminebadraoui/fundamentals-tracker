@@ -1,15 +1,14 @@
 import { useEffect, useState } from 'react';
-import {DashboardLayout} from '../components/layout/dashboard-layout';
+import {DashboardLayout} from '../../components/layout/dashboard-layout';
 import { EconomicChartAccordion } from '@/components/ui/economic-chart-accordion';
 import { getDataSortedByTotalScore } from '@/utils/getDataSortedByTotalScore';
-import { employmentKeys, inflationKeys, interestRatesKeys, housingKeys } from '@/utils/event-names';
+import { inflationKeys } from '@/utils/event-names';
 import { getChartData } from '@/utils/getChartData';
 import { Loader } from '@/components/ui/loader'
 
-
-const Growth = () => {
+const Inflation = () => {
   // keep track of different arrays of events as part of one object
-  const [{allData, growthData, growthChartData}, setEvents] = useState({});
+  const [{allData, inflationData, inflationChartData}, setEvents] = useState({});
   const [isLoading, setLoading] = useState(false);
 
   const handleDownload = async () => {
@@ -17,16 +16,24 @@ const Growth = () => {
     setLoading(true);
     try {
       console.log("fetching data")
-      const data = await fetch('api/event-calendar')
+      const data = await fetch('../api/event-calendar')
 
       const jsonData = await data.json()
+      
+      // if data is not empty, classify data into categories and currencies and set state
+      // const blob = new Blob([JSON.stringify(jsonData, null, 2)], { type: 'application/json' });
+      // const url = URL.createObjectURL(blob);
+      // const a = document.createElement('a');
+      // a.href = url;
+      // a.download = 'events.json';
+      // a.click();
 
-      const growthData = getDataSortedByTotalScore(jsonData, null, inflationKeys.concat(employmentKeys).concat(interestRatesKeys).concat(housingKeys))
-      const growthChartData = getChartData(growthData)
+      const inflationData = getDataSortedByTotalScore(jsonData, inflationKeys, null)
+      const inflationChartData = getChartData(inflationData)
 
-      console.log(growthData)
+      console.log(inflationData)
 
-      setEvents({jsonData, growthData, growthChartData});
+      setEvents({jsonData, inflationData, inflationChartData});
 
       setLoading(false);
       console.log("loading set to false")
@@ -49,7 +56,7 @@ const Growth = () => {
         </div>
          :  
          <div>
-          <EconomicChartAccordion key="Growth" title ="Growth" data={growthData} chartData={growthChartData} /> 
+          <EconomicChartAccordion key={"Inflation"} title ="Inflation" data={inflationData} chartData={inflationChartData} /> 
           </div>
         }
   
@@ -58,4 +65,4 @@ const Growth = () => {
   );
 };
 
-export default Growth;
+export default Inflation;

@@ -14,8 +14,24 @@ const getScoreCell = (score) => {
    { score > 0 ? `+${score}` : score} 
   </TableCell>
 }
+/*  
+{
+  US: {
+    inflationScore: 1
+    EconomicScore 1
+    TotalScore: 2
+  },
+  AU: {
+    inflationScore: 1
+    EconomicScore 1
+    TotalScore: 2
+  }
+  ,...
+}
+*/
 
 export const EconomicOverviewDataTable = ({title, data}) => {
+  console.log("EconomicOverviewDataTable" , data)
 
   return (
     <TitledCard title={title}>
@@ -45,7 +61,7 @@ export const EconomicOverviewDataTable = ({title, data}) => {
                   
                   {getScoreCell(country.inflationScore.toFixed(2))}
                   {getScoreCell(country.economicScore.toFixed(2))}
-                  {getScoreCell(  (country.inflationScore + country.economicScore).toFixed(2) / 2 ) }
+                  {getScoreCell(  (country.totalScore).toFixed(2) / 2 ) }
                   
                 </TableRow>
               )

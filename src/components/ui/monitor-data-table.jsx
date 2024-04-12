@@ -30,14 +30,14 @@ export const MonitorDataTable = ({tableTitle, valueTitle,  data, actualKey, prev
   {
     Object.keys(data).map((key) => {
       const country = data[key]
-      const cellBg = country[actualKey] > country[previousKey] ? '' 
-      : country[actualKey] < country[previousKey] ?  '' : ''
+      const cellBg = country.actual > country.previous ? '' 
+      : country.actual < country.previous ?  '' : ''
     
       return (
         <TableRow>
           <TableCell className=" bg-primary text-primary-foreground font-bold">{key}</TableCell>
-          <TableCell className= {`${cellBg} text-primary-foreground`}   >{ `${country[actualKey]}` }</TableCell>
-          <TableCell className={`${cellBg} text-primary-foreground`}  >{ `${country[previousKey]}` }</TableCell>
+          <TableCell className= {`${cellBg} text-primary-foreground`}   >{ `${country.actual}` }</TableCell>
+          <TableCell className={`${cellBg} text-primary-foreground`}  >{ `${country.previous}` }</TableCell>
         </TableRow>
       )
     })
