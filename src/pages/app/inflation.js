@@ -56,7 +56,8 @@ const Inflation = () => {
         </div>
          :  
          <div>
-          <EconomicChartAccordion key={"Inflation"} title ="Inflation" data={inflationData} chartData={inflationChartData} /> 
+          <h1 className="text-secondary-foreground mb-8"> Inflation </h1>
+          <EconomicChartAccordion key={"Inflation"} data={inflationData} chartData={inflationChartData} /> 
           </div>
         }
   

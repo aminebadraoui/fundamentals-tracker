@@ -56,7 +56,8 @@ const Employment = () => {
         </div>
          :  
          <div>
-          <EconomicChartAccordion key={"Employment"} title ="Employment" data={employmentData} chartData={employmentChartData} /> 
+          <h1 className="text-secondary-foreground mb-8"> Employment </h1>
+          <EconomicChartAccordion key={"Employment"} data={employmentData} chartData={employmentChartData} /> 
           </div>
         }
   

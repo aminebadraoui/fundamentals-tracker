@@ -49,7 +49,8 @@ const Growth = () => {
         </div>
          :  
          <div>
-          <EconomicChartAccordion key="Growth" title ="Growth" data={growthData} chartData={growthChartData} /> 
+          <h1 className="text-secondary-foreground mb-8"> Growth </h1>
+          <EconomicChartAccordion key="Growth" data={growthData} chartData={growthChartData} /> 
           </div>
         }
   

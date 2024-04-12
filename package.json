@@ -15,10 +15,12 @@
     "@radix-ui/react-separator": "^1.0.3",
     "@radix-ui/react-slot": "^1.0.2",
     "@sparticuz/chromium": "^106.0.2",
+    "@vercel/blob": "^0.22.3",
     "aws-sdk": "^2.1592.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "dotenv": "^16.4.5",
+    "fs": "^0.0.1-security",
     "lucide-react": "^0.363.0",
     "mongodb": "^6.5.0",
     "next": "14.1.4",
@@ -27,7 +29,8 @@
     "react-dom": "^18",
     "recharts": "^2.12.3",
     "tailwind-merge": "^2.2.2",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "xml2js": "^0.6.2"
   },
   "devDependencies": {
     "@sparticuz/chromium-min": "^119.0.2",

@@ -34,7 +34,6 @@ export const EconomicOverviewDataTable = ({title, data}) => {
   console.log("EconomicOverviewDataTable" , data)
 
   return (
-    <TitledCard title={title}>
       <Table>
         <TableHeader>
           <TableRow className="!border-0 hover:bg-transparent">
@@ -69,7 +68,6 @@ export const EconomicOverviewDataTable = ({title, data}) => {
           }
         </TableBody>
       </Table>
-      </TitledCard>
   );
 }
 

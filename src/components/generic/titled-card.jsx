@@ -3,7 +3,7 @@ import { Card } from '@/components/generic/card'
 
 const Style = {
   InternalCard: " space-y-4 px-8 py-4 ",
-  Heading: 'text-secondary-foreground pb-8'
+  Heading: 'text-secondary-foreground '
 }
 
 

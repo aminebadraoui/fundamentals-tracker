@@ -11,6 +11,7 @@ import { ForexPairComparisonTable } from '@/components/ui/forex-pair-comparison-
 import { getEconomicOverviewData } from '@/utils/get-economic-overview-data';
 import { getInflationRateMonitorData } from '@/utils/get-inflation-rate-monitor-data';
 import { getInterestRateMonitorData } from '@/utils/get-interest-rate-monitor-data';
+import { TitledCard } from '@/components/generic/titled-card';
 
 const EconomicOverview = () => {
   // keep track of different arrays of events as part of one object
@@ -105,7 +106,11 @@ const EconomicOverview = () => {
       
             <div className={Style.Wrapper}>
               <div className='col-span-2'> 
-              <EconomicOverviewDataTable key={"Overview Table"} title="Economic Overview" data={economicOverviewData} />
+                <h1 className="text-secondary-foreground mb-8"> Economic Overview </h1>
+                
+                <TitledCard title="Scores">
+                  <EconomicOverviewDataTable key={"Overview Table"}  data={economicOverviewData} />
+                </TitledCard>
               </div>
 
 

@@ -20,10 +20,9 @@ export const ForexPairComparisonTable = ({pair, ticker1, ticker2, data}) => {
   }
 
   return (
-    <TitledCard key={`${pair}_card`} title={pair}>
+    
       <Table>
         <TableHeader>
-
         <TableRow key={`${pair}_pair-row`} className="hover:bg-transparent">
         <TableHead  className="bg-transparent hover:bg-transparent" ></TableHead>
             {
@@ -82,7 +81,7 @@ export const ForexPairComparisonTable = ({pair, ticker1, ticker2, data}) => {
           </TableRow>
         </TableBody>
       </Table>
-      </TitledCard>
+   
   );
 }
 

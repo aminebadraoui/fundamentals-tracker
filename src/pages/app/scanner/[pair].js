@@ -6,6 +6,7 @@ import { Loader } from '@/components/ui/loader'
 
 import { majorForexPairs  } from '@/utils/event-names';
 import { ForexPairComparisonTable } from '@/components/ui/forex-pair-comparison-table';
+import { TitledCard } from '@/components/generic/titled-card';
 
 
 const Scanner = ({pair}) => {
@@ -135,17 +136,22 @@ const Scanner = ({pair}) => {
          :  
       
             <div className={Style.Wrapper}>
+              <h1 className="text-secondary-foreground mb-8"> {pair} </h1>
 
               { [pair].map((pair) => {
                 return (
                   <div className='col-span-2'>
-                    <ForexPairComparisonTable 
-                      key={pair}
-                      pair={pair} 
-                      ticker1={majorForexPairs[pair][0]} 
-                      ticker2={majorForexPairs[pair][1]} 
-                      data={eventsWithScores} />
+                    <TitledCard key={`${pair}_card`} title="Economy">
+                      <ForexPairComparisonTable 
+                        key={pair}
+                        pair={pair} 
+                        ticker1={majorForexPairs[pair][0]} 
+                        ticker2={majorForexPairs[pair][1]} 
+                        data={eventsWithScores} />
+                      </TitledCard>
+                     
                   </div> 
+
                 )  
               })
             }

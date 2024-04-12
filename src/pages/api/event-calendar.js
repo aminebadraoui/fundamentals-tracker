@@ -1,11 +1,11 @@
 import { countryList_Iso3166 } from '@/utils/event-names';
 
 export default async (req, res) => {
-  console.log("query", req.query.countries)
+
 
   const queryCountries = req.query.countries ? req.query.countries.split(',') : []
 
-  console.log("queryCountries", queryCountries)
+
 
   let countries = []
 
@@ -15,14 +15,12 @@ export default async (req, res) => {
   else {
     countries = countryList_Iso3166
   }
-  console.log("api countries", countries)
+ 
 
   const promises = countries.map( async (country) => {
       const eventsForCountry = await fetch(`https://eodhd.com/api/economic-events?api_token=${process.env.EOD_TOKEN}&fmt=json&country=${country}&limit=1000`, {cache: 'force-cache'});
       const eventsForCountryData = await eventsForCountry.json();
 
-      console.log("eventsForCountryData", eventsForCountryData)
-      
       return { [country]: eventsForCountryData }
     })
 

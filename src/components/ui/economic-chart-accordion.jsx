@@ -62,11 +62,11 @@ import { TitledCard } from "../generic/titled-card";
   }
 */
 
-export const EconomicChartAccordion = ({title, data, chartData}) => {
+export const EconomicChartAccordion = ({ data, chartData}) => {
   
   return (
             <div className="space-y-4 p-8 m-8">
-              <h2 className="text-secondary-foreground"> {title} </h2>
+              
               <TitledCard title={"Comparative Chart"} className="space-y-4 p-8 m-8">
                 
                 <CardContent>
@@ -96,8 +96,6 @@ export const EconomicChartAccordion = ({title, data, chartData}) => {
 
               <TitledCard title={"Details"} className="space-y-4 p-8 m-8">
                 
-           
-
                 { 
                   Object.keys({...data}).map((country) => {
                     const scoreColor = data[country].totalScore > 0 ? 'text-bullish' : data[country].totalScore < 0 ? 'text-bearish' : 'text-neutral'
