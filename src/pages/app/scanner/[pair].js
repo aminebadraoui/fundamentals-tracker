@@ -10,7 +10,7 @@ import { TitledCard } from '@/components/generic/titled-card';
 
 
 const Scanner = ({pair}) => {
-  const countries = majorForexPairs[pair]
+  const countries = majorForexPairs[pair].countries
  
   // keep track of different arrays of events as part of one object
   const [eventsWithScores , setEvents] = useState({});
@@ -145,8 +145,8 @@ const Scanner = ({pair}) => {
                       <ForexPairComparisonTable 
                         key={pair}
                         pair={pair} 
-                        ticker1={majorForexPairs[pair][0]} 
-                        ticker2={majorForexPairs[pair][1]} 
+                        ticker1={majorForexPairs[pair].countries[0]} 
+                        ticker2={majorForexPairs[pair].countries[1]} 
                         data={eventsWithScores} />
                       </TitledCard>
                      

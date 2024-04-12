@@ -5,25 +5,9 @@ import { inflationKeys, employmentKeys, interestRatesKeys, majorEventsKeys, majo
 import { Loader } from '@/components/ui/loader';
 import { TitledCard } from '@/components/generic/titled-card';
 import { Table, TableHeader, TableRow, TableHead, TableCell, TableBody } from '@/components/generic/table';
-
+import { parseCotData, findLatestReports, findLatestCotDataForAsset } from '@/utils/cot-data';
 import fs from 'fs';
-import { parseString } from "xml2js";  
 
-
-
-export async function parseCotData(cotData) {
-  return new Promise((resolve, reject) => {
-    parseString(cotData, (err, results) => {
-      if (err) {
-        reject(err);
-      } else {
-        const sanitizedResult = results.response.row[0].row.filter((row, index) => index !== 0 && index !== 1);
-        
-        resolve(sanitizedResult);
-      }
-    });
-  });
-}
 
 export async function getStaticProps() {
   const cot_2024_currencies_path = 'public/assets/cot-data/2024/currencies.xml';
@@ -47,39 +31,13 @@ const Pulse = (props) => {
   const [pulseData, setPulseData] = useState({});
   const [isLoading, setLoading] = useState(false);
 
-  console.log("props", props)
-
-
-  function findLatestReports(dataArray) {
-    // Find the maximum date
-
-    const latestDate = dataArray.reduce((maxDate, item) => {
-      const currentDate = new Date(item.report_date_as_yyyy_mm_dd[0]);
-      return currentDate > maxDate ? currentDate : maxDate;
-    }, new Date(0)); // Initialize with the earliest possible date
-  
-    // Filter data to find all entries with the latest date
-    return dataArray.filter(item => {
-      const itemDate = new Date(item.report_date_as_yyyy_mm_dd[0]);
-      return itemDate.getTime() === latestDate.getTime();
-    });
-  }
-
-  
-
-  if (props.cot_2024_currencies) {
-    
-    const latestReports = findLatestReports(props.cot_2024_currencies);
-    console.log("latestReports", latestReports)
-    
-  }
-  
 
   const handleDownload = async () => {
     setLoading(true);
     try {
       const pulseDataPromises = Object.keys(majorForexPairs).map(async (pair) => {
-        const countries = majorForexPairs[pair];
+        const countries = majorForexPairs[pair].countries;
+        const cotName = majorForexPairs[pair].cotName;
         const dataForPair = await fetch(`../../api/event-calendar?countries=${countries}`);
         const rawPairData = await dataForPair.json();
 
@@ -87,13 +45,18 @@ const Pulse = (props) => {
         const employmentData = getDataSortedByTotalScore(rawPairData, employmentKeys, null);
         const growthData = getDataSortedByTotalScore(rawPairData, null, inflationKeys.concat(employmentKeys).concat(interestRatesKeys));
         const interestRateData = getDataSortedByTotalScore(rawPairData, interestRatesKeys, null);
+        const latestReports = findLatestReports(props.cot_2024_currencies);
+        const cotData = findLatestCotDataForAsset(cotName, latestReports);
+
+        console.log(cotData)
 
         return {
           pair: pair,
           inflationScore: calculateScore(inflationData, countries),
           employmentScore: calculateScore(employmentData, countries),
           growthScore: calculateScore(growthData, countries),
-          economicScore: calculateEconomicScore(inflationData, employmentData, growthData, countries)
+          economicScore: calculateEconomicScore(inflationData, employmentData, growthData, countries),
+          cotData: cotData,
         };
       });
 

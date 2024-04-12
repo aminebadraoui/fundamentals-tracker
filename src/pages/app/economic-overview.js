@@ -5,7 +5,7 @@ import { inflationKeys, employmentKeys, interestRatesKeys, majorEventsKeys } fro
 import { Loader } from '@/components/ui/loader'
 import { EconomicOverviewDataTable } from '@/components/ui/economic-overview-data-table';
 import { MonitorDataTable } from '@/components/ui/monitor-data-table';
-import { majorForexPairs  } from '@/utils/event-names';
+
 import { ForexPairComparisonTable } from '@/components/ui/forex-pair-comparison-table';
 
 import { getEconomicOverviewData } from '@/utils/get-economic-overview-data';

@@ -101,15 +101,40 @@ const majorEventsKeys = [
 ]
 
 const majorForexPairs =  {
-  'EURUSD': ["EU", "US"],
-  'GBPUSD': ["UK", "US"],
+  'EURUSD': {
+    countries: ["EU", "US"],
+    cotName: "EURO FX",
+  },
+  
+  'GBPUSD': {
+    countries: ["UK", "US"],
+    cotName: "BRITISH POUND",
+  },
 
-  'AUDUSD': ["AU", "US"],
-  'NZDUSD': ["NZ", "US"],
+  'AUDUSD': {
+    countries: ["AU", "US"],
+    cotName: "AUSTRALIAN DOLLAR",
+  },
 
-  'USDCHF': ["US", "CH"],
-  'USDJPY': ["US", "JP"],
-  'USDCAD': ["US", "CA"],
+  'NZDUSD': {
+    countries: ["NZ", "US"],
+    cotName: "NZ DOLLAR",
+  },
+
+  'USDCHF': {
+    countries: ["US", "CH"],
+    cotName: "SWISS FRANC",
+  },
+
+  'USDJPY': {
+    countries: ["US", "JP"],
+    cotName: "JAPANESE YEN",
+  },
+
+  'USDCAD': {
+    countries: ["US", "CA"],
+    cotName: "CANADIAN DOLLAR",
+  },
 }
  
 export {inflationKeys,
