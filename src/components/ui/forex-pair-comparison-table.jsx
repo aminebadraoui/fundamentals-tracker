@@ -8,12 +8,6 @@ import { TitledCard } from '../generic/titled-card';
 export const ForexPairComparisonTable = ({pair, ticker1, ticker2, data}) => {
 
   // filter data so the keys are either ticker1 or ticker2
- 
-
-  console.log("data", data)
-  console.log("ticker1", ticker1)
-  console.log("ticker2", ticker2)
-
   const getPairScore = (score1, score2) => {
     const pairScore = score1 > score2 ? 1 : score1 < score2 ? -1 : 0
     return pairScore 
@@ -42,7 +36,6 @@ export const ForexPairComparisonTable = ({pair, ticker1, ticker2, data}) => {
             Object.keys(data).map((key) => { 
               return <TableCell key={`${pair}${key}_inflation_score_cell`}> {data[key].inflationScore.toFixed(2)} </TableCell>
              })
-
           }
 
           {

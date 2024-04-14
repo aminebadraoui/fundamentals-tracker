@@ -2,6 +2,7 @@ import React from 'react';
 import { Card } from '@/components/generic/card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/generic/table'
 import { TitledCard } from '../generic/titled-card';
+import { getScoreTextColor } from '@/utils/get-score-color';
 
 const Style = {
   Wrapper : "flex flex-row flex-wrap items-start p-8 space-x-4 space-y-4",
@@ -36,8 +37,8 @@ export const MonitorDataTable = ({tableTitle, valueTitle,  data, actualKey, prev
       return (
         <TableRow>
           <TableCell className=" bg-primary text-primary-foreground font-bold">{key}</TableCell>
-          <TableCell className= {`${cellBg} text-primary-foreground`}   >{ `${country.actual}` }</TableCell>
-          <TableCell className={`${cellBg} text-primary-foreground`}  >{ `${country.previous}` }</TableCell>
+          <TableCell className= {`${cellBg} ${getScoreTextColor(country.score)}`}   >{ `${country.actual}` }</TableCell>
+          <TableCell className={`${cellBg} ${getScoreTextColor(country.score)}`}  >{ `${country.previous}` }</TableCell>
         </TableRow>
       )
     })

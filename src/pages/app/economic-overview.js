@@ -15,9 +15,9 @@ import { TitledCard } from '@/components/generic/titled-card';
 
 const EconomicOverview = () => {
   // keep track of different arrays of events as part of one object
-  const [economicOverviewData , setEconomicOverview] = useState({});
-  const [interestRateMonitorData , setInterestRateMonitorData] = useState({});
-  const [inflationRateMonitorData , setInflationtRateMonitorData] = useState({});
+  const [economicOverviewData , setEconomicOverview] = useState(null);
+  const [interestRateMonitorData , setInterestRateMonitorData] = useState(null);
+  const [inflationRateMonitorData , setInflationtRateMonitorData] = useState(null);
   const [isLoading, setLoading] = useState(false);
 
   const handleDownload = async () => {
@@ -104,7 +104,9 @@ const EconomicOverview = () => {
           </div>
          :  
       
-            <div className={Style.Wrapper}>
+         economicOverviewData 
+         && interestRateMonitorData 
+         && inflationRateMonitorData && <div className={Style.Wrapper}>
               <div className='col-span-2'> 
                 <h1 className="text-secondary-foreground mb-8"> Economic Overview </h1>
                 

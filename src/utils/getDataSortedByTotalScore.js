@@ -2,7 +2,7 @@ import { countryList_Iso3166, eventCategoryList, inflationKeys, flippedScoringKe
 
 const getScore = (event) => {
   let score = 0
-  const scoreStep = 0.5 // 0.5 so score is between -1 and 1
+  const scoreStep = 50 // 0.5 so score is between -1 and 1
   if (flippedScoringKeys.includes(event.type)) {
     if (event.actual > event.estimate) {
       score -= scoreStep

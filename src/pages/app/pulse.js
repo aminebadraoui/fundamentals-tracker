@@ -7,7 +7,7 @@ import { TitledCard } from '@/components/generic/titled-card';
 import { Table, TableHeader, TableRow, TableHead, TableCell, TableBody } from '@/components/generic/table';
 import { parseCotData, findLatestReports, findLatestCotDataForAsset } from '@/utils/cot-data';
 import fs from 'fs';
-
+import { getScoreBackgroundColor, getScoreTextColor } from '@/utils/get-score-color';
 
 export async function getStaticProps() {
   const cot_2024_currencies_path = 'public/assets/cot-data/2024/currencies.xml';
@@ -38,6 +38,7 @@ const Pulse = (props) => {
       const pulseDataPromises = Object.keys(majorForexPairs).map(async (pair) => {
         const countries = majorForexPairs[pair].countries;
         const cotName = majorForexPairs[pair].cotName;
+
         const dataForPair = await fetch(`../../api/event-calendar?countries=${countries}`);
         const rawPairData = await dataForPair.json();
 
@@ -110,7 +111,7 @@ const Pulse = (props) => {
 
   const calculateScore = (data, countries) => {
     if (data[countries[0]] && data[countries[1]]) {
-      return data[countries[0]].totalScore > data[countries[1]].totalScore ? 1 : data[countries[0]].totalScore < data[countries[1]].totalScore ? -1 : 0;
+      return data[countries[0]].totalScore > data[countries[1]].totalScore ? 100 : data[countries[0]].totalScore < data[countries[1]].totalScore ? -100 : 0;
     }
     return 0;
   };
@@ -150,13 +151,8 @@ const Pulse = (props) => {
                       <TableHead className="font-bold" >Asset</TableHead>
 
                       <TableHead className="font-bold" >Bias</TableHead>
-                      <TableHead className="font-bold" >Total Score</TableHead>
+                      <TableHead className="font-bold" > Score</TableHead>
 
-                      <TableHead className="font-bold" >Economic Score</TableHead>
-                      <TableHead className="font-bold" > Institutional Positioning Score </TableHead>
-                      <TableHead className="font-bold" > Retail Positioning Score </TableHead>
-          
-                      <TableHead className="font-bold" > Technical Score </TableHead>
                     </TableRow>
                   </TableHeader>
 
@@ -166,14 +162,8 @@ const Pulse = (props) => {
                       <TableRow className="!border-0 hover:bg-transparent">
 
                         <TableCell className="bg-primary text-primary-foreground font-bold">{pair}</TableCell>
-                        <TableCell className="bg-primary text-primary-foreground font-bold"> {pulseData[pair].bias}  </TableCell>
-                        <TableCell className="bg-primary text-primary-foreground font-bold">{pulseData[pair].totalScore}  </TableCell>
-
-                        <TableCell className="bg-primary text-primary-foreground font-bold"  >{ pulseData[pair].economicScore }</TableCell>
-                        <TableCell className="bg-primary text-primary-foreground font-bold"  >{ pulseData[pair].institutionalPositioningScore }</TableCell>
-                        <TableCell className="bg-primary text-primary-foreground font-bold"  >{ pulseData[pair].retailPositioningScore }</TableCell>
-                        
-                        <TableCell className="bg-primary text-primary-foreground font-bold"  >{ pulseData[pair].technicalScore }</TableCell>
+                        <TableCell className={`bg-primary text-primary-foreground font-bold ${getScoreTextColor(pulseData[pair].totalScore)}`}> {pulseData[pair].bias}  </TableCell>
+                        <TableCell className={`bg-primary text-primary-foreground font-bold ${getScoreTextColor(pulseData[pair].totalScore)}`}>{pulseData[pair].totalScore}  </TableCell>
                       </TableRow>
                     )
                   })}
