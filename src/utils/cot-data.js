@@ -42,5 +42,5 @@ const findLatestCotDataForAsset = (cotName, cotData) => {
 
 }
 
-export { parseCotData, findLatestReports, findLatestCotDataForAsset}
+export { parseCotData, findLatestCotDataForAsset}
 

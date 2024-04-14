@@ -12,8 +12,6 @@ const getInflationRateMonitorData = (inflationRateData) => {
     && event.comparison === "yoy"
     )
 
-
-    console.log("rateEvent", rateEvent)
     if (rateEvent) {
       data[key]["actual"] = rateEvent.actual
       data[key]["previous"] = rateEvent.previous
@@ -36,9 +34,6 @@ const getInflationRateMonitorData = (inflationRateData) => {
   data_sorted_keys.map((key) => {
     data_sorted[key] = data[key]
   })
-
-  console.log(data_sorted)
-
 
   return data_sorted
 }

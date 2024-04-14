@@ -8,6 +8,7 @@ export default async (req, res) => {
 
 
   let countries = []
+  const limit = 600
 
   if (queryCountries.length > 0) {
     countries = queryCountries
@@ -18,7 +19,7 @@ export default async (req, res) => {
  
 
   const promises = countries.map( async (country) => {
-      const eventsForCountry = await fetch(`https://eodhd.com/api/economic-events?api_token=${process.env.EOD_TOKEN}&fmt=json&country=${country}&limit=1000`, {cache: 'force-cache'});
+      const eventsForCountry = await fetch(`https://eodhd.com/api/economic-events?api_token=${process.env.EOD_TOKEN}&fmt=json&country=${country}&limit=${limit}`, {cache: 'force-cache'});
       const eventsForCountryData = await eventsForCountry.json();
 
       return { [country]: eventsForCountryData }

@@ -37,7 +37,7 @@ const Pulse = (props) => {
     try {
       const pulseDataPromises = Object.keys(majorForexPairs).map(async (pair) => {
         const countries = majorForexPairs[pair].countries;
-        const cotName = majorForexPairs[pair].cotName;
+ 
 
         const dataForPair = await fetch(`../../api/event-calendar?countries=${countries}`);
         const rawPairData = await dataForPair.json();
@@ -46,10 +46,8 @@ const Pulse = (props) => {
         const employmentData = getDataSortedByTotalScore(rawPairData, employmentKeys, null);
         const growthData = getDataSortedByTotalScore(rawPairData, null, inflationKeys.concat(employmentKeys).concat(interestRatesKeys));
         const interestRateData = getDataSortedByTotalScore(rawPairData, interestRatesKeys, null);
-        const latestReports = findLatestReports(props.cot_2024_currencies);
-        const cotData = findLatestCotDataForAsset(cotName, latestReports);
-
-        console.log(cotData)
+       
+       
 
         return {
           pair: pair,
@@ -57,7 +55,7 @@ const Pulse = (props) => {
           employmentScore: calculateScore(employmentData, countries),
           growthScore: calculateScore(growthData, countries),
           economicScore: calculateEconomicScore(inflationData, employmentData, growthData, countries),
-          cotData: cotData,
+        
         };
       });
 
@@ -157,7 +155,6 @@ const Pulse = (props) => {
                   </TableHeader>
 
                   {pulseData && Object.keys(pulseData).map((pair) => {
-                    console.log("pulseData[pair].inflationScore", pulseData[pair].inflationScore)
                     return (
                       <TableRow className="!border-0 hover:bg-transparent">
 

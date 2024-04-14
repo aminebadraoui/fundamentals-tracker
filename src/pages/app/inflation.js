@@ -12,10 +12,8 @@ const Inflation = () => {
   const [isLoading, setLoading] = useState(false);
 
   const handleDownload = async () => {
-    console.log("loading set to true")
     setLoading(true);
     try {
-      console.log("fetching data")
       const data = await fetch('../api/event-calendar')
 
       const jsonData = await data.json()
@@ -31,12 +29,9 @@ const Inflation = () => {
       const inflationData = getDataSortedByTotalScore(jsonData, inflationKeys, null)
       const inflationChartData = getChartData(inflationData)
 
-      console.log(inflationData)
-
       setEvents({jsonData, inflationData, inflationChartData});
 
       setLoading(false);
-      console.log("loading set to false")
     } catch (error) { 
       console.log(error)
     }

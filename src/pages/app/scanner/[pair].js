@@ -10,38 +10,39 @@ import { TitledCard } from '@/components/generic/titled-card';
 
 import { getPairData } from '@/utils/pair-data';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/generic/table';
-import { getScoreBackgroundColor, getScoreTextColor } from '@/utils/score-colors';
+import { getScoreBackgroundColor, getScoreTextColor } from '@/utils/get-score-color';
+import { parseCotData, findLatestCotDataForAsset } from '@/utils/cot-data';
 
 import { cn } from "@/lib/utils"
+import fs from 'fs';
 
-
-
-const Scanner = ({pair}) => {
+const Scanner = (props) => {
+ 
+ 
+  const pair = props.params.pair;
+  const cot_2024_currencies = props.cot_2024_currencies;
   const countries = majorForexPairs[pair].countries
+
+  const cot_for_pair = findLatestCotDataForAsset(majorForexPairs[pair].cotName, cot_2024_currencies)
  
   // keep track of different arrays of events as part of one object
   const [pairData , setPairData] = useState(null);
   const [isLoading, setLoading] = useState(false);
 
   const handleDownload = async () => {
-    console.log("loading set to true")
     setLoading(true);
 
     try {
       const data = await fetch(`../../api/event-calendar?countries=${countries}`)
       const jsonData = await data.json()
 
-      const pairData_local = getPairData(pair, jsonData)
-
+      const pairData_local = getPairData(pair, jsonData, cot_for_pair)
 
       // set the state with the sorted data
       setPairData(pairData_local);
 
-
-
       if (pairData_local) {
         setLoading(false);
-        console.log("loading set to false")
       }
       
     } catch (error) { 
@@ -58,8 +59,6 @@ const Scanner = ({pair}) => {
     Wrapper : " flex flex-col w-full space-y-4 p-8",
     InternalCard: " "
   }
-
-  console.log("pairData", pairData)
 
   return (
     <div>
@@ -78,8 +77,6 @@ const Scanner = ({pair}) => {
               </div>
 
               { [pair].map((pair) => {
-
-             
                 return (
                   pairData && <div className=' space-y-8'>
 
@@ -132,7 +129,6 @@ const Scanner = ({pair}) => {
                             </TableRow>
                         </TableBody>
                         
-
                        </Table>
                         </TitledCard>
                       <TitledCard key={`${pair}_institional_Positioning_card`} className={Style.InternalCard} title="Institutional Positioning">
@@ -144,6 +140,13 @@ const Scanner = ({pair}) => {
                             <TableHead className='font-bold'> Score </TableHead>
                           </TableRow>
                         </TableHeader>
+                        <TableBody>
+                          <TableRow>
+                            <TableCell> {pairData.institutional.net_positions} </TableCell>
+                            <TableCell> {pairData.institutional.net_positions_old} </TableCell>
+                            <TableCell className={ `${getScoreBackgroundColor(pairData.institutional.score)} font-bold text-primary-foreground`}> {pairData.institutional.score} </TableCell>
+                            </TableRow>
+                        </TableBody>
                         </Table>   
                         </TitledCard>
                    
@@ -156,6 +159,13 @@ const Scanner = ({pair}) => {
                             <TableHead className='font-bold'> Score </TableHead>
                           </TableRow>
                         </TableHeader>
+                        <TableBody>
+                          <TableRow>
+                            <TableCell> {pairData.retail.net_positions} </TableCell>
+                            <TableCell> {pairData.retail.net_positions_old} </TableCell>
+                            <TableCell className={ `${getScoreBackgroundColor(pairData.retail.score)} font-bold text-primary-foreground`}>  {pairData.retail.score} </TableCell>
+                            </TableRow>
+                        </TableBody>
                         </Table>
                         </TitledCard>
                     
@@ -189,15 +199,22 @@ export const getStaticPaths = async () => {
 }
 
 export const getStaticProps = async ({params}) => {
-  console.log(params)
-  return {
-    props: params
+  const cot_2024_currencies_path = 'public/assets/cot-data/2024/currencies.xml';
+  const cot_2024_currencies_xml = fs.readFileSync(cot_2024_currencies_path, 'utf-8');
+
+  try {
+    const cot_2024_currencies_json = await parseCotData(cot_2024_currencies_xml);
+
+    return { 
+      props: {
+        params,
+        cot_2024_currencies: cot_2024_currencies_json ,
+       } 
+      };
+  } catch (error) {
+    console.error('Failed to parse COT data:', error);
+    return { props: { error: 'Failed to load data' } };
   }
 }
-
-
-
-
-
 
 export default Scanner;

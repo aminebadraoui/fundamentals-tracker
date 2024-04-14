@@ -13,10 +13,8 @@ const Growth = () => {
   const [isLoading, setLoading] = useState(false);
 
   const handleDownload = async () => {
-    console.log("loading set to true")
     setLoading(true);
     try {
-      console.log("fetching data")
       const data = await fetch('../api/event-calendar')
 
       const jsonData = await data.json()
@@ -24,12 +22,9 @@ const Growth = () => {
       const growthData = getDataSortedByTotalScore(jsonData, null, inflationKeys.concat(employmentKeys).concat(interestRatesKeys).concat(housingKeys))
       const growthChartData = getChartData(growthData)
 
-      console.log(growthData)
-
       setEvents({jsonData, growthData, growthChartData});
 
       setLoading(false);
-      console.log("loading set to false")
     } catch (error) { 
       console.log(error)
     }

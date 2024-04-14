@@ -21,14 +21,10 @@ const EconomicOverview = () => {
   const [isLoading, setLoading] = useState(false);
 
   const handleDownload = async () => {
-    console.log("loading set to true")
     setLoading(true);
     try {
-      console.log("fetching data")
       const data = await fetch('../api/event-calendar')
       const rawData = await data.json()
-
-      console.log("rawData", rawData)
 
       const inflationData = getDataSortedByTotalScore(rawData, inflationKeys, null)
       const employmentData = getDataSortedByTotalScore(rawData, employmentKeys, null)
@@ -68,8 +64,8 @@ const EconomicOverview = () => {
       if (economicOverviewData 
         && interestRateMonitorData 
         && inflationRateMonitorData) {
+        console.log("set loading to false")
         setLoading(false);
-        console.log("loading set to false")
       }
       
     } catch (error) { 

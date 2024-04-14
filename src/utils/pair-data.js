@@ -18,7 +18,7 @@ const getCountryData = (country, rawData) => {
   }
 }
 
-const getPairData = (pair, rawData) => {
+const getPairData = (pair, rawData, cotData) => {
   const pairData = {
     "pair": "EURUSD",
 
@@ -83,8 +83,6 @@ const getPairData = (pair, rawData) => {
     "bias": "neutral"
   }
 
-  console.log("pair", majorForexPairs[pair].countries)
-
   const country1_data = getCountryData(majorForexPairs[pair].countries[0], rawData)
   const country2_data = getCountryData(majorForexPairs[pair].countries[1], rawData)
 
@@ -113,6 +111,57 @@ const getPairData = (pair, rawData) => {
   pairData.totalEconomicScore = (pairData.inflationScore + pairData.employmentScore + pairData.housingScore + pairData.growthScore + pairData.interestRateScore) / 5
 
   pairData.totalScore = pairData.totalEconomicScore + pairData.institutional.score + pairData.retail.score  + pairData.technicals.score / 4
+
+  pairData.institutional.long = parseInt(cotData[0].comm_positions_long_all[0])
+  pairData.institutional.short = parseInt(cotData[0].comm_positions_short_all[0])
+  pairData.institutional.long_old = parseInt(cotData[0].comm_positions_long_old[0])
+  pairData.institutional.short_old = parseInt(cotData[0].comm_positions_short_old[0])
+  pairData.institutional.net_positions = parseInt(cotData[0].comm_positions_long_all) - parseInt(cotData[0].comm_positions_short_all)
+  pairData.institutional.net_positions_old = parseInt(cotData[0].comm_positions_long_old) - parseInt(cotData[0].comm_positions_short_old)
+  let institutionalScore = 0
+  if (pairData.institutional.net_positions > 0) {
+    institutionalScore += 100
+  } else if (pairData.institutional.net_positions < 0) {
+    institutionalScore -= 100
+  } else {
+    institutionalScore += 0
+  }
+
+  if ( pairData.institutional.net_positions > pairData.institutional.net_positions_old) {
+    institutionalScore += 100
+  } else if ( pairData.institutional.net_positions < pairData.institutional.net_positions_old) {
+    institutionalScore -= 100
+  } else {
+    institutionalScore += 0
+  }
+
+  pairData.institutional.score = institutionalScore
+
+  pairData.retail.long = parseInt(cotData[0].nonrept_positions_long_all[0])
+  pairData.retail.short = parseInt(cotData[0].nonrept_positions_short_all[0])
+  pairData.retail.long_old = parseInt(cotData[0].nonrept_positions_long_old[0])
+  pairData.retail.short_old = parseInt(cotData[0].nonrept_positions_short_old[0])
+  pairData.retail.net_positions = parseInt(cotData[0].nonrept_positions_long_all[0]) - parseInt(cotData[0].nonrept_positions_short_all[0])
+  pairData.retail.net_positions_old = parseInt(cotData[0].nonrept_positions_long_old[0]) - parseInt(cotData[0].nonrept_positions_short_old[0])
+
+  let retailScore = 0
+  if (pairData.retail.net_positions > 0) {
+    retailScore += 100
+  } else if (pairData.retail.net_positions < 0) {
+    retailScore -= 100
+  } else {
+    retailScore += 0
+  }
+
+  if ( pairData.retail.net_positions > pairData.retail.net_positions_old) {
+    retailScore += 100
+  } else if ( pairData.retail.net_positions < pairData.retail.net_positions_old) {
+    retailScore -= 100
+  } else {
+    retailScore += 0
+  }
+
+  pairData.retail.score = retailScore
 
  return pairData
 }

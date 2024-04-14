@@ -1,7 +1,5 @@
 import React from 'react';
-import { Card } from '@/components/generic/card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/generic/table'
-import { TitledCard } from '../generic/titled-card';
 
 const Style = {
   Wrapper : "flex flex-row flex-wrap items-start p-8 space-x-4 space-y-4",
@@ -30,15 +28,13 @@ const getScoreCell = (score) => {
 }
 */
 
-export const EconomicOverviewDataTable = ({title, data}) => {
-  console.log("EconomicOverviewDataTable" , data)
-
+export const EconomicOverviewDataTable = ({data}) => {
   return (
       <Table>
         <TableHeader>
           <TableRow className="!border-0 hover:bg-transparent">
             <TableHead className="bg-transparent border-0" font-bold> </TableHead>
-            <TableHead className="font-bold"  colspan = { 3 }> Scores </TableHead>
+            <TableHead className="font-bold"  colSpan = { 3 }> Scores </TableHead>
           </TableRow>
 
           <TableRow className="!border-0 hover:bg-transparent">

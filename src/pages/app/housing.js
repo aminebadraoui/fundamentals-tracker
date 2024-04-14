@@ -12,10 +12,8 @@ const Housing = () => {
   const [isLoading, setLoading] = useState(false);
 
   const handleDownload = async () => {
-    console.log("loading set to true")
     setLoading(true);
     try {
-      console.log("fetching data")
       const data = await fetch('../api/event-calendar')
 
       const jsonData = await data.json()
@@ -31,12 +29,9 @@ const Housing = () => {
       const housingData = getDataSortedByTotalScore(jsonData, housingKeys, null)
       const housingChartData = getChartData(housingData)
 
-      console.log(housingData)
-
       setEvents({jsonData, housingData, housingChartData});
 
       setLoading(false);
-      console.log("loading set to false")
     } catch (error) { 
       console.log(error)
     }

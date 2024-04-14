@@ -1,8 +1,5 @@
 const performFetch = async (date) => {
   try {
-    
-    console.log("hello")
-  
     const request = `/api/forex-calendar/scrape?date=${date}`
     const response = await fetch(request);
     

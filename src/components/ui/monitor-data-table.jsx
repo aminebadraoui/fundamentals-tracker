@@ -10,14 +10,14 @@ const Style = {
   Heading: 'text-primary-foreground'
 }
 
-export const MonitorDataTable = ({tableTitle, valueTitle,  data, actualKey, previousKey}) => {
+export const MonitorDataTable = ({tableTitle, valueTitle,  data}) => {
   return (
     <TitledCard title={tableTitle}>
     <Table>
     <TableHeader>
       <TableRow className="!border-0 hover:bg-transparent">
         <TableHead className="bg-transparent border-0" > </TableHead>
-        <TableHead className="font-bold"  colspan={ 2 }>{valueTitle}</TableHead>
+        <TableHead className="font-bold"  colSpan={ 2 }>{valueTitle}</TableHead>
       </TableRow>
 
       <TableRow className="!border-0 hover:bg-transparent">
@@ -35,7 +35,7 @@ export const MonitorDataTable = ({tableTitle, valueTitle,  data, actualKey, prev
       : country.actual < country.previous ?  '' : ''
     
       return (
-        <TableRow>
+        <TableRow key={key}>
           <TableCell className=" bg-primary text-primary-foreground font-bold">{key}</TableCell>
           <TableCell className= {`${cellBg} ${getScoreTextColor(country.score)}`}   >{ `${country.actual}` }</TableCell>
           <TableCell className={`${cellBg} ${getScoreTextColor(country.score)}`}  >{ `${country.previous}` }</TableCell>
