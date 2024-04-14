@@ -18,7 +18,7 @@ const getCountryData = (country, rawData) => {
   }
 }
 
-const getPairData = (pair, rawData, cotData) => {
+const getPairData = (pair, rawData, cotData, technical_data) => {
   const pairData = {
     "pair": "EURUSD",
 
@@ -75,7 +75,10 @@ const getPairData = (pair, rawData, cotData) => {
     },
    
     "technicals": {
-      "score": 0
+      "last_close": 0,
+      "last_sma_50": 0,
+      "last_sma_200": 0,
+      "sma_score": 0,
     },
 
     "totalScore": 0,
@@ -163,8 +166,29 @@ const getPairData = (pair, rawData, cotData) => {
 
   pairData.retail.score = retailScore
 
+  pairData.technicals.last_close = technical_data.last_close
+  pairData.technicals.last_sma_50 = technical_data.last_sma_50
+  pairData.technicals.last_sma_200 = technical_data.last_sma_200
 
-  pairData.totalScore = (pairData.totalEconomicScore + pairData.institutional.score - pairData.retail.score  + pairData.technicals.score) / 4
+  let sma_score = 0
+
+  if (pairData.technicals.last_close > pairData.technicals.last_sma_50) {
+    sma_score += 100
+  }
+  if (pairData.technicals.last_close < pairData.technicals.last_sma_50) {
+    sma_score -= 100
+  }
+  if (pairData.technicals.last_close > pairData.technicals.last_sma_200) {
+    sma_score += 100
+  }
+  if (pairData.technicals.last_close < pairData.technicals.last_sma_200) {
+    sma_score -= 100
+  }
+
+  pairData.technicals.sma_score = sma_score
+
+
+  pairData.totalScore = (pairData.totalEconomicScore + pairData.institutional.score - pairData.retail.score  + pairData.technicals.sma_score) / 4
 
   
  // if total score is between -100 and -50 bias is very bearish, if between -50 and -25 bias is bearish, if between 0 and 25 bias is neutral, if between 25 and 50 bias is bullish, if between 50 and 100 bias is very bullish

@@ -43,9 +43,23 @@ const Pulse = (props) => {
        
         const dataForPair = await fetch(`../../api/event-calendar?countries=${countries}`);
         const rawPairData = await dataForPair.json();
+        const last_sma50 = await fetch(`../../api/technical-sma?symbol=${pair}.FOREX&period=50`)
+        const last_sma50_json = await last_sma50.json()
+
+        const last_sma_200 = await fetch(`../../api/technical-sma?symbol=${pair}.FOREX&period=200`)
+        const last_sma200_json = await last_sma_200.json()
+
+        const last_close = await fetch(`../../api/last-close?symbol=${pair}.FOREX`)
+        const last_close_json = await last_close.json()
+
+        const technical_data_for_pair = {
+          last_sma_50: last_sma50_json,
+          last_sma_200: last_sma200_json,
+          last_close: last_close_json
+        }
         const cot_for_pair = findLatestCotDataForAsset(majorForexPairs[pair].cotName, cot_2024_currencies)
 
-       const pairData_local = getPairData(pair, rawPairData, cot_for_pair)
+       const pairData_local = getPairData(pair, rawPairData, cot_for_pair, technical_data_for_pair)
        
         return pairData_local
         

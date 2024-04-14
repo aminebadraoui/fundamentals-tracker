@@ -13,7 +13,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { getScoreBackgroundColor, getScoreTextColor } from '@/utils/get-score-color';
 import { parseCotData, findLatestCotDataForAsset } from '@/utils/cot-data';
 
-import { cn } from "@/lib/utils"
+
+
 import fs from 'fs';
 
 const Scanner = (props) => {
@@ -24,6 +25,8 @@ const Scanner = (props) => {
   const countries = majorForexPairs[pair].countries
 
   const cot_for_pair = findLatestCotDataForAsset(majorForexPairs[pair].cotName, cot_2024_currencies)
+
+  
  
   // keep track of different arrays of events as part of one object
   const [pairData , setPairData] = useState(null);
@@ -36,7 +39,23 @@ const Scanner = (props) => {
       const data = await fetch(`../../api/event-calendar?countries=${countries}`)
       const jsonData = await data.json()
 
-      const pairData_local = getPairData(pair, jsonData, cot_for_pair)
+      const last_sma50 = await fetch(`../../api/technical-sma?symbol=${pair}.FOREX&period=50`)
+      const last_sma50_json = await last_sma50.json()
+
+      const last_sma_200 = await fetch(`../../api/technical-sma?symbol=${pair}.FOREX&period=200`)
+      const last_sma200_json = await last_sma_200.json()
+
+      const last_close = await fetch(`../../api/last-close?symbol=${pair}.FOREX`)
+      const last_close_json = await last_close.json()
+
+      const technical_data_for_pair = {
+        last_sma_50: last_sma50_json,
+        last_sma_200: last_sma200_json,
+        last_close: last_close_json
+      }
+
+      const pairData_local = getPairData(pair, jsonData, cot_for_pair, technical_data_for_pair)
+      console.log(pairData_local)
 
       // set the state with the sorted data
       setPairData(pairData_local);
@@ -164,6 +183,27 @@ const Scanner = (props) => {
                             <TableCell> {pairData.retail.net_positions} </TableCell>
                             <TableCell> {pairData.retail.net_positions_old} </TableCell>
                             <TableCell className={ `${getScoreBackgroundColor(pairData.retail.score)} font-bold text-primary-foreground`}>  {pairData.retail.score} </TableCell>
+                            </TableRow>
+                        </TableBody>
+                        </Table>
+                        </TitledCard>
+
+                        <TitledCard key={`${pair}_retail_positioning_card`} className={Style.InternalCard} title="Technicals">
+                      <Table> 
+                        <TableHeader>
+                          <TableRow className='hover:bg-transparent'>
+                            <TableHead className='font-bold'> Last Close Price</TableHead>
+                            <TableHead className='font-bold'> SMA 50 </TableHead>
+                            <TableHead className='font-bold'> SMA 200 </TableHead>
+                            <TableHead className='font-bold'> Score </TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          <TableRow>
+                            <TableCell> {pairData.technicals.last_close} </TableCell>
+                            <TableCell> {pairData.technicals.last_sma_50} </TableCell>
+                            <TableCell> {pairData.technicals.last_sma_200} </TableCell>
+                            <TableCell className={ `${getScoreBackgroundColor(pairData.technicals.sma_score)} font-bold text-primary-foreground`}>  {pairData.technicals.sma_score} </TableCell>
                             </TableRow>
                         </TableBody>
                         </Table>

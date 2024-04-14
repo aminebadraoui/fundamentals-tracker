@@ -34,15 +34,14 @@ export const EconomicOverviewDataTable = ({data}) => {
         <TableHeader>
           <TableRow className="!border-0 hover:bg-transparent">
             <TableHead className="bg-transparent border-0" font-bold> </TableHead>
-            <TableHead className="font-bold"  colSpan = { 3 }> Scores </TableHead>
+            <TableHead  colSpan = { 3 }> Scores </TableHead>
           </TableRow>
 
           <TableRow className="!border-0 hover:bg-transparent">
-          <TableHead className="bg-transparent border-0 font-bold"> </TableHead>
-            <TableHead className="font-bold" >Inflation Score</TableHead>
-            <TableHead className="font-bold" >Economic Score</TableHead>
-            <TableHead className="font-bold" >Total Score</TableHead>
-            
+          <TableHead className="bg-transparent border-0"> </TableHead>
+            <TableHead> Inflation Score </TableHead>
+            <TableHead> Economic Score </TableHead>
+            <TableHead> Total Score </TableHead>
           </TableRow>
         </TableHeader>
         
@@ -51,8 +50,8 @@ export const EconomicOverviewDataTable = ({data}) => {
             Object.keys(data).map((key) => {
               const country = data[key]
               return (
-                <TableRow>
-                  <TableCell className="text-primary-foreground bg-primary font-bold">{key}</TableCell>
+                <TableRow key={key}>
+                  <TableCell className="text-primary-foreground bg-primary ">{key}</TableCell>
                   
                   {getScoreCell(country.inflationScore.toFixed(2))}
                   {getScoreCell(country.economicScore.toFixed(2))}
