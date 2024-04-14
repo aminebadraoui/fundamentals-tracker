@@ -177,7 +177,7 @@ const getPairData = (pair, rawData, cotData) => {
   } else if (pairData.totalScore >= -50) {
     pairData.bias = "Bearish"
   } else {
-    pairData.bias = "Very bearish"
+    pairData.bias = "Very Bearish"
   }
 
  return pairData
