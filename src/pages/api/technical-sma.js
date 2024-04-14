@@ -4,7 +4,7 @@ export default async (req, res) => {
 
 
 
-  const url =` https://eodhd.com/api/technical/${symbol}?order=d&function=sma&filter=last_sma&period=${sma_period}&api_token=${process.env.EOD_TOKEN}&fmt=json`
+  const url =` https://eodhd.com/api/technical/${symbol}?function=sma&filter=last_sma&&period=${sma_period}&api_token=${process.env.EOD_TOKEN}&fmt=json`
   console.log(url)
   const sma = await fetch(url);
 
