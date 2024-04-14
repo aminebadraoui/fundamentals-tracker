@@ -8,6 +8,7 @@ import { Table, TableHeader, TableRow, TableHead, TableCell, TableBody } from '@
 import { parseCotData, findLatestReports, findLatestCotDataForAsset } from '@/utils/cot-data';
 import fs from 'fs';
 import { getScoreBackgroundColor, getScoreTextColor } from '@/utils/get-score-color';
+import { getPairData } from '@/utils/pair-data';
 
 export async function getStaticProps() {
   const cot_2024_currencies_path = 'public/assets/cot-data/2024/currencies.xml';
@@ -31,72 +32,43 @@ const Pulse = (props) => {
   const [pulseData, setPulseData] = useState({});
   const [isLoading, setLoading] = useState(false);
 
+  const cot_2024_currencies = props.cot_2024_currencies;
+
 
   const handleDownload = async () => {
     setLoading(true);
     try {
       const pulseDataPromises = Object.keys(majorForexPairs).map(async (pair) => {
         const countries = majorForexPairs[pair].countries;
- 
-
+       
         const dataForPair = await fetch(`../../api/event-calendar?countries=${countries}`);
         const rawPairData = await dataForPair.json();
+        const cot_for_pair = findLatestCotDataForAsset(majorForexPairs[pair].cotName, cot_2024_currencies)
 
-        const inflationData = getDataSortedByTotalScore(rawPairData, inflationKeys, null);
-        const employmentData = getDataSortedByTotalScore(rawPairData, employmentKeys, null);
-        const growthData = getDataSortedByTotalScore(rawPairData, null, inflationKeys.concat(employmentKeys).concat(interestRatesKeys));
-        const interestRateData = getDataSortedByTotalScore(rawPairData, interestRatesKeys, null);
+       const pairData_local = getPairData(pair, rawPairData, cot_for_pair)
        
-       
-
-        return {
-          pair: pair,
-          inflationScore: calculateScore(inflationData, countries),
-          employmentScore: calculateScore(employmentData, countries),
-          growthScore: calculateScore(growthData, countries),
-          economicScore: calculateEconomicScore(inflationData, employmentData, growthData, countries),
+        return pairData_local
         
-        };
       });
 
       const resolvedPairs = await Promise.all(pulseDataPromises);
-      const updatedPulseData = resolvedPairs.reduce((acc, data) => {
+
+      const dataForAllPairs = resolvedPairs.reduce((acc, data) => {
         acc[data.pair] = data;
         return acc;
       }, {});
 
-      // Add cot score and technical score to the pulse data
+      console.log("dataForAllPairs", dataForAllPairs)
 
-      Object.keys(updatedPulseData).map((pair) => { 
-        updatedPulseData[pair]["institutionalPositioningScore"] = 0;
-        updatedPulseData[pair]["retailPositioningScore"] = 0
-        updatedPulseData[pair]["technicalScore"] = 0;
-      })
+      // sort dataForAllPairs by total score in descending order
+      const sortedDataForAllPairs = Object.keys(dataForAllPairs).sort((a, b) => dataForAllPairs[b].totalScore - dataForAllPairs[a].totalScore).reduce((acc, key) => {
+        acc[key] = dataForAllPairs[key];
+        return acc;
+      }
+      , {});
 
-      // Add total score to the pulse data
-
-      Object.keys(updatedPulseData).map((pair) => { 
-        const total = (updatedPulseData[pair]["economicScore"] + 
-        updatedPulseData[pair]["institutionalPositioningScore"] + 
-        updatedPulseData[pair]["retailPositioningScore"] + 
-        updatedPulseData[pair]["technicalScore"]) /4
-
-        updatedPulseData[pair]["totalScore"] = total.toFixed(2);
-      })
-
-      // Add bias to the pulse data
-
-      Object.keys(updatedPulseData).map((pair) => { 
-        const total = (updatedPulseData[pair]["economicScore"] + 
-        updatedPulseData[pair]["institutionalPositioningScore"] + 
-        updatedPulseData[pair]["retailPositioningScore"] +
-        updatedPulseData[pair]["technicalScore"])/4
-
-        updatedPulseData[pair]["bias"] = total > 0 ? "Bullish" : total < 0 ? "Bearish" : "Neutral";
-      })
-
-
-      setPulseData(updatedPulseData);
+      
+      setPulseData(sortedDataForAllPairs);
     } catch (error) {
       console.error(error);
     }

@@ -110,7 +110,7 @@ const getPairData = (pair, rawData, cotData) => {
 
   pairData.totalEconomicScore = (pairData.inflationScore + pairData.employmentScore + pairData.housingScore + pairData.growthScore + pairData.interestRateScore) / 5
 
-  pairData.totalScore = pairData.totalEconomicScore + pairData.institutional.score + pairData.retail.score  + pairData.technicals.score / 4
+ 
 
   pairData.institutional.long = parseInt(cotData[0].comm_positions_long_all[0])
   pairData.institutional.short = parseInt(cotData[0].comm_positions_short_all[0])
@@ -162,6 +162,23 @@ const getPairData = (pair, rawData, cotData) => {
   }
 
   pairData.retail.score = retailScore
+
+
+  pairData.totalScore = (pairData.totalEconomicScore + pairData.institutional.score - pairData.retail.score  + pairData.technicals.score) / 4
+
+  
+ // if total score is between -100 and -50 bias is very bearish, if between -50 and -25 bias is bearish, if between 0 and 25 bias is neutral, if between 25 and 50 bias is bullish, if between 50 and 100 bias is very bullish
+  if (pairData.totalScore >= 50) {
+    pairData.bias = "Very Bullish"
+  } else if (pairData.totalScore >= 25) {
+    pairData.bias = "Bullish"
+  } else if (pairData.totalScore >= -25) {
+    pairData.bias = "Neutral"
+  } else if (pairData.totalScore >= -50) {
+    pairData.bias = "Bearish"
+  } else {
+    pairData.bias = "Very bearish"
+  }
 
  return pairData
 }
