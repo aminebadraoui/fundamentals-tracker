@@ -29,18 +29,17 @@ const getScoreCell = (score) => {
 */
 
 export const EconomicOverviewDataTable = ({data}) => {
+  console.log(data)
   return (
       <Table>
         <TableHeader>
-          <TableRow className="!border-0 hover:bg-transparent">
-            <TableHead className="bg-transparent border-0" font-bold> </TableHead>
-            <TableHead  colSpan = { 3 }> Scores </TableHead>
-          </TableRow>
-
+          
           <TableRow className="!border-0 hover:bg-transparent">
           <TableHead className="bg-transparent border-0"> </TableHead>
-            <TableHead> Inflation Score </TableHead>
-            <TableHead> Economic Score </TableHead>
+            <TableHead> Inflation </TableHead>
+            <TableHead> Employment </TableHead>
+            <TableHead> Housing </TableHead>
+            <TableHead> Growth </TableHead>
             <TableHead> Total Score </TableHead>
           </TableRow>
         </TableHeader>
@@ -54,8 +53,10 @@ export const EconomicOverviewDataTable = ({data}) => {
                   <TableCell className="text-primary-foreground bg-primary ">{key}</TableCell>
                   
                   {getScoreCell(country.inflationScore.toFixed(2))}
-                  {getScoreCell(country.economicScore.toFixed(2))}
-                  {getScoreCell(  (country.totalScore).toFixed(2) / 2 ) }
+                  {getScoreCell(country.employmentScore.toFixed(2))}
+                  {getScoreCell(country.housingScore.toFixed(2))}
+                  {getScoreCell(country.growthScore.toFixed(2))}
+                  {getScoreCell(  (country.totalScore).toFixed(2)  ) }
                   
                 </TableRow>
               )

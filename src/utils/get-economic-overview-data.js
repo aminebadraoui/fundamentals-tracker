@@ -1,4 +1,4 @@
-const getEconomicOverviewData = (inflationData, employmentData, growthData) => {
+const getEconomicOverviewData = (inflationData, employmentData, growthData, housingData) => {
   const data = {}
 
       Object.keys(inflationData).map((key) => { 
@@ -22,12 +22,19 @@ const getEconomicOverviewData = (inflationData, employmentData, growthData) => {
         data[key]["growthScore"] = growthData[key].totalScore
       })
 
-      Object.keys(data).map((key) => { 
-        data[key]["economicScore"] =  (data[key].employmentScore + data[key].growthScore ) / 2
+      Object.keys(housingData).map((key) => { 
+        if (data[key] === undefined) {
+          data[key] = {}
+        }
+        data[key]["housingScore"] = housingData[key].totalScore
       })
 
       Object.keys(data).map((key) => { 
-        data[key]["totalScore"] =  (data[key].inflationScore + data[key].economicScore) / 2
+        data[key]["economicScore"] =  (data[key].employmentScore + data[key].growthScore + data[key].housingScore) / 3
+      })
+
+      Object.keys(data).map((key) => { 
+        data[key]["totalScore"] =  (data[key].inflationScore + data[key].employmentScore + data[key].growthScore + data[key].housingScore) / 4
       })
 
       // sort totalScoresData by totalScore

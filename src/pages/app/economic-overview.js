@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { DashboardLayout } from '@/components/layout/dashboard-layout';
 import { getDataSortedByTotalScore } from '@/utils/getDataSortedByTotalScore';
-import { inflationKeys, employmentKeys, interestRatesKeys } from '@/utils/event-names';
+import { inflationKeys, employmentKeys, interestRatesKeys, housingKeys } from '@/utils/event-names';
 import { Loader } from '@/components/ui/loader';
 import { EconomicOverviewDataTable } from '@/components/ui/economic-overview-data-table';
 import { MonitorDataTable } from '@/components/ui/monitor-data-table';
@@ -29,10 +29,14 @@ const EconomicOverview = () => {
 
       const inflationData = getDataSortedByTotalScore(rawData, inflationKeys, null);
       const employmentData = getDataSortedByTotalScore(rawData, employmentKeys, null);
-      const growthData = getDataSortedByTotalScore(rawData, null, inflationKeys.concat(employmentKeys).concat(interestRatesKeys));
+      const housingData = getDataSortedByTotalScore(rawData, housingKeys, null)
+      const growthData = getDataSortedByTotalScore(rawData, null, inflationKeys.concat(employmentKeys).concat(interestRatesKeys).concat(housingKeys));
       const interestRateData = getDataSortedByTotalScore(rawData, interestRatesKeys, null);
 
-      const economicOverviewData_local = getEconomicOverviewData(inflationData, employmentData, growthData);
+      const economicOverviewData_local = getEconomicOverviewData(inflationData, employmentData, growthData, housingData);
+
+
+
       const interestRateMontorData_local = getInterestRateMonitorData(interestRateData);
       const inflationRateMontorData_local = getInflationRateMonitorData(inflationData);
 
