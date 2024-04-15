@@ -185,7 +185,7 @@ const getPairData = (pair, rawData, cotData, technical_data) => {
     sma_score -= 100
   }
 
-  pairData.technicals.sma_score = sma_score
+  pairData.technicals.sma_score = sma_score / 2
 
 
   pairData.totalScore = (pairData.totalEconomicScore + pairData.institutional.score - pairData.retail.score  + pairData.technicals.sma_score) / 4
