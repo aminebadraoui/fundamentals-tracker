@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { DashboardLayout } from '@/components/layout/dashboard-layout';
-import { inflationKeys, employmentKeys, interestRatesKeys, majorEventsKeys, majorForexPairs } from '@/utils/event-names';
+import { inflationKeys, employmentKeys, interestRatesKeys, majorEventsKeys, majorForexPairs, cryptoAssets} from '@/utils/event-names';
 import { Loader } from '@/components/ui/loader';
 import { TitledCard } from '@/components/generic/titled-card';
 import { Table, TableHeader, TableRow, TableHead, TableCell, TableBody } from '@/components/generic/table';
@@ -8,17 +8,23 @@ import { parseCotData, findLatestReports, findLatestCotDataForAsset } from '@/ut
 import fs from 'fs';
 import { getScoreBackgroundColor, getScoreTextColor } from '@/utils/get-score-color';
 import { getPairData } from '@/utils/pair-data';
+import { getCryptoData } from '@/utils/crypto-data';
 
 export async function getStaticProps() {
   const cot_2024_currencies_path = 'public/assets/cot-data/2024/currencies.xml';
   const cot_2024_currencies_xml = fs.readFileSync(cot_2024_currencies_path, 'utf-8');
 
+  const cot_2024_bitcoin_path = 'public/assets/cot-data/2024/bitcoin.xml';
+  const cot_2024_bitcoin_xml = fs.readFileSync(cot_2024_bitcoin_path, 'utf-8');
+
   try {
     const cot_2024_currencies_json = await parseCotData(cot_2024_currencies_xml);
+    const cot_2024_bitcoin_json = await parseCotData(cot_2024_bitcoin_xml);
 
     return { 
       props: {
         cot_2024_currencies: cot_2024_currencies_json ,
+        cot_2024_bitcoin: cot_2024_bitcoin_json
        } 
       };
   } catch (error) {
@@ -32,12 +38,13 @@ const Pulse = (props) => {
   const [isLoading, setLoading] = useState(false);
 
   const cot_2024_currencies = props.cot_2024_currencies;
+  const cot_2024_bitcoin = props.cot_2024_bitcoin;
 
 
   const handleDownload = async () => {
     setLoading(true);
     try {
-      const pulseDataPromises = Object.keys(majorForexPairs).map(async (pair) => {
+      const forexDataPromises = Object.keys(majorForexPairs).map(async (pair) => {
         const countries = majorForexPairs[pair].countries;
        
         const dataForPair = await fetch(`../../api/event-calendar?countries=${countries}`);
@@ -73,6 +80,48 @@ const Pulse = (props) => {
         return pairData_local
         
       });
+
+      const cryptoDataPromises = Object.keys(cryptoAssets).map(async (asset) => { 
+        const countries = cryptoAssets[asset].countries;
+        const apiSymbol = cryptoAssets[asset].apiSymbol;
+        const cotName = cryptoAssets[asset].cotName;
+       
+        const dataForPair = await fetch(`../../api/event-calendar?countries=${countries}`);
+        const rawPairData = await dataForPair.json();
+        const last_sma50 = await fetch(`../../api/technical-sma?symbol=${apiSymbol}&period=50`)
+        const last_sma50_json = await last_sma50.json()
+
+        const last_sma_200 = await fetch(`../../api/technical-sma?symbol=${apiSymbol}&period=200`)
+        const last_sma200_json = await last_sma_200.json()
+
+        const last_close = await fetch(`../../api/last-close?symbol=${apiSymbol}`)
+        const last_close_json = await last_close.json()
+
+        const technical_data_for_pair = {
+          last_sma_50: last_sma50_json,
+          last_sma_200: last_sma200_json,
+          last_close: last_close_json
+        }
+
+        const news_sentiment = await fetch(`../../api/news-sentiment?symbol=${apiSymbol}`)
+        const news_sentiment_json = await news_sentiment.json()
+
+        const news_data_for_pair = {
+          news_sentiment: news_sentiment_json
+        }
+
+        console.log(news_data_for_pair)
+
+        const cot_for_pair = findLatestCotDataForAsset(cotName, cot_2024_bitcoin)
+
+        const pairData_local = getCryptoData(asset, rawPairData, cot_for_pair, technical_data_for_pair, news_data_for_pair)
+       
+        return pairData_local
+        
+      });
+
+
+      const pulseDataPromises = forexDataPromises.concat(cryptoDataPromises);
 
       const resolvedPairs = await Promise.all(pulseDataPromises);
 
