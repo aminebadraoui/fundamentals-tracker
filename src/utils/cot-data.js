@@ -48,7 +48,6 @@ const findLatestCotDataForAsset = (cotName, cotData) => {
     return bDate - aDate
   } )
 
-  console.log("cotDataArray", cotDataArray)
 
   return cotDataArray
   

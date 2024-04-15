@@ -48,13 +48,20 @@ const Scanner = (props) => {
       const last_close = await fetch(`../../api/last-close?symbol=${pair}.FOREX`)
       const last_close_json = await last_close.json()
 
+      const news_sentiment = await fetch(`../../api/news-sentiment?symbol=${pair}.FOREX`)
+      const news_sentiment_json = await news_sentiment.json()
+
       const technical_data_for_pair = {
         last_sma_50: last_sma50_json,
         last_sma_200: last_sma200_json,
         last_close: last_close_json
       }
 
-      const pairData_local = getPairData(pair, jsonData, cot_for_pair, technical_data_for_pair)
+      const news_data_for_pair = {
+        news_sentiment: news_sentiment_json
+      }
+
+      const pairData_local = getPairData(pair, jsonData, cot_for_pair, technical_data_for_pair, news_data_for_pair)
       console.log(pairData_local)
 
       // set the state with the sorted data
@@ -98,6 +105,7 @@ const Scanner = (props) => {
               { [pair].map((pair) => {
                 return (
                   pairData && <div className=' space-y-8'>
+                    {console.log("news section", pairData.news)}
 
                       <TitledCard key={`${pair}_economy_card_`} className={Style.InternalCard} title="Economy">
                        <Table>
@@ -142,8 +150,8 @@ const Scanner = (props) => {
                               <TableCell className={ `${getScoreTextColor(pairData.growthScore)}`}> {pairData.growthScore} </TableCell>
                             </TableRow>
                             <TableRow>
-                              <TableCell className='font-bold'> Total Average Score </TableCell>
-                              <TableCell colSpan={2}>  </TableCell>
+                              <TableCell colSpan={3} className='font-bold'> Final Score </TableCell>
+                          
                               <TableCell className={ `${getScoreBackgroundColor(pairData.totalEconomicScore)} font-bold text-primary-foreground`}> {pairData.totalEconomicScore} </TableCell>
                             </TableRow>
                         </TableBody>
@@ -156,7 +164,7 @@ const Scanner = (props) => {
                           <TableRow className='hover:bg-transparent'>
                             <TableHead className='font-bold'> Net Positions Current </TableHead>
                             <TableHead className='font-bold'> Net Positions Old </TableHead>
-                            <TableHead className='font-bold'> Score </TableHead>
+                            <TableHead className='font-bold'> Final Score </TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -175,7 +183,7 @@ const Scanner = (props) => {
                           <TableRow className='hover:bg-transparent'>
                             <TableHead className='font-bold'> Net Positions Current </TableHead>
                             <TableHead className='font-bold'> Net Positions Old </TableHead>
-                            <TableHead className='font-bold'> Score </TableHead>
+                            <TableHead className='font-bold'> Final Score </TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -188,27 +196,75 @@ const Scanner = (props) => {
                         </Table>
                         </TitledCard>
 
-                        <TitledCard key={`${pair}_retail_positioning_card`} className={Style.InternalCard} title="Technicals">
-                      <Table> 
-                        <TableHeader>
-                          <TableRow className='hover:bg-transparent'>
-                            <TableHead className='font-bold'> Last Close Price</TableHead>
-                            <TableHead className='font-bold'> SMA 50 </TableHead>
-                            <TableHead className='font-bold'> SMA 200 </TableHead>
-                            <TableHead className='font-bold'> Score </TableHead>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          <TableRow>
-                            <TableCell> {pairData.technicals.last_close} </TableCell>
-                            <TableCell> {pairData.technicals.last_sma_50} </TableCell>
-                            <TableCell> {pairData.technicals.last_sma_200} </TableCell>
-                            <TableCell className={ `${getScoreBackgroundColor(pairData.technicals.sma_score)} font-bold text-primary-foreground`}>  {pairData.technicals.sma_score} </TableCell>
-                            </TableRow>
-                        </TableBody>
-                        </Table>
+                        <TitledCard key={`${pair}_technicals_card`} className={Style.InternalCard} title="Technicals">
+                          <Table> 
+                            <TableHeader>
+                              <TableRow className='hover:bg-transparent'>
+                                <TableHead className='font-bold'> Last Close Price</TableHead>
+                                <TableHead className='font-bold'> SMA 50 </TableHead>
+                                <TableHead className='font-bold'> SMA 200 </TableHead>
+                                <TableHead className='font-bold'> Final Score </TableHead>
+                              </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                              <TableRow>
+                                <TableCell> {pairData.technicals.last_close} </TableCell>
+                                <TableCell> {pairData.technicals.last_sma_50} </TableCell>
+                                <TableCell> {pairData.technicals.last_sma_200} </TableCell>
+                                <TableCell className={ `${getScoreBackgroundColor(pairData.technicals.sma_score)} font-bold text-primary-foreground`}>  {pairData.technicals.sma_score} </TableCell>
+                                </TableRow>
+                            </TableBody>
+                            </Table>
                         </TitledCard>
-                    
+
+                        <TitledCard key={`${pair}_news_sentiment_card`} className={Style.InternalCard} title="News Sentiment">
+                          <Table> 
+                            <TableHeader>
+                              {
+                                 pairData.news.news_set.length > 0 && 
+                                 <TableRow className='hover:bg-transparent'>
+                                  <TableHead className='font-bold'> Date</TableHead>
+                                  <TableHead className='font-bold'> Count </TableHead>
+                                <TableHead className='font-bold'> Score </TableHead>
+                              </TableRow>}
+                            </TableHeader>
+                            
+                            <TableBody>
+                            {
+                              pairData.news.news_set.length > 0 && pairData.news.news_set.map((news) => {
+                                  return (
+                                    <TableRow>
+                                      <TableCell> {news.date} </TableCell>
+                                      <TableCell> {news.count} </TableCell>
+                                      <TableCell>  {news.score.toFixed(2)} </TableCell>
+                                    </TableRow>
+                                  )
+                                })
+                              }
+
+                            {
+                              pairData.news.news_set.length > 0 && 
+                              <TableRow>
+                                <TableCell colSpan={2} className='font-bold'> 7-Day Average Score </TableCell>
+                                <TableCell > {pairData.news.avg_score.toFixed(2)} </TableCell>
+                              </TableRow>
+                            }
+
+                            {
+                              pairData.news.news_set.length == 0 &&
+                              <TableRow>
+                                <TableCell colSpan={3}> No News Available </TableCell>
+                              </TableRow>
+
+                            }
+                              <TableRow>
+                                <TableCell colSpan={2} className='font-bold'> Final Score </TableCell>
+                           
+                                <TableCell className={ `${getScoreBackgroundColor(pairData.news.total_news_score)} font-bold text-primary-foreground`}> {pairData.news.total_news_score} </TableCell>
+                              </TableRow>
+                            </TableBody>
+                            </Table>
+                        </TitledCard>
                   </div>
                   
 

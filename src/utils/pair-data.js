@@ -18,7 +18,7 @@ const getCountryData = (country, rawData) => {
   }
 }
 
-const getPairData = (pair, rawData, cotData, technical_data) => {
+const getPairData = (pair, rawData, cotData, technical_data, news_sentiment_data) => {
   const pairData = {
     "pair": "EURUSD",
 
@@ -79,6 +79,17 @@ const getPairData = (pair, rawData, cotData, technical_data) => {
       "last_sma_50": 0,
       "last_sma_200": 0,
       "sma_score": 0,
+    },
+
+    "news": {
+      "news_set": [
+      {
+        "date": 0,
+        "count": 0,
+        "score": 0
+      }
+    ], 
+    "total_news_score": 0,
     },
 
     "totalScore": 0,
@@ -142,7 +153,7 @@ const getPairData = (pair, rawData, cotData, technical_data) => {
 
   pairData.retail.long = parseInt(cotData[0].nonrept_positions_long_all[0])
   pairData.retail.short = parseInt(cotData[0].nonrept_positions_short_all[0])
-  
+
   pairData.retail.long_old = parseInt(cotData[1].nonrept_positions_long_old[0])
   pairData.retail.short_old = parseInt(cotData[1].nonrept_positions_short_old[0])
 
@@ -189,8 +200,26 @@ const getPairData = (pair, rawData, cotData, technical_data) => {
 
   pairData.technicals.sma_score = sma_score / 2
 
+  // News
+  pairData.news.news_set = []
 
-  pairData.totalScore = (pairData.totalEconomicScore + pairData.institutional.score - pairData.retail.score  + pairData.technicals.sma_score) / 4
+  if (news_sentiment_data.news_sentiment[`${pair}.FOREX`]) {
+    news_sentiment_data.news_sentiment[`${pair}.FOREX`].slice(0,7).map((news) => {
+      pairData.news.news_set.push({date: news.date, count: news.count, score: (news.normalized * 100)})
+    })
+  
+    pairData.news.avg_score = pairData.news.news_set.reduce((acc, news) => acc + news.score, 0) / pairData.news.news_set.length 
+    pairData.news.total_news_score = pairData.news.avg_score > 0 ? 100 : pairData.news.avg_score < 0 ? -100 : 0
+
+  } else {
+    pairData.news.news_set = []
+    pairData.news.avg_score = 0
+    pairData.news.total_news_score = 0
+  }
+  
+  
+
+  pairData.totalScore = (pairData.totalEconomicScore + pairData.institutional.score - pairData.retail.score  + pairData.technicals.sma_score + pairData.news.total_news_score) / 5
 
   
  // if total score is between -100 and -50 bias is very bearish, if between -50 and -25 bias is bearish, if between 0 and 25 bias is neutral, if between 25 and 50 bias is bullish, if between 50 and 100 bias is very bullish

@@ -54,7 +54,6 @@ const getDataSortedByTotalScore = (rawData, filter, antifilter) => {
         }
       })
 
-
       // if there are duplicates in inflation[key], keep only the most recent event based on their date property's value
       const uniqueEvents = []
       finalData[key].events.map((event) => {
@@ -87,8 +86,6 @@ const getDataSortedByTotalScore = (rawData, filter, antifilter) => {
 
       // set the state with the sorted data
       finalData = sortedData
-
-      
   })
 
   return finalData

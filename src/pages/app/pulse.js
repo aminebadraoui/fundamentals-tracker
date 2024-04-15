@@ -57,9 +57,19 @@ const Pulse = (props) => {
           last_sma_200: last_sma200_json,
           last_close: last_close_json
         }
+
+        const news_sentiment = await fetch(`../../api/news-sentiment?symbol=${pair}.FOREX`)
+        const news_sentiment_json = await news_sentiment.json()
+
+        const news_data_for_pair = {
+          news_sentiment: news_sentiment_json
+        }
+
+        console.log(news_data_for_pair)
+
         const cot_for_pair = findLatestCotDataForAsset(majorForexPairs[pair].cotName, cot_2024_currencies)
 
-       const pairData_local = getPairData(pair, rawPairData, cot_for_pair, technical_data_for_pair)
+        const pairData_local = getPairData(pair, rawPairData, cot_for_pair, technical_data_for_pair, news_data_for_pair)
        
         return pairData_local
         
