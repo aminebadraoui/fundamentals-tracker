@@ -1,9 +1,9 @@
 const getScoreTextColor = (score) => {
-  return `${score > 0 ? 'text-bullish' : score  ==  0 ? 'text-neutral' : 'text-bearish' }`
+  return `${score > 25 ? 'text-bullish' : score  < -25 ? 'text-bearish' : 'text-neutral' }`
 }
 
 const getScoreBackgroundColor = (score) => {
-  return `${score > 0 ? 'bg-bullish' : score  ==  0 ? 'bg-neutral' : 'bg-bearish' }`
+  return `${score > 25 ? 'bg-bullish' : score  < -25 ? 'bg-bearish' : 'bg-neutral' }`
 }
 
 export { getScoreTextColor, getScoreBackgroundColor }
