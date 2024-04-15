@@ -161,18 +161,20 @@ const getPairData = (pair, rawData, cotData, technical_data, news_sentiment_data
   pairData.retail.net_positions_old = parseInt(cotData[1].nonrept_positions_long_all[0]) - parseInt(cotData[1].nonrept_positions_short_all[0])
 
   let retailScore = 0
+  // Contrarian Signal
+
   if (pairData.retail.net_positions > 0) {
-    retailScore += 100
-  } else if (pairData.retail.net_positions < 0) {
     retailScore -= 100
+  } else if (pairData.retail.net_positions < 0) {
+    retailScore += 100
   } else {
     retailScore += 0
   }
 
   if ( pairData.retail.net_positions > pairData.retail.net_positions_old) {
-    retailScore += 100
-  } else if ( pairData.retail.net_positions < pairData.retail.net_positions_old) {
     retailScore -= 100
+  } else if ( pairData.retail.net_positions < pairData.retail.net_positions_old) {
+    retailScore += 100
   } else {
     retailScore += 0
   }
@@ -219,7 +221,7 @@ const getPairData = (pair, rawData, cotData, technical_data, news_sentiment_data
   
   
 
-  pairData.totalScore = (pairData.totalEconomicScore + pairData.institutional.score - pairData.retail.score  + pairData.technicals.sma_score + pairData.news.total_news_score) / 5
+  pairData.totalScore = (pairData.totalEconomicScore + pairData.institutional.score + pairData.retail.score  + pairData.technicals.sma_score + pairData.news.total_news_score) / 5
 
   
  // if total score is between -100 and -50 bias is very bearish, if between -50 and -25 bias is bearish, if between 0 and 25 bias is neutral, if between 25 and 50 bias is bullish, if between 50 and 100 bias is very bullish
