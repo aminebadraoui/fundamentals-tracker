@@ -34,9 +34,28 @@ function findLatestReports(dataArray) {
 
 // get the latest cot data for a specific asset
 const findLatestCotDataForAsset = (cotName, cotData) => {
-  const latestReports = findLatestReports(cotData);
+  const cotDataArray = []
 
-  return latestReports.filter(report => report.contract_market_name[0] == cotName);
+ cotData.filter(item => item.contract_market_name[0] === cotName)
+                .map(item => {
+                  cotDataArray.push(item)
+                })
+
+
+  cotDataArray.sort((a, b) => {
+    const aDate = new Date(a.report_date_as_yyyy_mm_dd[0])
+    const bDate = new Date(b.report_date_as_yyyy_mm_dd[0])
+    return bDate - aDate
+  } )
+
+  console.log("cotDataArray", cotDataArray)
+
+  return cotDataArray
+  
+
+    
+                
+
 
   
 

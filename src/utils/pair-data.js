@@ -117,10 +117,10 @@ const getPairData = (pair, rawData, cotData, technical_data) => {
 
   pairData.institutional.long = parseInt(cotData[0].comm_positions_long_all[0])
   pairData.institutional.short = parseInt(cotData[0].comm_positions_short_all[0])
-  pairData.institutional.long_old = parseInt(cotData[0].comm_positions_long_old[0])
-  pairData.institutional.short_old = parseInt(cotData[0].comm_positions_short_old[0])
+  pairData.institutional.long_old = parseInt(cotData[1].comm_positions_long_old[0])
+  pairData.institutional.short_old = parseInt(cotData[1].comm_positions_short_old[0])
   pairData.institutional.net_positions = parseInt(cotData[0].comm_positions_long_all) - parseInt(cotData[0].comm_positions_short_all)
-  pairData.institutional.net_positions_old = parseInt(cotData[0].comm_positions_long_old) - parseInt(cotData[0].comm_positions_short_old)
+  pairData.institutional.net_positions_old = parseInt(cotData[1].comm_positions_long_old) - parseInt(cotData[1].comm_positions_short_old)
   let institutionalScore = 0
   if (pairData.institutional.net_positions > 0) {
     institutionalScore += 100
@@ -138,14 +138,16 @@ const getPairData = (pair, rawData, cotData, technical_data) => {
     institutionalScore += 0
   }
 
-  pairData.institutional.score = institutionalScore
+  pairData.institutional.score = institutionalScore / 2
 
   pairData.retail.long = parseInt(cotData[0].nonrept_positions_long_all[0])
   pairData.retail.short = parseInt(cotData[0].nonrept_positions_short_all[0])
-  pairData.retail.long_old = parseInt(cotData[0].nonrept_positions_long_old[0])
-  pairData.retail.short_old = parseInt(cotData[0].nonrept_positions_short_old[0])
+  
+  pairData.retail.long_old = parseInt(cotData[1].nonrept_positions_long_old[0])
+  pairData.retail.short_old = parseInt(cotData[1].nonrept_positions_short_old[0])
+
   pairData.retail.net_positions = parseInt(cotData[0].nonrept_positions_long_all[0]) - parseInt(cotData[0].nonrept_positions_short_all[0])
-  pairData.retail.net_positions_old = parseInt(cotData[0].nonrept_positions_long_old[0]) - parseInt(cotData[0].nonrept_positions_short_old[0])
+  pairData.retail.net_positions_old = parseInt(cotData[1].nonrept_positions_long_all[0]) - parseInt(cotData[1].nonrept_positions_short_all[0])
 
   let retailScore = 0
   if (pairData.retail.net_positions > 0) {
@@ -164,7 +166,7 @@ const getPairData = (pair, rawData, cotData, technical_data) => {
     retailScore += 0
   }
 
-  pairData.retail.score = retailScore
+  pairData.retail.score = retailScore / 2
 
   pairData.technicals.last_close = technical_data.last_close
   pairData.technicals.last_sma_50 = technical_data.last_sma_50
