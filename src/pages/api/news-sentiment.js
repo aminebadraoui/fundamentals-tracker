@@ -6,6 +6,7 @@ export default async (req, res) => {
   const sentiment_res = await fetch(url);
 
   const sentiment_json = await sentiment_res.json()
+  console.log(sentiment_json)
 
   res.status(200).json(sentiment_json)
 }

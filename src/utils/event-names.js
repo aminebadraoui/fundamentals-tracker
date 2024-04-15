@@ -136,6 +136,14 @@ const majorForexPairs =  {
     cotName: "CANADIAN DOLLAR",
   },
 }
+
+const cryptoAssets = {
+  'BITCOIN': {
+    countries: ["US"],
+    cotName: "BITCOIN",
+    apiSymbol: 'BTC-USD.CC'
+  },
+}
  
 export {inflationKeys,
   eventCategoryList, 
@@ -145,5 +153,6 @@ export {inflationKeys,
   housingKeys, 
   flippedScoringKeys,
   majorEventsKeys,
-  majorForexPairs
+  majorForexPairs,
+  cryptoAssets
 }

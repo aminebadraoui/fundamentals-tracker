@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { DashboardLayout } from '@/components/layout/dashboard-layout';
-import { getDataSortedByTotalScore } from '@/utils/getDataSortedByTotalScore';
 import { inflationKeys, employmentKeys, interestRatesKeys, majorEventsKeys, majorForexPairs } from '@/utils/event-names';
 import { Loader } from '@/components/ui/loader';
 import { TitledCard } from '@/components/generic/titled-card';

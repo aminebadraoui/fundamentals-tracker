@@ -13,19 +13,32 @@ const Style = {
   subLink: "ps-12"
 }
 
-import { majorForexPairs  } from '@/utils/event-names';
+import { majorForexPairs, cryptoAssets  } from '@/utils/event-names';
 
 const forexLinksArray =  Object.keys(majorForexPairs).map((pair) => {
   return {
     type: "link",
     style: "sub",
     name: pair,
-    href: `/app/scanner/${pair}`
+    href: `/app/forex-scanner/${pair}`
+  }
+})
+
+const cryptoLinksArray =  Object.keys(cryptoAssets).map((asset) => {
+  return {
+    type: "link",
+    style: "sub",
+    name: asset,
+    href: `/app/crypto-scanner/${asset}`
   }
 })
 
 const forexLinks = {
   ...forexLinksArray
+}
+
+const cryptoLinks = {
+  ...cryptoLinksArray
 }
 
 
@@ -49,6 +62,19 @@ const links = [
  
 
   ...forexLinksArray,
+
+  {
+    type: "separator"
+  },
+
+  {
+    type: "section",
+    style: "main",
+    name: 'Crypto Scanner',
+  },
+ 
+
+  ...cryptoLinksArray,
 
   {
     type: "separator"
