@@ -187,20 +187,14 @@ const getPairData = (pair, rawData, cotData, technical_data, news_sentiment_data
 
   let sma_score = 0
 
-  if (pairData.technicals.last_close > pairData.technicals.last_sma_50) {
+  if (pairData.technicals.last_sma_50 > pairData.technicals.last_sma_200) {
     sma_score += 100
   }
-  if (pairData.technicals.last_close < pairData.technicals.last_sma_50) {
-    sma_score -= 100
-  }
-  if (pairData.technicals.last_close > pairData.technicals.last_sma_200) {
-    sma_score += 100
-  }
-  if (pairData.technicals.last_close < pairData.technicals.last_sma_200) {
+  if (pairData.technicals.last_sma_50 < pairData.technicals.last_sma_200) {
     sma_score -= 100
   }
 
-  pairData.technicals.sma_score = sma_score / 2
+  pairData.technicals.sma_score = sma_score 
 
   // News
   pairData.news.news_set = []
