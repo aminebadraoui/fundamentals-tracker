@@ -39,10 +39,10 @@ const CryptoScanner = (props) => {
       const data = await fetch(`../../api/event-calendar?countries=${countries}`)
       const jsonData = await data.json()
 
-      const last_sma50 = await fetch(`../../api/technical-sma?symbol=${cryptoAssets[pair].apiSymbol}&period=50`)
+      const last_sma50 = await fetch(`../../api/technical-sma?symbol=${cryptoAssets[pair].apiSymbol}&period=20`)
       const last_sma50_json = await last_sma50.json()
 
-      const last_sma_200 = await fetch(`../../api/technical-sma?symbol=${cryptoAssets[pair].apiSymbol}&period=200`)
+      const last_sma_200 = await fetch(`../../api/technical-sma?symbol=${cryptoAssets[pair].apiSymbol}&period=50`)
       const last_sma200_json = await last_sma_200.json()
 
       const last_close = await fetch(`../../api/last-close?symbol=${cryptoAssets[pair].apiSymbol}`)
@@ -204,8 +204,8 @@ const CryptoScanner = (props) => {
                             <TableHeader>
                               <TableRow className='hover:bg-transparent'>
                                 <TableHead className='font-bold'> Last Close Price</TableHead>
-                                <TableHead className='font-bold'> SMA 50 </TableHead>
-                                <TableHead className='font-bold'> SMA 200 </TableHead>
+                                <TableHead className='font-bold'> 20 Daily Moving Average </TableHead>
+                                <TableHead className='font-bold'> 50 Daily Moving Average </TableHead>
                                 <TableHead className='font-bold'> Final Score </TableHead>
                               </TableRow>
                             </TableHeader>

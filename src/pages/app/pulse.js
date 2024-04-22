@@ -49,18 +49,18 @@ const Pulse = (props) => {
        
         const dataForPair = await fetch(`../../api/event-calendar?countries=${countries}`);
         const rawPairData = await dataForPair.json();
-        const last_sma50 = await fetch(`../../api/technical-sma?symbol=${pair}.FOREX&period=50`)
-        const last_sma50_json = await last_sma50.json()
+        const last_sma20 = await fetch(`../../api/technical-sma?symbol=${pair}.FOREX&period=20`)
+        const last_sma20_json = await last_sma20.json()
 
-        const last_sma_200 = await fetch(`../../api/technical-sma?symbol=${pair}.FOREX&period=200`)
-        const last_sma200_json = await last_sma_200.json()
+        const last_sma_50 = await fetch(`../../api/technical-sma?symbol=${pair}.FOREX&period=50`)
+        const last_sma50_json = await last_sma_50.json()
 
         const last_close = await fetch(`../../api/last-close?symbol=${pair}.FOREX`)
         const last_close_json = await last_close.json()
 
         const technical_data_for_pair = {
-          last_sma_50: last_sma50_json,
-          last_sma_200: last_sma200_json,
+          last_sma_50: last_sma20_json,
+          last_sma_200: last_sma50_json,
           last_close: last_close_json
         }
 
