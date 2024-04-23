@@ -202,15 +202,15 @@ const getCryptoData = (crypto, rawData, cotData, technical_data, news_sentiment_
   
  // if total score is between -100 and -50 bias is very bearish, if between -50 and -25 bias is bearish, if between 0 and 25 bias is neutral, if between 25 and 50 bias is bullish, if between 50 and 100 bias is very bullish
   if (pairData.totalScore >= 50) {
-    pairData.bias = "Very Bullish"
+    pairData.bias = "Strong Buy"
   } else if (pairData.totalScore >= 25) {
-    pairData.bias = "Bullish"
+    pairData.bias = "Buy"
   } else if (pairData.totalScore >= -25) {
     pairData.bias = "Neutral"
   } else if (pairData.totalScore >= -50) {
-    pairData.bias = "Bearish"
+    pairData.bias = "Sell"
   } else {
-    pairData.bias = "Very Bearish"
+    pairData.bias = "Strong Sell"
   }
 
  return pairData
