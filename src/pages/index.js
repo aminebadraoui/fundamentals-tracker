@@ -71,7 +71,7 @@ import { Card, CardContent, CardHeader } from "@/components/generic/card";
       w-full
       flex
       flex-col
-      bg-white
+     
       items-center
       ">
 
@@ -80,9 +80,9 @@ import { Card, CardContent, CardHeader } from "@/components/generic/card";
         ">
           <h1 className="
           text-6xl
-          mb-4
-          mt-8
-          text-primary
+          mb-8
+          mt-16
+          text-white
           text-center
           "> 
           Take Control Of Your trading  
@@ -100,41 +100,18 @@ import { Card, CardContent, CardHeader } from "@/components/generic/card";
 
        { joinButton}
 
-        {/* <div className="
-          border
-          border-secondary
-          shadow-sm
-          shadow-secondary
-          mt-8
-         
-          w-full
-          ">
-           <Image 
-              src={Screenshot}
-              alt="screenshot"
-              
-        />
-          </div> */}
       </div>
 
-      {/* <div  className="
-      bg-primary
-      text-center
-      p-8
-      "
-      >
-        <p className="
-        text-primary-foreground
-        text-3xl
-        "
-        > To escape the matrix you need to first undertand it</p>
-      </div> */}
+  
 
 <div className="
       w-full
-      
       p-8
       h-full
+      border
+      border-white
+      
+      
       ">
         <h1
         className="
@@ -142,18 +119,21 @@ import { Card, CardContent, CardHeader } from "@/components/generic/card";
         text-right
         "
         > A Multi-Angle Analysis </h1>
+        
       </div>
 
 
       <div className="
       w-full
-      bg-white 
+     
       p-8
       h-full
+      border
+      border-white
       ">
         <h1
         className="
-        text-primary
+        text-white
         "
         > Know Exactly What To Trade  </h1>
       </div>
@@ -164,6 +144,8 @@ import { Card, CardContent, CardHeader } from "@/components/generic/card";
       
       p-8
       h-full
+      border
+      border-white
       ">
         <h1
         className="
@@ -175,13 +157,15 @@ import { Card, CardContent, CardHeader } from "@/components/generic/card";
 
       <div className="
       w-full
-      bg-white 
+     
       p-8
       h-full
+      border
+      border-white
       ">
         <h1
         className="
-        text-primary
+        text-white
         "
         > AI Powered </h1>
       </div>
@@ -191,24 +175,30 @@ import { Card, CardContent, CardHeader } from "@/components/generic/card";
       
       p-8
       h-full
+      border
+      border-white
       ">
         <h1 className=" 
         text-white
         text-center
         "
         > FAQ  </h1>
+
       </div>
+
       <div className="
       flex-col
       w-full
-      bg-white
+     
       h-full
       p-8
       justify-center
       align-center
+      border
+      border-white
       ">
         <h1 className="
-        text-primary
+        text-white
         text-center"
         > Pricing  </h1>
 
@@ -220,7 +210,7 @@ import { Card, CardContent, CardHeader } from "@/components/generic/card";
         flex-col
         align-center
         ">
-          
+
           <div className ="grid grid-cols-1 content-center"  >
     
             <Card className="m-4
