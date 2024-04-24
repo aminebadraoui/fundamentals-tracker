@@ -4,7 +4,7 @@ import React from "react";
 import Screenshot from "../../public/screenshot.png"
 import Image from 'next/image'
 import { Button } from "@/components/generic/button";
-import { Card } from "@/components/generic/card";
+import { Card, CardContent, CardHeader } from "@/components/generic/card";
 
  const Home = () => {
    // Event handler for Join button
@@ -27,7 +27,7 @@ import { Card } from "@/components/generic/card";
       mx-4
       w-50
        bg-orange-500 
-       text-secondary-foreground
+       text-white
        rounded-md
        " 
 
@@ -117,7 +117,7 @@ import { Card } from "@/components/generic/card";
           </div> */}
       </div>
 
-      <div  className="
+      {/* <div  className="
       bg-primary
       text-center
       p-8
@@ -128,24 +128,11 @@ import { Card } from "@/components/generic/card";
         text-3xl
         "
         > To escape the matrix you need to first undertand it</p>
-      </div>
+      </div> */}
 
-      <div className="
+<div className="
       w-full
-      bg-white 
-      p-8
-      h-full
-      ">
-        <h1
-        className="
-        text-primary
-        "
-        > Know Exactly What To Trade  </h1>
-      </div>
-
-      <div className="
-      w-full
-      bg-primary 
+      
       p-8
       h-full
       ">
@@ -154,8 +141,9 @@ import { Card } from "@/components/generic/card";
         text-white
         text-right
         "
-        > Multi-Angle Analysis </h1>
+        > A Multi-Angle Analysis </h1>
       </div>
+
 
       <div className="
       w-full
@@ -170,9 +158,10 @@ import { Card } from "@/components/generic/card";
         > Know Exactly What To Trade  </h1>
       </div>
 
+
       <div className="
       w-full
-      bg-primary 
+      
       p-8
       h-full
       ">
@@ -186,22 +175,83 @@ import { Card } from "@/components/generic/card";
 
       <div className="
       w-full
-      bg-white
+      bg-white 
+      p-8
+      h-full
+      ">
+        <h1
+        className="
+        text-primary
+        "
+        > AI Powered </h1>
+      </div>
+
+      <div className="
+      w-full
+      
+      p-8
       h-full
       ">
         <h1 className=" 
-        text-primary
+        text-white
         text-center
         "
         > FAQ  </h1>
       </div>
       <div className="
+      flex-col
       w-full
-      bg-cyan-500
+      bg-white
       h-full
+      p-8
+      justify-center
+      align-center
       ">
-        <h1> Pricing  </h1>
+        <h1 className="
+        text-primary
+        text-center"
+        > Pricing  </h1>
+
+
+        <div className=" flex justify-center">
+
+
+        <div className="
+        flex-col
+        align-center
+        ">
+          
+          <div className ="grid grid-cols-1 content-center"  >
+    
+            <Card className="m-4
+            bg-gray-100
+            
+            ">
+              <CardHeader>
+                <div>
+                  <p> tab</p>
+                  <p> price</p>
+                </div>
+          
+              </CardHeader>
+
+              <CardContent>
+                features
+              </CardContent>
+
+              { joinButton}
+            </Card>
+         
+          </div>
+        </div>
+        </div>
+
+
+       
       </div>
+    
+
+      
 
     </div>
   </div>
