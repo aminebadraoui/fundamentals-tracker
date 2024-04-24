@@ -94,7 +94,7 @@ import { Card, CardContent, CardHeader } from "@/components/generic/card";
           text-center
           "
           >  
-            Find your edge with a unique solution combining fundamentals, technicals and AI.
+            AI-Powered Market Intelligence
           </p>
         </div>
 
@@ -103,93 +103,10 @@ import { Card, CardContent, CardHeader } from "@/components/generic/card";
       </div>
 
   
-
-<div className="
-      w-full
-      p-8
-      h-full
-      border
-      border-white
-      
-      
-      ">
-        <h1
-        className="
-        text-white
-        text-right
-        "
-        > A Multi-Angle Analysis </h1>
-        
-      </div>
-
-
-      <div className="
-      w-full
-     
-      p-8
-      h-full
-      border
-      border-white
-      ">
-        <h1
-        className="
-        text-white
-        "
-        > Know Exactly What To Trade  </h1>
-      </div>
-
-
-      <div className="
-      w-full
-      
-      p-8
-      h-full
-      border
-      border-white
-      ">
-        <h1
-        className="
-        text-white
-        text-right
-        "
-        > Global View</h1>
-      </div>
-
-      <div className="
-      w-full
-     
-      p-8
-      h-full
-      border
-      border-white
-      ">
-        <h1
-        className="
-        text-white
-        "
-        > AI Powered </h1>
-      </div>
-
-      <div className="
-      w-full
-      
-      p-8
-      h-full
-      border
-      border-white
-      ">
-        <h1 className=" 
-        text-white
-        text-center
-        "
-        > FAQ  </h1>
-
-      </div>
-
+ {/* pricing section  */ }
       <div className="
       flex-col
       w-full
-     
       h-full
       p-8
       justify-center
@@ -202,38 +119,31 @@ import { Card, CardContent, CardHeader } from "@/components/generic/card";
         text-center"
         > Pricing  </h1>
 
-
         <div className=" flex justify-center">
-
-
-        <div className="
-        flex-col
-        align-center
-        ">
-
-          <div className ="grid grid-cols-1 content-center"  >
-    
-            <Card className="m-4
-            bg-gray-100
+          <div className="
+          flex-col
+          align-center
+          ">
+            <div className ="grid grid-cols-1 content-center"  >
+              <Card className="m-4
+              bg-gray-100
+              ">
+                <CardHeader>
+                  <div>
+                    <p> tab</p>
+                    <p> price</p>
+                  </div>
             
-            ">
-              <CardHeader>
-                <div>
-                  <p> tab</p>
-                  <p> price</p>
-                </div>
+                </CardHeader>
+
+                <CardContent>
+                  features
+                </CardContent>
+                { joinButton}
+              </Card>
           
-              </CardHeader>
-
-              <CardContent>
-                features
-              </CardContent>
-
-              { joinButton}
-            </Card>
-         
+            </div>
           </div>
-        </div>
         </div>
 
 

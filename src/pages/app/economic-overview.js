@@ -66,8 +66,15 @@ const EconomicOverview = () => {
   };
 
   const Style = {
-    Wrapper: "grid grid-cols-2 gap-4 p-8",
-    InternalCard: "space-y-4 p-8"
+    Wrapper: `
+    grid 
+  grid-cols-1 
+  md:grid-cols-2 
+  gap-4 px-4
+  md:p-8`,
+    InternalCard: `
+    space-y-4   
+    md:p-8`
   };
 
   return (
@@ -82,7 +89,7 @@ const EconomicOverview = () => {
          && state.interestRateMonitorData 
          && state.inflationRateMonitorData && 
          <div className={Style.Wrapper}>
-            <div className='col-span-2'> 
+            <div className='md:col-span-2'> 
               <h1 className="text-secondary-foreground mb-8">Economic Overview</h1>
               <TitledCard title="Scores">
                 <EconomicOverviewDataTable key={"Overview Table"} data={state.economicOverviewData} />

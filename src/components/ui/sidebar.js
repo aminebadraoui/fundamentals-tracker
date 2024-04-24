@@ -6,7 +6,7 @@ import { Separator } from '@/components/ui/separator'
 import { cn } from '@/lib/utils'
 
 const Style = {
-  sidebarWrapper: "bg-primary py-4 w-[200px] border-0 shadow-md shadow-secondary min-h-dvh max-h-500 ",
+  sidebarWrapper: "bg-primary hidden md:block py-4 w-[200px] border-0 shadow-md shadow-secondary min-h-dvh max-h-500 ",
   buttonLink: " text-primary-foreground bg-primary hover:bg-secondary",
   sectionStyle: "font-bold bg-primary text-secondary-foreground hover:bg-primary",
   mainLink: "font-bold",
