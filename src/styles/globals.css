@@ -16,6 +16,9 @@
     --bearish: 0, 100%, 60%;
     --neutral: 0, 0%, 90%;
 
+    --landing-background: 0, 0%, 100%;
+    --landing-foreground: 0, 0%, 0%;
+
     /* --card:   134, 38%, 20%; */
 
 
@@ -91,14 +94,14 @@
   }
 
   h1 {
-    @apply text-5xl font-bold;
+    @apply text-5xl ;
   }
   
   h2 {
-    @apply text-4xl font-bold;
+    @apply text-4xl 
   }
 
   h3 {
-    @apply text-3xl font-bold;
+    @apply text-3xl ;
   }
 }
