@@ -5,6 +5,7 @@ import Screenshot from "../../public/screenshot.png"
 import Image from 'next/image'
 import { Button } from "@/components/generic/button";
 import { Card, CardContent, CardHeader } from "@/components/generic/card";
+import Link from "next/link";
 
  const Home = () => {
    // Event handler for Join button
@@ -47,10 +48,11 @@ import { Card, CardContent, CardHeader } from "@/components/generic/card";
      border-orange-500
       rounded-md
     text-orange-500 
-      bg-transparent" 
-
-      onClick={handleSignInClick}>
-      Sign In
+      bg-transparent
+      hover:cursor-pointer
+      "
+     >
+        <Link href="/app/pulse">  Go To App </Link>
     </Button>
   );
 

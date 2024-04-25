@@ -1,14 +1,24 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
 
 export const TrendPulseHeader = ({ children, buttons }) => {
+  const [domain, setDomain] = useState('');
+
+  useEffect(() => {
+    // Set the domain when the component mounts and only on the client side
+    setDomain(window.location.origin);
+  }, []);
+
   return (
     <div>
-      <header className='bg-secondary p-8 h-20 w-full'>
-        {/* You may want to use this header or remove it if not necessary */}
+      <header className='bg-secondary 
+      p-8 h-20 
+      w-full'>
         <h1 className='text-secondary'> </h1>
       </header>
 
       <header className='
+        hidden
         md:block
         bg-secondary
         fixed
@@ -21,7 +31,15 @@ export const TrendPulseHeader = ({ children, buttons }) => {
         shadow-secondary
       '>
         <div className='flex justify-between'>
-          <h1 className='text-secondary-foreground'>Trend Pulse</h1>
+          {/* Use domain from state which will be updated after component mounts */}
+          <Link href={domain} className='
+          hover:cursor-pointer
+          '>
+            <h1 className='
+            text-secondary-foreground
+            '>Trend Pulse</h1>
+          </Link>
+          
           <div>
             {buttons && buttons.map((button, index) => (
               <React.Fragment key={index}>
