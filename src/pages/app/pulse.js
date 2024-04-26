@@ -30,36 +30,29 @@ export const getServerSideProps = async (context) => {
         },
       };
     }
-
-    const cot_2024_currencies_path = path.join(process.cwd(), 'public/assets/cot-data/2024/currencies.xml');
-    const cot_2024_currencies_xml = fs.readFileSync(cot_2024_currencies_path, 'utf-8');
-  
-    const cot_2024_bitcoin_path = path.join(process.cwd(), 'public/assets/cot-data/2024/bitcoin.xml');
-    const cot_2024_bitcoin_xml = fs.readFileSync(cot_2024_bitcoin_path, 'utf-8');
-  
-    try {
-      const cot_2024_currencies_json = await parseCotData(cot_2024_currencies_xml);
-      const cot_2024_bitcoin_json = await parseCotData(cot_2024_bitcoin_xml);
-  
-      return { 
-        props: {
-          cot_2024_currencies: cot_2024_currencies_json ,
-          cot_2024_bitcoin: cot_2024_bitcoin_json
-         } 
-        };
-    } catch (error) {
-      console.error('Failed to parse COT data:', error);
-      return { props: { error: 'Failed to load data' } };
-    }
-
 }
 
-return {
-  props: {}, // pass props to the page as needed
-};
+  const cot_2024_currencies_path = path.join(process.cwd(), 'public/assets/cot-data/2024/currencies.xml');
+  const cot_2024_currencies_xml = fs.readFileSync(cot_2024_currencies_path, 'utf-8');
+
+  const cot_2024_bitcoin_path = path.join(process.cwd(), 'public/assets/cot-data/2024/bitcoin.xml');
+  const cot_2024_bitcoin_xml = fs.readFileSync(cot_2024_bitcoin_path, 'utf-8');
+
+  try {
+  const cot_2024_currencies_json = await parseCotData(cot_2024_currencies_xml);
+  const cot_2024_bitcoin_json = await parseCotData(cot_2024_bitcoin_xml);
+
+  return { 
+    props: {
+      cot_2024_currencies: cot_2024_currencies_json ,
+      cot_2024_bitcoin: cot_2024_bitcoin_json
+      } 
+    };
+  } catch (error) {
+  console.error('Failed to parse COT data:', error);
+  return { props: { error: 'Failed to load data' } };
+  }
 }
-
-
 
 const Pulse = (props) => {
   const [pulseData, setPulseData] = useState({});

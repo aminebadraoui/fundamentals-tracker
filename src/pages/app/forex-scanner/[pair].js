@@ -17,9 +17,39 @@ import { parseCotData, findLatestCotDataForAsset } from '@/utils/cot-data';
 
 import fs from 'fs';
 
+export const getStaticPaths = async () => {
+  const paths = Object.keys(majorForexPairs).map((pair) => { return {
+    params: {
+      pair: pair
+    },
+
+  }})
+  return {
+    paths,
+    fallback: false
+  }
+}
+
+export const getStaticProps = async ({params}) => {
+  const cot_2024_currencies_path = 'public/assets/cot-data/2024/currencies.xml';
+  const cot_2024_currencies_xml = fs.readFileSync(cot_2024_currencies_path, 'utf-8');
+
+  try {
+    const cot_2024_currencies_json = await parseCotData(cot_2024_currencies_xml);
+
+    return { 
+      props: {
+        params,
+        cot_2024_currencies: cot_2024_currencies_json ,
+       } 
+      };
+  } catch (error) {
+    console.error('Failed to parse COT data:', error);
+    return { props: { error: 'Failed to load data' } };
+  }
+}
+
 const Scanner = (props) => {
- 
- 
   const pair = props.params.pair;
   const cot_2024_currencies = props.cot_2024_currencies;
   const countries = majorForexPairs[pair].countries
@@ -281,36 +311,6 @@ const Scanner = (props) => {
   );
 };
 
-export const getStaticPaths = async () => {
-  const paths = Object.keys(majorForexPairs).map((pair) => { return {
-    params: {
-      pair: pair
-    },
 
-  }})
-  return {
-    paths,
-    fallback: false
-  }
-}
-
-export const getStaticProps = async ({params}) => {
-  const cot_2024_currencies_path = 'public/assets/cot-data/2024/currencies.xml';
-  const cot_2024_currencies_xml = fs.readFileSync(cot_2024_currencies_path, 'utf-8');
-
-  try {
-    const cot_2024_currencies_json = await parseCotData(cot_2024_currencies_xml);
-
-    return { 
-      props: {
-        params,
-        cot_2024_currencies: cot_2024_currencies_json ,
-       } 
-      };
-  } catch (error) {
-    console.error('Failed to parse COT data:', error);
-    return { props: { error: 'Failed to load data' } };
-  }
-}
 
 export default Scanner;

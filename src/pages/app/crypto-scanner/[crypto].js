@@ -17,6 +17,42 @@ import { parseCotData, findLatestCotDataForAsset } from '@/utils/cot-data';
 
 import fs from 'fs';
 
+export const getStaticPaths = async () => {
+  const paths = Object.keys(cryptoAssets).map((crypto) => { return {
+    params: {
+      crypto: crypto
+    },
+
+  }})
+
+  console.log("pahts", paths)
+
+  
+  return {
+    paths,
+    fallback: false
+  }
+}
+
+export const getStaticProps = async ({params}) => {
+  const cot_2024_bitcoin_path = 'public/assets/cot-data/2024/bitcoin.xml';
+  const cot_2024_bitcoin_xml = fs.readFileSync(cot_2024_bitcoin_path, 'utf-8');
+
+  try {
+    const cot_2024_bitcoin_json = await parseCotData(cot_2024_bitcoin_xml);
+
+    return { 
+      props: {
+       params,
+       cot_2024_bitcoin: cot_2024_bitcoin_json 
+       } 
+      };
+  } catch (error) {
+    console.error('Failed to parse COT data:', error);
+    return { props: { error: 'Failed to load data' } };
+  }
+}
+
 const CryptoScanner = (props) => {
 
   console.log("props", props.params)
@@ -284,40 +320,5 @@ const CryptoScanner = (props) => {
   );
 };
 
-export const getStaticPaths = async () => {
-  const paths = Object.keys(cryptoAssets).map((crypto) => { return {
-    params: {
-      crypto: crypto
-    },
-
-  }})
-
-  console.log("pahts", paths)
-
-  
-  return {
-    paths,
-    fallback: false
-  }
-}
-
-export const getStaticProps = async ({params}) => {
-  const cot_2024_bitcoin_path = 'public/assets/cot-data/2024/bitcoin.xml';
-  const cot_2024_bitcoin_xml = fs.readFileSync(cot_2024_bitcoin_path, 'utf-8');
-
-  try {
-    const cot_2024_bitcoin_json = await parseCotData(cot_2024_bitcoin_xml);
-
-    return { 
-      props: {
-       params,
-       cot_2024_bitcoin: cot_2024_bitcoin_json 
-       } 
-      };
-  } catch (error) {
-    console.error('Failed to parse COT data:', error);
-    return { props: { error: 'Failed to load data' } };
-  }
-}
 
 export default CryptoScanner;
