@@ -10,15 +10,16 @@ import { getScoreBackgroundColor, getScoreTextColor } from '@/utils/get-score-co
 import { getPairData } from '@/utils/pair-data';
 import { getCryptoData } from '@/utils/crypto-data';
 import { getSession } from 'next-auth/react';
+import path from 'path';
 
 
 export const getServerSideProps = async (context) => {
   const session = await getSession({ req: context.req });
 
   console.log("session", session);
-  const path = context.resolvedUrl;
+  const urlPath = context.resolvedUrl;
   // Check if the path contains '/app'
-  const containsApp = path.includes('/app');
+  const containsApp = urlPath.includes('/app');
 
   if (containsApp) {
     if (!session) {
@@ -30,10 +31,10 @@ export const getServerSideProps = async (context) => {
       };
     }
 
-    const cot_2024_currencies_path = 'public/assets/cot-data/2024/currencies.xml';
+    const cot_2024_currencies_path = path.join(process.cwd(), 'public/assets/cot-data/2024/currencies.xml');
     const cot_2024_currencies_xml = fs.readFileSync(cot_2024_currencies_path, 'utf-8');
   
-    const cot_2024_bitcoin_path = 'public/assets/cot-data/2024/bitcoin.xml';
+    const cot_2024_bitcoin_path = path.join(process.cwd(), 'public/assets/cot-data/2024/bitcoin.xml');
     const cot_2024_bitcoin_xml = fs.readFileSync(cot_2024_bitcoin_path, 'utf-8');
   
     try {
