@@ -9,29 +9,56 @@ import fs from 'fs';
 import { getScoreBackgroundColor, getScoreTextColor } from '@/utils/get-score-color';
 import { getPairData } from '@/utils/pair-data';
 import { getCryptoData } from '@/utils/crypto-data';
+import { getSession } from 'next-auth/react';
 
-export async function getStaticProps() {
-  const cot_2024_currencies_path = 'public/assets/cot-data/2024/currencies.xml';
-  const cot_2024_currencies_xml = fs.readFileSync(cot_2024_currencies_path, 'utf-8');
 
-  const cot_2024_bitcoin_path = 'public/assets/cot-data/2024/bitcoin.xml';
-  const cot_2024_bitcoin_xml = fs.readFileSync(cot_2024_bitcoin_path, 'utf-8');
+export const getServerSideProps = async (context) => {
+  const session = await getSession({ req: context.req });
 
-  try {
-    const cot_2024_currencies_json = await parseCotData(cot_2024_currencies_xml);
-    const cot_2024_bitcoin_json = await parseCotData(cot_2024_bitcoin_xml);
+  console.log("session", session);
+  const path = context.resolvedUrl;
+  // Check if the path contains '/app'
+  const containsApp = path.includes('/app');
 
-    return { 
-      props: {
-        cot_2024_currencies: cot_2024_currencies_json ,
-        cot_2024_bitcoin: cot_2024_bitcoin_json
-       } 
+  if (containsApp) {
+    if (!session) {
+      return {
+        redirect: {
+          destination: '/auth/signin',
+          permanent: false,
+        },
       };
-  } catch (error) {
-    console.error('Failed to parse COT data:', error);
-    return { props: { error: 'Failed to load data' } };
-  }
+    }
+
+    const cot_2024_currencies_path = 'public/assets/cot-data/2024/currencies.xml';
+    const cot_2024_currencies_xml = fs.readFileSync(cot_2024_currencies_path, 'utf-8');
+  
+    const cot_2024_bitcoin_path = 'public/assets/cot-data/2024/bitcoin.xml';
+    const cot_2024_bitcoin_xml = fs.readFileSync(cot_2024_bitcoin_path, 'utf-8');
+  
+    try {
+      const cot_2024_currencies_json = await parseCotData(cot_2024_currencies_xml);
+      const cot_2024_bitcoin_json = await parseCotData(cot_2024_bitcoin_xml);
+  
+      return { 
+        props: {
+          cot_2024_currencies: cot_2024_currencies_json ,
+          cot_2024_bitcoin: cot_2024_bitcoin_json
+         } 
+        };
+    } catch (error) {
+      console.error('Failed to parse COT data:', error);
+      return { props: { error: 'Failed to load data' } };
+    }
+
 }
+
+return {
+  props: {}, // pass props to the page as needed
+};
+}
+
+
 
 const Pulse = (props) => {
   const [pulseData, setPulseData] = useState({});

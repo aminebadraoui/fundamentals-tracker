@@ -20,46 +20,46 @@ import Link from "next/link";
     // Additional actions can be added here
   };
 
-  // Define the Join button
-  const joinButton = (
-    <Button 
-      className="mt-4 
-      mb-4 
-      mx-4
-      w-50
-       bg-orange-500 
-       text-white
-       rounded-md
-       " 
+ 
+ // Define the Join button
+ const joinButton = (
+  <Button 
+    className="mt-4 
+    mb-4 
+    mx-4
+    w-50
+     bg-orange-500 
+     text-white
+     rounded-md
+     " 
 
-      onClick={handleJoinClick}>
-      Join Trend Pulse
-    </Button>
-  );
+    onClick={handleJoinClick}>
+    Join Trend Pulse
+  </Button>
+);
 
-  // Define the Sign In button with opposite style
-  const signInButton = (
-    <Button 
-      className="mt-4 
-      mb-4 
-      mx-4 
-      w-50 
-      border
-     border-orange-500
-      rounded-md
-    text-orange-500 
-      bg-transparent
-      hover:cursor-pointer
-      "
-     >
-        <Link href="/app/pulse">  Go To App </Link>
-    </Button>
-  );
-
+// Define the Sign In button with opposite style
+const signInButton = (
+  <Button 
+    className="mt-4 
+    mb-4 
+    mx-4 
+    w-50 
+    border
+   border-orange-500
+    rounded-md
+  text-orange-500 
+    bg-transparent
+    hover:cursor-pointer
+    "
+   >
+      <Link href="/app/pulse">  Go To App </Link>
+  </Button>
+);
 
   return (
   <div className="flex flex-col">
-    <TrendPulseHeader buttons={[joinButton, signInButton]}>
+    <TrendPulseHeader >
       
 
     </TrendPulseHeader>
