@@ -6,10 +6,10 @@ import { Loader } from '@/components/ui/loader'
 
 import { majorForexPairs, cryptoAssets  } from '@/utils/event-names';
 import { ForexPairComparisonTable } from '@/components/ui/forex-pair-comparison-table';
-import { TitledCard } from '@/components/generic/titled-card';
+import { TitledCard } from '@/components/shadcn/titled-card';
 
 import { getCryptoData } from '@/utils/crypto-data';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/generic/table';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/shadcn/table';
 import { getScoreBackgroundColor, getScoreTextColor } from '@/utils/get-score-color';
 import { parseCotData, findLatestCotDataForAsset } from '@/utils/cot-data';
 

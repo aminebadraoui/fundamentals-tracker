@@ -1,5 +1,5 @@
 import React from "react";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../generic/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../shadcn/table";
 
 
 export const EventsTable = ({events}) => {

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Button } from '@/components/generic/button';
+import { Button } from '@/components/shadcn/button';
 import { useSession, getSession } from "next-auth/react"
 import { signOut } from 'next-auth/react';
 import { useRouter } from 'next/router';

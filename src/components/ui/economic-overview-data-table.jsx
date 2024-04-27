@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/generic/table'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/shadcn/table'
 
 const Style = {
   Wrapper : "flex flex-row flex-wrap items-start p-8 space-x-4 space-y-4",

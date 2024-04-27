@@ -8,7 +8,7 @@ import { MonitorDataTable } from '@/components/ui/monitor-data-table';
 import { getEconomicOverviewData } from '@/utils/get-economic-overview-data';
 import { getInflationRateMonitorData } from '@/utils/get-inflation-rate-monitor-data';
 import { getInterestRateMonitorData } from '@/utils/get-interest-rate-monitor-data';
-import { TitledCard } from '@/components/generic/titled-card';
+import { TitledCard } from '@/components/shadcn/titled-card';
 
 const EconomicOverview = () => {
   // Combining all states into one object

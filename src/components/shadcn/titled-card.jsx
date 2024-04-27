@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card } from '@/components/generic/card'
+import { Card } from '@/components/shadcn/card'
 
 const Style = {
   InternalCard: " space-y-4 px-8 py-4 ",

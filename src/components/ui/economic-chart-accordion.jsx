@@ -1,15 +1,15 @@
 import React from "react";
 import { EventsTable } from '@/components/ui/events-table';
 import { ComposedChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/generic/card';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/shadcn/card';
 
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/generic/accordion"
-import { TitledCard } from "../generic/titled-card";
+} from "@/components/shadcn/accordion"
+import { TitledCard } from "../shadcn/titled-card";
 
 /*
   * EconomicChartAccordion

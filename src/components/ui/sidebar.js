@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { Button } from '@/components/generic/button';
+import { Button } from '@/components/shadcn/button';
 import { usePathname } from 'next/navigation';
 import { Separator } from '@/components/ui/separator'
 import { cn } from '@/lib/utils'

@@ -1,7 +1,7 @@
 // https://buy.stripe.com/eVaeWOaOW3uA7bG4gg Monthly link
 import { useState } from 'react';
 import { signIn } from 'next-auth/react';
-import { Card } from '@/components/generic/card';
+import { Card } from '@/components/shadcn/card';
 import { TrendPulseHeader } from '@/components/layout/trendPulseHeader';
 
 const SuccessAuth = () => {

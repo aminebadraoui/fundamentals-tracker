@@ -1,7 +1,7 @@
 import React from 'react';
-import { Card } from '@/components/generic/card'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/generic/table'
-import { TitledCard } from '../generic/titled-card';
+import { Card } from '@/components/shadcn/card'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/shadcn/table'
+import { TitledCard } from '../shadcn/titled-card';
 import { getScoreTextColor } from '@/utils/get-score-color';
 
 const Style = {

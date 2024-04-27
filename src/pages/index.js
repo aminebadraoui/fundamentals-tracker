@@ -3,9 +3,10 @@ import { TrendPulseHeader } from "@/components/layout/trendPulseHeader";
 import React from "react";
 import Screenshot from "../../public/screenshot.png"
 import Image from 'next/image'
-import { Button } from "@/components/generic/button";
-import { Card, CardContent, CardHeader } from "@/components/generic/card";
+import { Button } from "@/components/shadcn/button";
+
 import Link from "next/link";
+import PricingTable from "@/components/ui/pricing-table";
 
  const Home = () => {
    // Event handler for Join button
@@ -31,10 +32,9 @@ import Link from "next/link";
      bg-orange-500 
      text-white
      rounded-md
-     " 
-
-    onClick={handleJoinClick}>
-    Join Trend Pulse
+     " >
+      <Link href={`https://buy.stripe.com/test_7sI3eqgL32Q2640aEE`}> Join Trend Pulse </Link>
+    
   </Button>
 );
 
@@ -58,16 +58,13 @@ const signInButton = (
 );
 
   return (
-  <div className="flex flex-col">
+  <div className="grid">
     <TrendPulseHeader >
-      
-
     </TrendPulseHeader>
-
     <div className="
     grid
     grid-cols-1
-    w-full
+    w-fulls
     "> 
       <div className="
       w-full
@@ -77,6 +74,7 @@ const signInButton = (
       items-center
       ">
 
+{/* hero section  */ }
         <div className="
         px-8
         ">
@@ -104,56 +102,8 @@ const signInButton = (
 
       </div>
 
-  
- {/* pricing section  */ }
-      <div className="
-      flex-col
-      w-full
-      h-full
-      p-8
-      justify-center
-      align-center
-      border
-      border-white
-      ">
-        <h1 className="
-        text-white
-        text-center"
-        > Pricing  </h1>
-
-        <div className=" flex justify-center">
-          <div className="
-          flex-col
-          align-center
-          ">
-            <div className ="grid grid-cols-1 content-center"  >
-              <Card className="m-4
-              bg-gray-100
-              ">
-                <CardHeader>
-                  <div>
-                    <p> tab</p>
-                    <p> price</p>
-                  </div>
-            
-                </CardHeader>
-
-                <CardContent>
-                  features
-                </CardContent>
-                { joinButton}
-              </Card>
-          
-            </div>
-          </div>
-        </div>
-
-
-       
-      </div>
-    
-
-      
+      {/* pricing section  */ }
+      <PricingTable />
 
     </div>
   </div>
