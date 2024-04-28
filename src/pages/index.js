@@ -85,7 +85,7 @@ const signInButton = (
           text-white
           text-center
           "> 
-          Take Control Of Your trading  
+          Take Control Of Your Trading  
           </h1>
 
           <p className="
