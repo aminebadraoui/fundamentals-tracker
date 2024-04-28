@@ -1,4 +1,5 @@
 import { buffer } from 'micro';
+import { on } from 'nodemailer/lib/xoauth2';
 import Stripe from 'stripe';
 
 export const config = {
@@ -8,6 +9,17 @@ export const config = {
 };
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+
+const onCheckoutSessionCompleted = async (session) => {
+    console.log(`Payment was successful!`);
+    console.log(session);
+    
+    // Add user to database
+
+    // Send email to user
+
+};
+
 
 const webhookHandler = async (req, res) => {
     if (req.method === 'POST') {
@@ -28,17 +40,30 @@ const webhookHandler = async (req, res) => {
 
         // Handle the event
         switch (event.type) {
+          case 'checkout.session.completed':
+            const session = event.data.object;
+            console.log(`checkout session completed !`);
+            console.log(event)
+
+            onCheckoutSessionCompleted(session);
+            break;
+
             case 'setup_intent.succeeded':
                 const paymentIntent = event.data.object;
                 console.log(`PaymentIntent was successful!`);
                 console.log(event)
                 break;
+
             case 'customer.updated':
               console.log(`customer updated`);
               console.log(event)
+              break;
+
             case 'invoice.finalized':
               console.log(`invoice finalized`);
               console.log(event)
+              break;
+
             default:
                 console.log(`Unhandled event type ${event.type}`);
         }
