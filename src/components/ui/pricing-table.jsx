@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Card, CardContent } from "@/components/shadcn/card";
 import { Button } from "@/components/shadcn/button";
 import { Switch } from "@/components/shadcn/switch";
+import { PrimaryButton } from './primary-button';
 
 const PricingTable = () => {
     const [isYearly, setIsYearly] = useState(false);
@@ -11,11 +12,23 @@ const PricingTable = () => {
     const monthlyEquivalent = (yearlyPrice / 12).toFixed(2);
     const savings = ((monthlyPrice - monthlyEquivalent) / monthlyPrice * 100).toFixed(0);
 
+      // Define the links for both subscription types
+      const monthlyLink = "https://buy.stripe.com/test_7sI3eqgL32Q2640aEE";
+      const yearlyLink = "https://buy.stripe.com/test_00g2ambqJ62eeAwbIJ";
+
     const features = [
-        'All analytics features',
-        'Up to 1,000,000 tracked visits',
-        'Premium support',
-        'Up to 10 team members',
+        'Best trading setups every day',
+        'Forex Scanner',
+        'Crypto Scanner',
+        'International economic analysis',
+        'Fundamental and technical analysis',
+        'AI-powered sentiment analysis',
+        `Scoring system based on real-time data`,
+        `24/7 customer support`,
+        "Free 7-day trial",
+        "Cancel anytime"
+
+
     ];
 
     const Checkmark = () => (
@@ -27,7 +40,8 @@ const PricingTable = () => {
     return (
         <div className="bg-gray-100 p-6 rounded-lg shadow-xl mx-auto max-w-md mt-10">
             <div className="flex items-center justify-center space-x-4 mb-6">
-                <span className={`text-lg font-medium ${!isYearly ? 'text-orange-600' : 'text-gray-400'}`}>Monthly</span>
+                <span className={`text-lg font-medium ${!isYearly ? 'text-orange-600' : 'text-gray-400'}`}>
+                  Monthly</span>
                 <Switch
                     checked={isYearly}
                     onCheckedChange={setIsYearly}
@@ -35,31 +49,40 @@ const PricingTable = () => {
                 />
                 <span className={`text-lg font-medium ${isYearly ? 'text-orange-600' : 'text-gray-400'}`}>Yearly</span>
             </div>
-            <Card className="bg-white">
-                <CardContent className="text-left">
-                    <div className="text-4xl font-bold mb-2">
+            <Card className="bg-white pt-8">
+                <CardContent className="">
+                  <div className='mb-4'>
+                  <div className="text-4xl font-bold mb-2  ">
                         ${isYearly ? monthlyEquivalent : monthlyPrice}
                         <span className="text-lg text-gray-500">/month</span>
                     </div>
                     {isYearly && (
-                        <div className="flex justify-left items-left space-x-2 mb-2">
+                        <div className="flex justify-left items-baseline space-x-2 ">
                             <span className="text-xl line-through text-gray-500">${monthlyPrice}</span>
+                            <span className="text-sm italic text-gray-500">
+            ${yearlyPrice} billed annually
+        </span>
                             <span className="text-sm text-ef bg-green-200 text-green-700 px-2 py-1 rounded-full">
                                 Save {savings}%
                             </span>
                         </div>
-                    )}
+                           )}
+
+                  </div>
+                 
+                 
                     <ul className="text-sm text-gray-600 space-y-2 mb-6">
                         {features.map((feature, index) => (
-                            <li key={index} className="flex items-center">
+                            <li key={index} className="flex ">
                                 <Checkmark />
                                 {feature}
                             </li>
                         ))}
                     </ul>
-                    <Button className="bg-orange-500 text-white rounded-lg py-2 px-6 font-bold uppercase shadow-md hover:bg-blue-600 transition ease-in-out duration-300">
-                        Get started
-                    </Button>
+                    <div className="flex justify-center">
+                      <PrimaryButton title={"Start For Free"} 
+                    link={isYearly ? yearlyLink : monthlyLink}/>
+                    </div>
                 </CardContent>
             </Card>
         </div>
