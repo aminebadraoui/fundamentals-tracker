@@ -2,6 +2,8 @@ import { buffer } from 'micro';
 import { on } from 'nodemailer/lib/xoauth2';
 import Stripe from 'stripe';
 
+import mongoose from 'mongoose';
+
 export const config = {
     api: {
         bodyParser: false,
@@ -9,15 +11,64 @@ export const config = {
 };
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+mongoose.connect(process.env.MONGODB_URI);
+
+const customerSchema = new mongoose.Schema({
+    email: String,
+    customerId: String,
+    subscription: {
+        paymentLink: String,
+        subscription: String,
+        status: String,
+    },
+  });
+
+const Customer = mongoose.models.Customer || mongoose.model('Customer', customerSchema);
 
 const onCheckoutSessionCompleted = async (session) => {
     console.log(`Payment was successful!`);
     console.log(session);
+
+    const customerId = session.customer
+    const customerEmail = session.customer_details.email;
+    const customerName = session.customer_details.name;
+    const paymentLink = session.payment_link
+    const paymentStatus = session.payment_status
+    const subscriptionId = session.subscription
+
+    const subscription = {
+        paymentLink: paymentLink,
+        subscription: subscriptionId,
+        status: paymentStatus,
+    };
     
-    // Add user to database
+    try {
+      let customer = await Customer.findOne({ email: customerEmail });
+      if (customer) {
+        // Customer exists, update their subscription
+    
+        customer.subscription = subscription;
+        await customer.save();
 
-    // Send email to user
+        console.log(`Subscription updated for ${email}`);
+        // TODO: send email to user
+      } else {
+        // Customer does not exist, create new one
+        const newCustomer = new Customer({
+          email: customerEmail,
+          customerId: customerId,
+          subscription: subscription,
+        });
 
+        await newCustomer.save();
+        console.log(`New customer created with subscription for ${customerEmail}`);
+
+        // TODO: send email to user
+      }
+    } catch (error) {
+      console.error(`Error handling checkout.session.completed event: ${error}`);
+      // Handle the error appropriately
+    }
 };
 
 
@@ -28,8 +79,6 @@ const webhookHandler = async (req, res) => {
 
         let event;
 
-    
-       
         try {
             event = stripe.webhooks.constructEvent(buf, sig, process.env.STRIPE_WEBHOOK_SECRET );
            
@@ -42,26 +91,26 @@ const webhookHandler = async (req, res) => {
         switch (event.type) {
           case 'checkout.session.completed':
             const session = event.data.object;
-            console.log(`checkout session completed !`);
-            console.log(event)
+            // console.log(`checkout session completed !`);
+            // console.log(event)
 
             onCheckoutSessionCompleted(session);
             break;
 
             case 'setup_intent.succeeded':
                 const paymentIntent = event.data.object;
-                console.log(`PaymentIntent was successful!`);
-                console.log(event)
+                // console.log(`PaymentIntent was successful!`);
+                // console.log(event)
                 break;
 
             case 'customer.updated':
-              console.log(`customer updated`);
-              console.log(event)
+            //   console.log(`customer updated`);
+            //   console.log(event)
               break;
 
             case 'invoice.finalized':
-              console.log(`invoice finalized`);
-              console.log(event)
+            //   console.log(`invoice finalized`);
+            //   console.log(event)
               break;
 
             default:

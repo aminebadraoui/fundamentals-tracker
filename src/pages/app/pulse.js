@@ -30,6 +30,14 @@ export const getServerSideProps = async (context) => {
         },
       };
     }
+
+    else {
+      // Get email from session
+
+      // get user from customer collection
+
+      // check if user has active subscription
+    }
 }
 
   const cot_2024_currencies_path = path.join(process.cwd(), 'public/assets/cot-data/2024/currencies.xml');
