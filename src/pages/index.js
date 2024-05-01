@@ -7,6 +7,7 @@ import { Button } from "@/components/shadcn/button";
 
 import Link from "next/link";
 import PricingTable from "@/components/ui/pricing-table";
+import { PrimaryButton } from "@/components/ui/primary-button";
 
  const Home = () => {
    // Event handler for Join button
@@ -38,24 +39,6 @@ import PricingTable from "@/components/ui/pricing-table";
   </Button>
 );
 
-// Define the Sign In button with opposite style
-const signInButton = (
-  <Button 
-    className="mt-4 
-    mb-4 
-    mx-4 
-    w-50 
-    border
-   border-orange-500
-    rounded-md
-  text-orange-500 
-    bg-transparent
-    hover:cursor-pointer
-    "
-   >
-      <Link href="/app/pulse">  Go To App </Link>
-  </Button>
-);
 
   return (
   <div className="grid">
@@ -98,7 +81,9 @@ const signInButton = (
           </p>
         </div>
 
-       { joinButton}
+        <div className="w-96 m-4">
+
+       <PrimaryButton variant="default"> Join Trend Pulse </PrimaryButton> </div>
 
       </div>
 

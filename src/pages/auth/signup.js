@@ -13,8 +13,6 @@ const SignUp = () => {
   };
 
   return (
-   
-
     <div>
        <TrendPulseHeader />
 

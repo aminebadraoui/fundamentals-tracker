@@ -28,18 +28,7 @@ const SuccessAuth = () => {
     h-96
     `}>
 
-    <form className={
-      `flex flex-col`
-    } onSubmit={handleLogin}>
-      <input
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        placeholder="Enter your email"
-        required
-      />
-      <button type="submit">Send Magic Link</button>
-    </form>
+      <p> Welcome To Trend Pulse. You can login <a href='/auth/signin'> here </a>! </p>
 
     </Card>
 
