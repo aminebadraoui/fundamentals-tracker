@@ -1,44 +1,23 @@
 "use client"
-import { TrendPulseHeader } from "@/components/layout/trendPulseHeader";
-import React from "react";
-import Screenshot from "../../public/screenshot.png"
-import Image from 'next/image'
-import { Button } from "@/components/shadcn/button";
 
-import Link from "next/link";
+import React, { useRef } from 'react'; // Import useRef
+import { TrendPulseHeader } from "@/components/layout/trendPulseHeader";
 import PricingTable from "@/components/ui/pricing-table";
 import { PrimaryButton } from "@/components/ui/primary-button";
 
  const Home = () => {
+  const pricingRef = useRef(null);  // Create a ref object
+
+  const scrollToPricing = () => {
+    pricingRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
    // Event handler for Join button
    const handleJoinClick = () => {
     console.log("Join Trend Pulse clicked!");
-    // Additional actions can be added here
-  };
-
-  // Event handler for Sign In button
-  const handleSignInClick = () => {
-    console.log("Sign In clicked!");
-    // Additional actions can be added here
-  };
-
- 
- // Define the Join button
- const joinButton = (
-  <Button 
-    className="mt-4 
-    mb-4 
-    mx-4
-    w-50
-     bg-orange-500 
-     text-white
-     rounded-md
-     " >
-      <Link href={`https://buy.stripe.com/test_7sI3eqgL32Q2640aEE`}> Join Trend Pulse </Link>
     
-  </Button>
-);
-
+    scrollToPricing()
+  };
 
   return (
   <div className="grid">
@@ -83,12 +62,17 @@ import { PrimaryButton } from "@/components/ui/primary-button";
 
         <div className="w-96 m-4">
 
-       <PrimaryButton variant="default"> Join Trend Pulse </PrimaryButton> </div>
+       <PrimaryButton onClick={() => handleJoinClick()} variant="default"> Join Trend Pulse </PrimaryButton> </div>
 
       </div>
 
       {/* pricing section  */ }
-      <PricingTable />
+
+      <div ref={pricingRef} id="pricing">
+        <PricingTable/>
+
+      </div>
+      
 
     </div>
   </div>

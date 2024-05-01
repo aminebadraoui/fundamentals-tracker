@@ -1,41 +1,42 @@
-// https://buy.stripe.com/eVaeWOaOW3uA7bG4gg Monthly link
-import { useState } from 'react';
-import { signIn } from 'next-auth/react';
-import { Card } from '@/components/shadcn/card';
+import React, { useEffect, useState } from 'react';
+import { FaCheckCircle } from 'react-icons/fa'; // Import an icon that indicates success
+import IconTitleMessageCard from '@/components/ui/IconTitleMessageCard';
 import { TrendPulseHeader } from '@/components/layout/trendPulseHeader';
+import { useRouter } from 'next/router';
 
 const PaymentSuccess = () => {
-  const [email, setEmail] = useState('');
+  const [countdown, setCountdown] = useState(10);
+  const router = useRouter();
 
-  const handleLogin = async (event) => {
-    event.preventDefault();
-    // Trigger sending the magic link email
-    signIn('email', { email });
-  };
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCountdown((currentCountdown) => {
+        if (currentCountdown <= 1) {
+          clearInterval(timer);
+          router.push('/auth/signin'); // Redirect to the sign-in page after countdown
+          return 0;
+        }
+        return currentCountdown - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [router]);
 
   return (
-   
+    <div className="text-white min-h-screen">
+      <TrendPulseHeader />
+      <IconTitleMessageCard
+        Icon={FaCheckCircle}
+        title="Welcome To The Trend Pulse Family !"
+        message={
+          <>
+            You will be redirected to the sign-in page in <span className="text-orange-500">{countdown}</span>  seconds.<br /><br />
 
-    <div>
-       <TrendPulseHeader />
-
-       <div className='grid 
-       grid-cols-1 
-       h-dvh 
-       place-items-center'>
-       <Card className={`
-    w-96
-    h-96
-    `}>
-
-   <p> Welcome To Trend Pulse. You can login <a href='/auth/signin'> here </a>! </p>
-
-    </Card>
-
-       </div>
-
-   
-
+            <a href="/auth/signin" className="text-orange-500 hover:text-orange-600">Click here</a> if you are not redirected.
+          </>
+        }
+      />
     </div>
   );
 };
