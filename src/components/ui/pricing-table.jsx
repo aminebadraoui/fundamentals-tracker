@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Card, CardContent } from "@/components/shadcn/card";
 import { Switch } from "@/components/shadcn/switch";
 import { PrimaryButton } from './primary-button';
+import Link from 'next/link';
 
 const PricingTable = () => {
     const [isYearly, setIsYearly] = useState(false);
@@ -79,7 +80,10 @@ const PricingTable = () => {
                         ))}
                     </ul>
                     <div className="flex justify-center">
-                      <PrimaryButton onClick={() => {}}> Start Free Trial </PrimaryButton>
+                    <Link href={ isYearly ? yearlyLink : monthlyLink} passHref>
+                        <PrimaryButton> Start Free Trial </PrimaryButton>
+                    </Link>
+                      
 
                     </div>
                 </CardContent>

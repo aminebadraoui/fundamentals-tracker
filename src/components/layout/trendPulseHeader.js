@@ -41,21 +41,28 @@ export const TrendPulseHeader = ({ children, buttons }) => {
 
           <div className='flex space-x-4'>
             {!isUserSignedIn && (
-              <PrimaryButton variant="default">
-                <Link href="/auth/signup">Join Trend Pulse</Link>
-              </PrimaryButton>
+              <Link href="/" passHref>
+                  <PrimaryButton variant="default">
+                    Join Trend Pulse
+                  </PrimaryButton>
+              </Link>
+              
             )}
 
             {!isUserSignedIn && (
-              <PrimaryButton variant="outlined">
-                <Link href="/auth/signin">Sign In</Link>
-              </PrimaryButton>
-            )}
+                <Link href="/auth/signin" passHref> 
+                  <PrimaryButton variant="outlined">
+                    Sign In
+                  </PrimaryButton>
+                </Link>
+                 )}
 
             {!hasAppPath && isUserSignedIn && (
-              <PrimaryButton variant="default">
-                <Link href="/app/pulse">Go To App</Link>
-              </PrimaryButton>
+              <Link href="/app/pulse" passHref>
+                <PrimaryButton variant="default">
+                  Go To App
+                </PrimaryButton>
+              </Link>
             )}
 
             {isUserSignedIn && (
