@@ -9,58 +9,40 @@ import fs from 'fs';
 import { getScoreBackgroundColor, getScoreTextColor } from '@/utils/get-score-color';
 import { getPairData } from '@/utils/pair-data';
 import { getCryptoData } from '@/utils/crypto-data';
-import { getSession } from 'next-auth/react';
+
 import path from 'path';
 
+import withSession from '@/lib/withSession';
+import withSubscription from '@/lib/withSubscription';
 
 export const getServerSideProps = async (context) => {
-  const session = await getSession({ req: context.req });
+  return withSession(context, async(context, session) => {
+   return withSubscription(context, session, async(context) => {
 
-  console.log("session", session);
-  const urlPath = context.resolvedUrl;
-  // Check if the path contains '/app'
-  const containsApp = urlPath.includes('/app');
-
-  if (containsApp) {
-    if (!session) {
-      return {
-        redirect: {
-          destination: '/auth/signin',
-          permanent: false,
-        },
-      };
-    }
-
-    else {
-      // Get email from session
-
-      // get user from customer collection
-
-      // check if user has active subscription
-    }
-}
-
-  const cot_2024_currencies_path = path.join(process.cwd(), 'public/assets/cot-data/2024/currencies.xml');
-  const cot_2024_currencies_xml = fs.readFileSync(cot_2024_currencies_path, 'utf-8');
-
-  const cot_2024_bitcoin_path = path.join(process.cwd(), 'public/assets/cot-data/2024/bitcoin.xml');
-  const cot_2024_bitcoin_xml = fs.readFileSync(cot_2024_bitcoin_path, 'utf-8');
+    const cot_2024_currencies_path = path.join(process.cwd(), 'public/assets/cot-data/2024/currencies.xml');
+    const cot_2024_currencies_xml = fs.readFileSync(cot_2024_currencies_path, 'utf-8');
+  
+    const cot_2024_bitcoin_path = path.join(process.cwd(), 'public/assets/cot-data/2024/bitcoin.xml');
+    const cot_2024_bitcoin_xml = fs.readFileSync(cot_2024_bitcoin_path, 'utf-8');
 
   try {
-  const cot_2024_currencies_json = await parseCotData(cot_2024_currencies_xml);
-  const cot_2024_bitcoin_json = await parseCotData(cot_2024_bitcoin_xml);
-
-  return { 
-    props: {
-      cot_2024_currencies: cot_2024_currencies_json ,
-      cot_2024_bitcoin: cot_2024_bitcoin_json
-      } 
-    };
-  } catch (error) {
-  console.error('Failed to parse COT data:', error);
-  return { props: { error: 'Failed to load data' } };
-  }
+    const cot_2024_currencies_json = await parseCotData(cot_2024_currencies_xml);
+    const cot_2024_bitcoin_json = await parseCotData(cot_2024_bitcoin_xml);
+  
+    return { 
+      props: {
+        cot_2024_currencies: cot_2024_currencies_json ,
+        cot_2024_bitcoin: cot_2024_bitcoin_json
+        } 
+      };
+    }  catch (error) {
+        console.error('Failed to parse COT data:', error);
+        return { props: { error: 'Failed to load data' } };
+      }
+    })
+  })
 }
+  
 
 const Pulse = (props) => {
   const [pulseData, setPulseData] = useState({});
@@ -100,7 +82,7 @@ const Pulse = (props) => {
           news_sentiment: news_sentiment_json
         }
 
-        console.log(news_data_for_pair)
+ 
 
         const cot_for_pair = findLatestCotDataForAsset(majorForexPairs[pair].cotName, cot_2024_currencies)
 
@@ -139,7 +121,7 @@ const Pulse = (props) => {
           news_sentiment: news_sentiment_json
         }
 
-        console.log(news_data_for_pair)
+     
 
         const cot_for_pair = findLatestCotDataForAsset(cotName, cot_2024_bitcoin)
 
@@ -159,7 +141,7 @@ const Pulse = (props) => {
         return acc;
       }, {});
 
-      console.log("dataForAllPairs", dataForAllPairs)
+      
 
       // sort dataForAllPairs by total score in descending order
       const sortedDataForAllPairs = Object.keys(dataForAllPairs).sort((a, b) => dataForAllPairs[b].totalScore - dataForAllPairs[a].totalScore).reduce((acc, key) => {

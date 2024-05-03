@@ -8,7 +8,7 @@ const Style = {
 }
 
 const getScoreCell = (score) => {
-  return <TableCell className={`${score > 0 ? 'text-bullish' : score  ==  0 ? 'text-neutral' : 'text-bearish '} `}>
+  return <TableCell className={`${score > 0 ? 'text-bullish' : score  ==  0 ? 'text-primary-foreground' : 'text-bearish '} `}>
    { score > 0 ? `+${score}` : score} 
   </TableCell>
 }
@@ -29,7 +29,7 @@ const getScoreCell = (score) => {
 */
 
 export const EconomicOverviewDataTable = ({data}) => {
-  console.log(data)
+  
   return (
       <Table>
         <TableHeader>

@@ -10,6 +10,19 @@ import { getInflationRateMonitorData } from '@/utils/get-inflation-rate-monitor-
 import { getInterestRateMonitorData } from '@/utils/get-interest-rate-monitor-data';
 import { TitledCard } from '@/components/shadcn/titled-card';
 
+import withSession from '@/lib/withSession';
+import withSubscription from '@/lib/withSubscription';
+
+export const getServerSideProps = async (context) => {
+  return withSession(context, async(context, session) => {
+   return withSubscription(context, session, async(context) => {
+    return { 
+      props: {} 
+      };
+    })
+  })
+}
+
 const EconomicOverview = () => {
   // Combining all states into one object
   const [state, setState] = useState({

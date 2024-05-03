@@ -13,44 +13,34 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { getScoreBackgroundColor, getScoreTextColor } from '@/utils/get-score-color';
 import { parseCotData, findLatestCotDataForAsset } from '@/utils/cot-data';
 
-
+import withSession from '@/lib/withSession';
+import withSubscription from '@/lib/withSubscription';
 
 import fs from 'fs';
 
-export const getStaticPaths = async () => {
-  const paths = Object.keys(cryptoAssets).map((crypto) => { return {
-    params: {
-      crypto: crypto
-    },
 
-  }})
+export const getServerSideProps = async (context) => {
+  return withSession(context, async(context, session) => {
+    return withSubscription(context, session, async(context) => {
+      const params = context.params;
+      const cot_2024_bitcoin_path = 'public/assets/cot-data/2024/bitcoin.xml';
+      const cot_2024_bitcoin_xml = fs.readFileSync(cot_2024_bitcoin_path, 'utf-8');
 
-  console.log("pahts", paths)
+      try {
+        const cot_2024_bitcoin_json = await parseCotData(cot_2024_bitcoin_xml);
 
-  
-  return {
-    paths,
-    fallback: false
-  }
-}
-
-export const getStaticProps = async ({params}) => {
-  const cot_2024_bitcoin_path = 'public/assets/cot-data/2024/bitcoin.xml';
-  const cot_2024_bitcoin_xml = fs.readFileSync(cot_2024_bitcoin_path, 'utf-8');
-
-  try {
-    const cot_2024_bitcoin_json = await parseCotData(cot_2024_bitcoin_xml);
-
-    return { 
-      props: {
-       params,
-       cot_2024_bitcoin: cot_2024_bitcoin_json 
-       } 
-      };
-  } catch (error) {
-    console.error('Failed to parse COT data:', error);
-    return { props: { error: 'Failed to load data' } };
-  }
+        return { 
+          props: {
+          params,
+          cot_2024_bitcoin: cot_2024_bitcoin_json 
+          } 
+          };
+      } catch (error) {
+        console.error('Failed to parse COT data:', error);
+        return { props: { error: 'Failed to load data' } };
+      }
+    })
+  })
 }
 
 const CryptoScanner = (props) => {

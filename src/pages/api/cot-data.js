@@ -6,7 +6,7 @@ import { list } from '@vercel/blob';
 export default async (req, res) => {
   const listResponse = await list();
   const blobs = listResponse.blobs
-  console.log("response", blobs)
+  
 
 
 

@@ -11,7 +11,7 @@ export const DashboardLayout = ({ children }) => {
   return (
     <div className='flex flex-col'>
     <TrendPulseHeader />
-      <div className='flex flex-row offset '>
+      <div className='mt-16 flex flex-row offset '>
         <SideBar/> 
         <div className="w-full">
           {children}

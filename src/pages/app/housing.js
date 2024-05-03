@@ -6,6 +6,19 @@ import { housingKeys } from '@/utils/event-names';
 import { getChartData } from '@/utils/getChartData';
 import { Loader } from '@/components/ui/loader'
 
+import withSession from '@/lib/withSession';
+import withSubscription from '@/lib/withSubscription';
+
+export const getServerSideProps = async (context) => {
+  return withSession(context, async(context, session) => {
+   return withSubscription(context, session, async(context) => {
+    return { 
+      props: {} 
+      };
+    })
+  })
+}
+
 const Housing = () => {
   // keep track of different arrays of events as part of one object
   const [{allData, housingData, housingChartData}, setEvents] = useState({});

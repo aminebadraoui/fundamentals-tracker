@@ -13,40 +13,34 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { getScoreBackgroundColor, getScoreTextColor } from '@/utils/get-score-color';
 import { parseCotData, findLatestCotDataForAsset } from '@/utils/cot-data';
 
-
+import withSession from '@/lib/withSession';
+import withSubscription from '@/lib/withSubscription';
 
 import fs from 'fs';
 
-export const getStaticPaths = async () => {
-  const paths = Object.keys(majorForexPairs).map((pair) => { return {
-    params: {
-      pair: pair
-    },
+export const getServerSideProps = async (context) => {
+  return withSession(context, async(context, session) => {
+    return withSubscription(context, session, async(context) => {
+      const params = context.params
+      console.log('params', params)
+      const cot_2024_currencies_path = 'public/assets/cot-data/2024/currencies.xml';
+      const cot_2024_currencies_xml = fs.readFileSync(cot_2024_currencies_path, 'utf-8');
 
-  }})
-  return {
-    paths,
-    fallback: false
-  }
-}
+      try {
+        const cot_2024_currencies_json = await parseCotData(cot_2024_currencies_xml);
 
-export const getStaticProps = async ({params}) => {
-  const cot_2024_currencies_path = 'public/assets/cot-data/2024/currencies.xml';
-  const cot_2024_currencies_xml = fs.readFileSync(cot_2024_currencies_path, 'utf-8');
-
-  try {
-    const cot_2024_currencies_json = await parseCotData(cot_2024_currencies_xml);
-
-    return { 
-      props: {
-        params,
-        cot_2024_currencies: cot_2024_currencies_json ,
-       } 
-      };
-  } catch (error) {
-    console.error('Failed to parse COT data:', error);
-    return { props: { error: 'Failed to load data' } };
-  }
+        return { 
+          props: {
+            params,
+            cot_2024_currencies: cot_2024_currencies_json ,
+            } 
+          };
+      } catch (error) {
+        console.error('Failed to parse COT data:', error);
+        return { props: { error: 'Failed to load data' } };
+      }
+      })
+    })
 }
 
 const Scanner = (props) => {
