@@ -56,7 +56,7 @@ export const ForexPairComparisonTable = ({pair, ticker1, ticker2, data}) => {
            {
             data[ticker1] && data[ticker2] ? 
             
-            <TableCell> {getPairScore(data[ticker1].inflationScore, data[ticker2].inflationScore) }</TableCell> : <TableCell> {"N/A"} </TableCell>
+            <TableCell className={`font-bold`}> {getPairScore(data[ticker1].inflationScore, data[ticker2].inflationScore) }</TableCell> : <TableCell> {"N/A"} </TableCell>
           }
           
           </TableRow>

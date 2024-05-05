@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
 import { DashboardLayout } from '@/components/layout/dashboard-layout'
-import { getDataSortedByTotalScore } from '@/utils/getDataSortedByTotalScore';
-import { inflationKeys, employmentKeys, interestRatesKeys, majorEventsKeys } from '@/utils/event-names';
+
 import { Loader } from '@/components/ui/loader'
 
-import { majorForexPairs, cryptoAssets  } from '@/utils/event-names';
-import { ForexPairComparisonTable } from '@/components/ui/forex-pair-comparison-table';
+import {  cryptoAssets  } from '@/utils/event-names';
+
 import { TitledCard } from '@/components/shadcn/titled-card';
 
 import { getCryptoData } from '@/utils/crypto-data';
