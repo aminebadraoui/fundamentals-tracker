@@ -5,9 +5,9 @@ const ScoreIndicator = ({ score }) => {
   const isPositive = score >= 0;
   
   return (
-    <div className={`inline-flex items-center px-2 py-1 rounded font-bold text-base ${isPositive ? 'bg-green-500' : 'bg-red-500'} text-white`}>
-      <span className="m-4 text-3xl">{score} </span>
-      {isPositive ? <FaArrowTrendUp size={32}  /> : <FaArrowTrendDown size={32}  />}
+    <div className={`inline-flex items-center px-4 space-x-4 py-1 rounded font-bold text-base ${score > 0 ? 'bg-bullish' : score < 0 ? 'bg-bearish' : 'bg-neutral'} text-white`}>
+      <span className="text-3xl">{score} </span>
+      {isPositive ? <FaArrowTrendUp size={32} className='opacity-60'  /> : <FaArrowTrendDown size={32} className='opacity-60'   />}
       
     </div>
   );
