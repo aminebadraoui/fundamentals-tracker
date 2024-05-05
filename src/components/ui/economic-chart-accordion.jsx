@@ -8,7 +8,7 @@ import { TitledCard } from "../shadcn/titled-card";
 export const EconomicChartAccordion = ({ data, chartData }) => {
   const axisStyle = {
     fontWeight: 'bold',
-    fill: '#ff7300',
+    fill: '#ffffff',
   };
 
   return (
@@ -40,7 +40,7 @@ export const EconomicChartAccordion = ({ data, chartData }) => {
             const scoreColor = data[country].totalScore > 0 ? 'text-bullish' : data[country].totalScore < 0 ? 'text-bearish' : 'text-neutral';
             return (
               <Accordion key={country} type="single" collapsible>
-                <AccordionItem value={country} className={`text-orange-500 font-bold`}>
+                <AccordionItem value={country} className={`text-secondary-foreground font-bold`}>
                   <AccordionTrigger>
                     <div className="flex flex-row w-full items-center justify-between">
                       <p>{country}</p>

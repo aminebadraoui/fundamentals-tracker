@@ -10,12 +10,14 @@ import { useEffect } from 'react';
 export const DashboardLayout = ({ children }) => {
   return (
     <div className='flex flex-col'>
-    <TrendPulseHeader />
+      <TrendPulseHeader />
+
       <div className='mt-16 flex flex-row offset '>
         <SideBar/> 
-        <div className="w-full">
+        <div className="w-full p-8">
           {children}
         </div>
+
       </div>
     </div>
   );

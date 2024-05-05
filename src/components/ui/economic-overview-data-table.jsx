@@ -8,7 +8,7 @@ const Style = {
 }
 
 const getScoreCell = (score) => {
-  return <TableCell className={`${score > 0 ? 'text-bullish' : score  ==  0 ? 'text-primary-foreground' : 'text-bearish '} `}>
+  return <TableCell className={`font-bold ${score > 0 ? 'text-bullish' : score  ==  0 ? 'text-primary-foreground' : 'text-bearish '} `}>
    { score > 0 ? `+${score}` : score} 
   </TableCell>
 }
@@ -36,11 +36,12 @@ export const EconomicOverviewDataTable = ({data}) => {
           
           <TableRow className="!border-0 hover:bg-transparent">
           <TableHead className="bg-transparent border-0"> </TableHead>
-            <TableHead> Inflation </TableHead>
-            <TableHead> Employment </TableHead>
-            <TableHead> Housing </TableHead>
-            <TableHead> Growth </TableHead>
-            <TableHead> Total Score </TableHead>
+          <TableHead className=""> Total Score </TableHead>
+            <TableHead className=""> Inflation </TableHead>
+            <TableHead className=""> Employment </TableHead>
+            <TableHead className=""> Housing </TableHead>
+            <TableHead className=""> Growth </TableHead>
+            
           </TableRow>
         </TableHeader>
         
@@ -50,13 +51,16 @@ export const EconomicOverviewDataTable = ({data}) => {
               const country = data[key]
               return (
                 <TableRow key={key}>
-                  <TableCell className="text-primary-foreground bg-primary ">{key}</TableCell>
-                  
-                  {getScoreCell(country.inflationScore.toFixed(2))}
-                  {getScoreCell(country.employmentScore.toFixed(2))}
-                  {getScoreCell(country.housingScore.toFixed(2))}
-                  {getScoreCell(country.growthScore.toFixed(2))}
+                  <TableCell className="font-bold bg-primary ">{key}</TableCell>
                   {getScoreCell(  (country.totalScore).toFixed(2)  ) }
+
+                  <TableCell className=" text-primary-foreground bg-primary ">{ country.inflationScore.toFixed(2) }</TableCell>
+                  <TableCell className=" text-primary-foreground bg-primary ">{ country.employmentScore.toFixed(2) }</TableCell>
+                  <TableCell className="text-primary-foreground bg-primary ">{ country.housingScore.toFixed(2) }</TableCell>
+                  <TableCell className=" text-primary-foreground bg-primary ">{ country.growthScore.toFixed(2) }</TableCell>
+
+                  
+                 
                   
                 </TableRow>
               )

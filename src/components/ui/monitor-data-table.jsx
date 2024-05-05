@@ -15,15 +15,12 @@ export const MonitorDataTable = ({tableTitle, valueTitle,  data}) => {
     <TitledCard title={tableTitle}>
     <Table>
     <TableHeader>
-      <TableRow className="!border-0 hover:bg-transparent">
-        <TableHead className="bg-transparent border-0" > </TableHead>
-        <TableHead className="font-bold"  colSpan={ 2 }>{valueTitle}</TableHead>
-      </TableRow>
+     
 
       <TableRow className="!border-0 hover:bg-transparent">
       <TableHead className=" border-0 bg-transparent hover:bg-transparent"> </TableHead>
-        <TableHead className="font-bold" > Current</TableHead>
-        <TableHead className="font-bold"  >  Previous</TableHead>
+        <TableHead className="font-bold"  > Current</TableHead>
+        <TableHead className="font-bold "  >  Previous</TableHead>
       </TableRow>
     </TableHeader>
     <TableBody>
@@ -36,8 +33,8 @@ export const MonitorDataTable = ({tableTitle, valueTitle,  data}) => {
     
       return (
         <TableRow key={key}>
-          <TableCell className=" bg-primary text-primary-foreground font-bold">{key}</TableCell>
-          <TableCell className= {`${cellBg} ${getScoreTextColor(country.score)}`}   >{ `${country.actual}` }</TableCell>
+          <TableCell className=" bg-primary text-primary-foreground font-bold ">{key}</TableCell>
+          <TableCell className= {`${cellBg} ${getScoreTextColor(country.score)} `}   >{ `${country.actual}` }</TableCell>
           <TableCell className={`${cellBg} ${getScoreTextColor(country.score)}`}  >{ `${country.previous}` }</TableCell>
         </TableRow>
       )
