@@ -43,7 +43,14 @@ const links = [
       { name: 'Housing', href: '/app/housing' },
       { name: 'Growth', href: '/app/growth' },
     ]
-  }
+  },
+  {
+    name: 'Sentiment',
+    type: 'section',
+    links: [
+      { name: 'Insititutional Positioning', href: '/app/sentiment/institutional' },
+    ]
+  },
 ];
 
 

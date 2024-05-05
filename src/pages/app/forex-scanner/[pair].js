@@ -17,6 +17,7 @@ import withSession from '@/lib/withSession';
 import withSubscription from '@/lib/withSubscription';
 
 import fs from 'fs';
+import ScoreIndicator from '@/components/ui/score-indicator';
 
 export const getServerSideProps = async (context) => {
   return withSession(context, async(context, session) => {
@@ -123,7 +124,8 @@ const Scanner = (props) => {
             pairData && <div className={Style.Wrapper}>
               <div className={Style.Title}>
                 <h1 className="text-secondary-foreground mb-8"> {pair} </h1>
-                <h1 className="text-secondary-foreground mb-8"> {pairData.totalScore} </h1>
+                <ScoreIndicator score={pairData.totalScore} />
+              
               </div>
 
               { [pair].map((pair) => {
