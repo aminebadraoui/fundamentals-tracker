@@ -7,6 +7,8 @@ const Verify = () => {
   return (
     <div className="text-white min-h-screen">
       <TrendPulseHeader />
+
+      <div className='mt-16'>
       <IconTitleMessageCard 
         Icon={FaEnvelopeOpenText}
         title="Just One More Step!"
@@ -15,6 +17,7 @@ const Verify = () => {
           Click it to complete your sign up and dive right in.
         </>}
       />
+      </div>
     </div>
   );
 };
