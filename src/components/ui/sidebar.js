@@ -6,7 +6,7 @@ import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/
 const Style = {
   sidebarWrapper: "bg-primary hidden md:block py-4 w-[200px] border-0 shadow-md shadow-secondary min-h-screen",
   linkStyle: "text-primary-foreground bg-primary cursor-pointer block w-full text-left px-4 py-4 font-medium text-sm",
-  activeLink: "text-orange-500 bg-secondary cursor-pointer block w-full text-left px-4 py-4 font-medium text-sm",
+  activeLink: "font-bold text-orange-500 bg-secondary cursor-pointer block w-full text-left px-4 py-4  text-sm",
   sectionHeader: "font-bold bg-primary text-sm border-b border-secondary-foreground text-secondary-foreground hover:bg-secondary cursor-pointer py-8 pl-4 w-full text-left",
   subLink: "pl-4 py-4"
 };
@@ -88,7 +88,7 @@ export const SideBar = () => {
             </AccordionItem>
           ) : (
             <Link key={item.name} href={item.href} passHref>
-              <div className={`${ isLinkActive(item.href) ? Style.activeLink : Style.linkStyle }`}>
+              <div className={`${ isLinkActive(item.href) ? Style.activeLink : Style.sectionHeader }`}>
                 {item.name}
               </div>
             </Link>
