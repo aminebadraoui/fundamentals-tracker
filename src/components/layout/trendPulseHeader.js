@@ -22,10 +22,10 @@ export const TrendPulseHeader = () => {
 
   return (
     <div>
-     <header className='hidden md:block bg-secondary fixed top-0 z-50 px-8 py-4 w-full shadow-md shadow-secondary'>
+     <header className='hidden md:block bg-secondary fixed top-0 z-50 px-4 py-4 w-full shadow-md shadow-secondary'>
   <div className='flex justify-between items-center h-full'> {/* Added h-full to ensure full height usage */}
     <Link href="/" passHref>
-      <h1 className='text-secondary-foreground cursor-pointer'>Trend Pulse</h1>
+      <h1 className='text-3xl font-bold text-secondary-foreground cursor-pointer'>Trend Pulse</h1>
     </Link>
 
     <div className='flex space-x-4 items-center'> {/* Ensuring items-center is applied */}
