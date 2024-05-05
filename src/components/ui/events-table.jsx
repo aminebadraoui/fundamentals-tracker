@@ -22,17 +22,17 @@ export const EventsTable = ({events}) => {
           {events.map((event, index) => (
 
                 <TableRow key={index}>
-                  <TableCell> {event.type} </TableCell>
+                  <TableCell className={`font-bold`}> {event.type} </TableCell>
                   <TableCell> {event.comparison } </TableCell>
                   <TableCell> {event.date  } </TableCell>
                   <TableCell> {event.actual} </TableCell>
                   <TableCell> {event.previous} </TableCell>
                   <TableCell> {event.estimate} </TableCell>
-                  <TableCell> {event.score} </TableCell>
+                  <TableCell className={`font-bold ${event.score > 0 ? `text-bullish` : event.score == 0 ? `text-primary-foreground` : `text-bearish`}`} > {event.score} </TableCell>
                  
               
                 </TableRow>
-              ))},
+              ))}
           </TableBody>
         </Table> 
   )
