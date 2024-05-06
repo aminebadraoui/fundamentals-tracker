@@ -144,6 +144,24 @@ const cryptoAssets = {
     apiSymbol: 'BTC-USD.CC'
   },
 }
+
+const commodities = {
+  'GOLD': {
+    countries: ["US"],
+    cotName: "GOLD",
+    apiSymbol: ''
+  },
+  'SILVER': {
+    countries: ["US"],
+    cotName: "SILVER",
+    apiSymbol: ''
+  },
+  'OIL': {
+    countries: ["US"],
+    cotName: "WTI FINANCIAL CRUDE OIL",
+    apiSymbol: ''
+  },
+}
  
 export {inflationKeys,
   eventCategoryList, 
@@ -154,5 +172,6 @@ export {inflationKeys,
   flippedScoringKeys,
   majorEventsKeys,
   majorForexPairs,
-  cryptoAssets
+  cryptoAssets,
+  commodities
 }
