@@ -256,26 +256,7 @@ const Scanner = (props) => {
                         </Table>
                         </TitledCard>
 
-                        <TitledCard key={`${pair}_technicals_card`} className={Style.InternalCard} title="Technicals">
-                          <Table> 
-                            <TableHeader>
-                              <TableRow className='hover:bg-transparent'>
-                                <TableHead className='font-bold'> Last Close Price</TableHead>
-                                <TableHead className='font-bold'> 20 Daily Moving Average </TableHead>
-                                <TableHead className='font-bold'> 50 Daily Moving Average </TableHead>
-                                <TableHead className='font-bold'> Final Score </TableHead>
-                              </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                              <TableRow>
-                                <TableCell> {pairData.technicals.last_close} </TableCell>
-                                <TableCell> {pairData.technicals.last_sma_50} </TableCell>
-                                <TableCell> {pairData.technicals.last_sma_200} </TableCell>
-                                <TableCell className={ `${getScoreBackgroundColor(pairData.technicals.sma_score)} font-bold `}>  {pairData.technicals.sma_score} </TableCell>
-                                </TableRow>
-                            </TableBody>
-                            </Table>
-                        </TitledCard>
+                    
 
                         <TitledCard key={`${pair}_news_sentiment_card`} className={Style.InternalCard} title="News Sentiment">
                           <Table> 
