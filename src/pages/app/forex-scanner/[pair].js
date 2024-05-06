@@ -56,10 +56,6 @@ const Scanner = (props) => {
   const cot_for_pair = findLatestCotDataForAsset(majorForexPairs[pair].cotName, cot_2024_currencies)
   const GaugeComponent = dynamic(() => import('react-gauge-component'), { ssr: false });
 
-  //Component with default values
- 
-  
- 
   // keep track of different arrays of events as part of one object
   const [pairData , setPairData] = useState(null);
   const [isLoading, setLoading] = useState(false);
