@@ -8,6 +8,7 @@ export const TrendPulseHeader = () => {
   const { data: session, status } = useSession();
   const router = useRouter();
   const isUserSignedIn = session && status === "authenticated";
+  const isAppRoute = router.pathname.includes('/app'); 
 
   const handleJoinClick = async () => {
     // Route to home and then scroll to pricing
@@ -43,7 +44,7 @@ export const TrendPulseHeader = () => {
         </Link>
       )}
 
-      {isUserSignedIn && (
+      {isUserSignedIn && !isAppRoute  && (
         <Link href="/app/pulse" passHref>
           <PrimaryButton variant="default" style={{ minHeight: 'auto', lineHeight: 'inherit' }}>
             Go To App
