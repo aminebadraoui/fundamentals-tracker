@@ -28,7 +28,7 @@ export const EventsTable = ({events}) => {
                   <TableCell> {event.actual} </TableCell>
                   <TableCell> {event.previous} </TableCell>
                   <TableCell> {event.estimate} </TableCell>
-                  <TableCell className={`font-bold ${event.score > 0 ? `text-bullish` : event.score == 0 ? `text-primary-foreground` : `text-bearish`}`} > {event.score} </TableCell>
+                  <TableCell className={`font-bold ${event.score > 50 ? `text-strongBuy` : event.score > 25 ? `text-buy` : event.score > -25 ? `text-neutral` : event.score > -50 ? `text-sell` :  `text-strongSell`}`} > {event.score} </TableCell>
                  
               
                 </TableRow>

@@ -8,7 +8,7 @@ const Style = {
 }
 
 const getScoreCell = (score) => {
-  return <TableCell className={`font-bold ${score > 0 ? 'text-bullish' : score  ==  0 ? 'text-primary-foreground' : 'text-bearish '} `}>
+  return <TableCell className={`font-bold ${score > 50 ? 'text-strongBuy' : score > 25 ? 'text-buy' : score > -25 ? 'text-neutral' : score  > -50 ? 'text-sell' : 'text-strongSell '} `}>
    { score > 0 ? `+${score}` : score} 
   </TableCell>
 }

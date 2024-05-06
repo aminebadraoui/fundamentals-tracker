@@ -180,7 +180,7 @@ const CryptoScanner = (props) => {
                             <TableRow>
                               <TableCell colSpan={2} className='font-bold'> Final Score </TableCell>
                           
-                              <TableCell className={ `${getScoreBackgroundColor(pairData.totalEconomicScore)} font-bold text-primary-foreground`}> {pairData.totalEconomicScore} </TableCell>
+                              <TableCell className={ `${getScoreBackgroundColor(pairData.totalEconomicScore)} font-bold `}> {pairData.totalEconomicScore} </TableCell>
                             </TableRow>
                         </TableBody>
                         
@@ -199,7 +199,7 @@ const CryptoScanner = (props) => {
                           <TableRow>
                             <TableCell> {pairData.institutional.net_positions} </TableCell>
                             <TableCell> {pairData.institutional.net_positions_old} </TableCell>
-                            <TableCell className={ `${getScoreBackgroundColor(pairData.institutional.score)} font-bold text-primary-foreground`}> {pairData.institutional.score} </TableCell>
+                            <TableCell className={ `${getScoreBackgroundColor(pairData.institutional.score)} font-bold `}> {pairData.institutional.score} </TableCell>
                             </TableRow>
                         </TableBody>
                         </Table>   
@@ -218,7 +218,7 @@ const CryptoScanner = (props) => {
                           <TableRow>
                             <TableCell> {pairData.retail.net_positions} </TableCell>
                             <TableCell> {pairData.retail.net_positions_old} </TableCell>
-                            <TableCell className={ `${getScoreBackgroundColor(pairData.retail.score)} font-bold text-primary-foreground`}>  {pairData.retail.score} </TableCell>
+                            <TableCell className={ `${getScoreBackgroundColor(pairData.retail.score)} font-bold `}>  {pairData.retail.score} </TableCell>
                             </TableRow>
                         </TableBody>
                         </Table>
@@ -239,7 +239,7 @@ const CryptoScanner = (props) => {
                                 <TableCell> {pairData.technicals.last_close.toFixed(2)} </TableCell>
                                 <TableCell> {pairData.technicals.last_sma_50.toFixed(2)} </TableCell>
                                 <TableCell> {pairData.technicals.last_sma_200.toFixed(2)} </TableCell>
-                                <TableCell className={ `${getScoreBackgroundColor(pairData.technicals.sma_score)} font-bold text-primary-foreground`}>  {pairData.technicals.sma_score} </TableCell>
+                                <TableCell className={ `${getScoreBackgroundColor(pairData.technicals.sma_score)} font-bold `}>  {pairData.technicals.sma_score} </TableCell>
                                 </TableRow>
                             </TableBody>
                             </Table>
@@ -288,7 +288,7 @@ const CryptoScanner = (props) => {
                               <TableRow>
                                 <TableCell colSpan={2} className='font-bold'> Final Score </TableCell>
                            
-                                <TableCell className={ `${getScoreBackgroundColor(pairData.news.total_news_score)} font-bold text-primary-foreground`}> {pairData.news.total_news_score} </TableCell>
+                                <TableCell className={ `${getScoreBackgroundColor(pairData.news.total_news_score)} font-bold `}> {pairData.news.total_news_score} </TableCell>
                               </TableRow>
                             </TableBody>
                             </Table>

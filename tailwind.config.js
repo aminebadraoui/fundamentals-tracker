@@ -58,14 +58,20 @@ module.exports = {
           DEFAULT: "hsl(var(--table-header))",
           foreground: "hsl(var(--table-header-foreground))",
         },
-        bullish: {
-          DEFAULT: "hsl(var(--bullish))",
+        strongBuy: {
+          DEFAULT: "hsl(var(--strong-buy))",
         },
-        bearish: {
-          DEFAULT: "hsl(var(--bearish))",
+        buy: {
+          DEFAULT: "hsl(var(--buy))",
         },
         neutral: {
           DEFAULT: "hsl(var(--neutral))",
+        },
+        sell: {
+          DEFAULT: "hsl(var(--sell))",
+        },
+        strongSell: {
+          DEFAULT: "hsl(var(--strong-sell))",
         },
       },
       borderRadius: {

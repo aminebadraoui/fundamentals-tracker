@@ -37,7 +37,7 @@ export const EconomicChartAccordion = ({ data, chartData }) => {
       <div className="flex-1"> {/* Second card, no conditional margin */}
         <TitledCard title="Details">
           {Object.keys({...data}).map((country) => {
-            const scoreColor = data[country].totalScore > 0 ? 'text-bullish' : data[country].totalScore < 0 ? 'text-bearish' : 'text-neutral';
+            const scoreColor = data[country].totalScore > 50 ? 'text-strongBuy' : data[country].totalScore > 25 ? 'text-buy' : data[country].totalScore > -25 ? 'text-neutral' : data[country].totalScore > -50 ? 'text-sell' : `text-strongSell`;
             return (
               <Accordion key={country} type="single" collapsible>
                 <AccordionItem value={country} className={`text-secondary-foreground font-bold`}>

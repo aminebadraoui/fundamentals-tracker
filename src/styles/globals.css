@@ -16,9 +16,11 @@
     --primary-foreground: 226, 27%, 70%;
     --secondary-foreground: 0, 0%, 85%;;
 
-    --bullish: 120, 100%, 30%;
-    --bearish: 0, 90%, 40%;
-    --neutral: 225, 60%, 15%;
+    --strong-buy: 120, 100%, 30%;
+    --buy: 89, 100%, 32%;
+    --neutral: 60, 93%, 35%;
+    --sell: 30, 93%, 37%;
+    --strong-sell: 0, 90%, 40%;
 
     --landing-background: 0, 0%, 100%;
     --landing-foreground: 0, 0%, 0%;

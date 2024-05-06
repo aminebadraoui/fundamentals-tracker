@@ -5,7 +5,7 @@ const ScoreIndicator = ({ score }) => {
   const isPositive = score >= 0;
   
   return (
-    <div className={`inline-flex items-center px-4 space-x-4 py-1 rounded font-bold text-base ${score > 0 ? 'bg-bullish' : score < 0 ? 'bg-bearish' : 'bg-neutral'} text-white`}>
+    <div className={`inline-flex items-center px-4 space-x-4 py-1 rounded font-bold text-base ${score > 50 ? 'bg-strongBuy text-white' : score > 25 ? 'bg-buy text-white' : score > -25 ? 'bg-neutral text-black' : score > -50 ? 'bg-sell text-white' : 'bg-strongSell text-white'} `}>
       <span className="text-3xl">{score} </span>
       {isPositive ? <FaArrowTrendUp size={32} className='opacity-60'  /> : <FaArrowTrendDown size={32} className='opacity-60'   />}
       
