@@ -18,6 +18,10 @@ import withSubscription from '@/lib/withSubscription';
 
 import fs from 'fs';
 import ScoreIndicator from '@/components/ui/score-indicator';
+import Gauge from '@/components/ui/gauge';
+
+import dynamic from "next/dynamic";
+
 
 export const getServerSideProps = async (context) => {
   return withSession(context, async(context, session) => {
@@ -50,7 +54,10 @@ const Scanner = (props) => {
   const countries = majorForexPairs[pair].countries
 
   const cot_for_pair = findLatestCotDataForAsset(majorForexPairs[pair].cotName, cot_2024_currencies)
+  const GaugeComponent = dynamic(() => import('react-gauge-component'), { ssr: false });
 
+  //Component with default values
+ 
   
  
   // keep track of different arrays of events as part of one object
@@ -106,8 +113,8 @@ const Scanner = (props) => {
   }, [pair])
 
   const Style = {
-    Title: "flex flex-row w-full justify-between" ,
-    Wrapper : " flex flex-col w-full space-y-4 p-8",
+    Title: "flex flex-row w-full justify-between items-start" ,
+    Wrapper : " flex flex-col w-full  ",
     InternalCard: " "
   }
 
@@ -124,7 +131,38 @@ const Scanner = (props) => {
             pairData && <div className={Style.Wrapper}>
               <div className={Style.Title}>
                 <h1 className="text-secondary-foreground mb-8"> {pair} </h1>
-                <ScoreIndicator score={pairData.totalScore} />
+                <GaugeComponent
+                                value={pairData.totalScore} 
+                                type="radial"
+                                labels={{
+                                  valueLabel: {
+                                    matchColorWithArc: true,
+                                  },
+                                  tickLabels: {
+                                    type: "inner",
+                                    ticks: [
+                                      { value: -100 },
+                                      { value: -50 },
+                                      { value: -25 },
+                                      { value: 0 },
+                                      { value: 25 },
+                                      { value: 50 },
+                                      { value: 100 },
+                                    ]
+                                  }
+                                }}
+                                arc={{
+                                  colorArray: ['#c20b0a','#009900'],
+                                  subArcs: [{limit: -50}, {limit: -25}, {limit: 25}, {limit: 50}, {}],
+                                  padding: 0.02,
+                                  width: 0.3
+                                }}
+                                minValue={-100}
+                                maxValue={100}
+                                pointer={{
+                                  elastic: true,
+                                  animationDelay: 0
+                                }}/>
               
               </div>
 
