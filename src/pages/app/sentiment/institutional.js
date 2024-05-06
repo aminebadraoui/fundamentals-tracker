@@ -170,7 +170,7 @@ const Institutional = (props) => {
   
 // Function to dynamically adjust bar size based on the number of items
 const calculateBarSize = (data) => {
-  return data.length > 1 ? 20 : 100; // Smaller bar size for multiple items, larger for single
+  return data.length > 1 ? 50 : 100; // Smaller bar size for multiple items, larger for single
 };
 
 return (
@@ -182,40 +182,40 @@ return (
         <h1 className="text-secondary-foreground mb-8">Institutional Positioning</h1>
         {/* Forex Chart */}
         <TitledCard title="Forex">
-          <ResponsiveContainer width="100%" height={400}>
-            <BarChart data={forexData}>
+          <ResponsiveContainer  height={400}>
+            <BarChart data={forexData} barCategoryGap={20} >
               <XAxis dataKey="name" tick={{ fill: 'white' }} />
               <YAxis domain={[0, 100]} />
               <Tooltip cursor={{fill: 'transparent'}} />
               <Legend />
-              <Bar dataKey="comm_positions_long_all" name="Total Longs" fill="#009900" barSize={calculateBarSize(forexData)} />
-              <Bar dataKey="comm_positions_short_all" name="Total Shorts" fill="#c20b0a" barSize={calculateBarSize(forexData)} />
+              <Bar dataKey="comm_positions_long_all" name="Total Longs" stackId="a" fill="#009900"   />
+              <Bar dataKey="comm_positions_short_all" name="Total Shorts" stackId="a" fill="#c20b0a" />
             </BarChart>
           </ResponsiveContainer>
         </TitledCard>
         {/* Crypto Chart */}
         <TitledCard title="Crypto">
-          <ResponsiveContainer width="100%" height={400}>
-            <BarChart data={cryptoData} layout={cryptoData.length === 1 ? 'vertical' : 'horizontal'}>
-              <XAxis type={cryptoData.length === 1 ? 'number' : 'category'} />
-              <YAxis type={cryptoData.length === 1 ? 'category' : 'number'} dataKey="name"  tick={{ fill: 'white' }} />
+        <ResponsiveContainer  width="25%" height={400}>
+            <BarChart data={cryptoData} barCategoryGap={20} >
+              <XAxis dataKey="name" tick={{ fill: 'white' }} />
+              <YAxis domain={[0, 100]} />
               <Tooltip cursor={{fill: 'transparent'}} />
               <Legend />
-              <Bar dataKey="comm_positions_long_all" name="Total Longs" fill="#009900" barSize={calculateBarSize(cryptoData)} />
-              <Bar dataKey="comm_positions_short_all" name="Total Shorts" fill="#c20b0a" barSize={calculateBarSize(cryptoData)} />
+              <Bar dataKey="comm_positions_long_all" name="Total Longs" stackId="a" fill="#009900"   />
+              <Bar dataKey="comm_positions_short_all" name="Total Shorts" stackId="a" fill="#c20b0a" />
             </BarChart>
           </ResponsiveContainer>
         </TitledCard>
         {/* Commodities Chart */}
         <TitledCard title="Commodities">
-          <ResponsiveContainer width="100%" height={400}>
-            <BarChart data={commodityData}>
+          <ResponsiveContainer width="50%" height={400}>
+            <BarChart data={commodityData}  barCategoryGap={20} >
               <XAxis dataKey="name"   tick={{ fill: 'white' }}/>
               <YAxis domain={[0, 100]}   />
               <Tooltip cursor={{fill: 'transparent'}} />
               <Legend />
-              <Bar dataKey="noncomm_positions_long_all" name="Total Longs"  fill="#009900" barSize={calculateBarSize(commodityData)} />
-              <Bar dataKey="noncomm_positions_short_all" name="Total Shorts" fill="#c20b0a" barSize={calculateBarSize(commodityData)} />
+              <Bar dataKey="noncomm_positions_long_all" name="Total Longs"  stackId="a" fill="#009900"  />
+              <Bar dataKey="noncomm_positions_short_all" name="Total Shorts" stackId="a" fill="#c20b0a"  />
             </BarChart>
           </ResponsiveContainer>
         </TitledCard>
