@@ -3,7 +3,7 @@
 export default async (req, res) => {
   const symbol = req.query.symbol
 
-  const formatted_weekly_price_data = getWeeklyPriceData(symbol)
+  const formatted_weekly_price_data = await getWeeklyPriceData(symbol)
 
   res.status(200).json(formatted_weekly_price_data)
 }
