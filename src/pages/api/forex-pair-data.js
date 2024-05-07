@@ -34,7 +34,7 @@ export default async (req, res) => {
   }
 
   try {
-    weekly_price_data_json = await getWeeklyPriceData(pair)
+    weekly_price_data_json = await getWeeklyPriceData(majorForexPairs[pair].apiSymbol)
   } catch (error) {
     console.error('Error fetching weekly price data:', error);
     return res.status(500).json({ error: 'Failed to fetch weekly price data', details: error.message });

@@ -104,36 +104,43 @@ const majorForexPairs =  {
   'EURUSD': {
     countries: ["EU", "US"],
     cotName: "EURO FX",
+    apiSymbol: 'EURUSD.FOREX'
   },
   
   'GBPUSD': {
     countries: ["UK", "US"],
     cotName: "BRITISH POUND",
+    apiSymbol: 'GBPUSD.FOREX'
   },
 
   'AUDUSD': {
     countries: ["AU", "US"],
     cotName: "AUSTRALIAN DOLLAR",
+    apiSymbol: 'AUDUSD.FOREX'
   },
 
   'NZDUSD': {
     countries: ["NZ", "US"],
     cotName: "NZ DOLLAR",
+    apiSymbol: 'NZDUSD.FOREX'
   },
 
   'USDCHF': {
     countries: ["US", "CH"],
     cotName: "SWISS FRANC",
+    apiSymbol: 'USDCHF.FOREX'
   },
 
   'USDJPY': {
     countries: ["US", "JP"],
     cotName: "JAPANESE YEN",
+    apiSymbol: 'USDJPY.FOREX'
   },
 
   'USDCAD': {
     countries: ["US", "CA"],
     cotName: "CANADIAN DOLLAR",
+    apiSymbol: 'USDCAD.FOREX'
   },
 }
 

@@ -10,7 +10,7 @@ export default async (req, res) => {
 
 export const getNewsSentimentData = async (symbol) => {  
 
-  const url =` https://eodhd.com/api/sentiments/?s=${symbol}&api_token=${process.env.EOD_TOKEN}&fmt=json`
+  const url =`https://eodhd.com/api/sentiments/?s=${symbol}&api_token=${process.env.EOD_TOKEN}&fmt=json`
 
   const sentiment_res = await fetch(url);
 

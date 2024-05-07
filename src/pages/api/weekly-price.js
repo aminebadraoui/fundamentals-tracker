@@ -9,7 +9,7 @@ export default async (req, res) => {
 }
 
 export const getWeeklyPriceData = async (symbol) => {
-  const url =` https://eodhd.com/api/eod/${symbol}?&period=w&api_token=${process.env.EOD_TOKEN}&fmt=json`
+  const url =`https://eodhd.com/api/eod/${symbol}?&period=w&api_token=${process.env.EOD_TOKEN}&fmt=json`
 
   const weekly_price_res = await fetch(url);
 
