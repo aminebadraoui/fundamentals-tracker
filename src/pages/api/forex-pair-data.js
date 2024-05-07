@@ -4,6 +4,8 @@ import fs from 'fs';
 import { getPairData } from '@/utils/pair-data';
 import path from 'path';
 
+import { getEventData } from './event-calendar';
+
 export default async (req, res) => {
   const baseUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000';
   const pair = req.query.pair;
@@ -22,8 +24,8 @@ export default async (req, res) => {
   }
 
   try {
-    const data = await fetch(`${baseUrl}/api/event-calendar?countries=${countries}`);
-    jsonData = await data.json();
+    jsonData = await getEventData(countries);
+    
   } catch (error) {
     console.error('Error fetching event data:', error);
     return res.status(500).json({ error: 'Failed to fetch event data', details: error.message });
