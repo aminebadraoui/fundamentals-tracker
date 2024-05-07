@@ -48,10 +48,7 @@ export default async (req, res) => {
   }
 
   try {
-    const pairData = getPairData(pair, jsonData, cot_for_pair, {
-      news_sentiment: news_sentiment_json,
-      weekly_price_data: weekly_price_data_json
-    });
+    const pairData = getPairData(pair, jsonData, cot_for_pair, news_sentiment_json, weekly_price_data_json);
     console.log(pairData);
     res.status(200).json(pairData);
   } catch (error) {
