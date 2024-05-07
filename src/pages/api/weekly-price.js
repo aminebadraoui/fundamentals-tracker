@@ -2,7 +2,13 @@
 
 export default async (req, res) => {
   const symbol = req.query.symbol
+  
+  const formatted_weekly_price_data = getWeeklyPriceData(symbol)
 
+  res.status(200).json(formatted_weekly_price_data)
+}
+
+export const getWeeklyPriceData = async (symbol) => {
   const url =` https://eodhd.com/api/eod/${symbol}?&period=w&api_token=${process.env.EOD_TOKEN}&fmt=json`
 
   const weekly_price_res = await fetch(url);
@@ -20,5 +26,5 @@ export default async (req, res) => {
     }
   })
 
-  res.status(200).json(formatted_weekly_price_data)
+  return formatted_weekly_price_data
 }

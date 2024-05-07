@@ -5,6 +5,8 @@ import { getPairData } from '@/utils/pair-data';
 import path from 'path';
 
 import { getEventData } from './event-calendar';
+import { getWeeklyPriceData } from './weekly-price';
+import { getNewsSentimentData } from './news-sentiment';
 
 export default async (req, res) => {
   const baseUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000';
@@ -32,16 +34,14 @@ export default async (req, res) => {
   }
 
   try {
-    const weekly_price_data = await fetch(`${baseUrl}/api/weekly-price?symbol=${pair}.FOREX`);
-    weekly_price_data_json = await weekly_price_data.json();
+    weekly_price_data_json = await getWeeklyPriceData(pair)
   } catch (error) {
     console.error('Error fetching weekly price data:', error);
     return res.status(500).json({ error: 'Failed to fetch weekly price data', details: error.message });
   }
 
   try {
-    const news_sentiment = await fetch(`${baseUrl}/api/news-sentiment?symbol=${pair}.FOREX`);
-    news_sentiment_json = await news_sentiment.json();
+    news_sentiment_json = await getNewsSentimentData(pair)
   } catch (error) {
     console.error('Error fetching news sentiment:', error);
     return res.status(500).json({ error: 'Failed to fetch news sentiment', details: error.message });
