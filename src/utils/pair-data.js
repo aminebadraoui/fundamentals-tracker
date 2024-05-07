@@ -178,6 +178,8 @@ const getPairData = (pair, rawData, cotData, news_sentiment_data, weekly_price_d
   // News
   pairData.news.news_set = []
 
+  console.log("news_sentiment_data", news_sentiment_data)
+
   // if (news_sentiment_data.news_sentiment[`${pair}.FOREX`]) {
   //   news_sentiment_data.news_sentiment[`${pair}.FOREX`].slice(0,7).map((news) => {
   //     pairData.news.news_set.push({date: news.date, count: news.count, score: (news.normalized * 100)})
