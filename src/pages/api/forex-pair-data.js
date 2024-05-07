@@ -1,5 +1,7 @@
-import { majorForexPairs, parseCotData, findLatestCotDataForAsset, getPairData } from '@/utils'; // Make sure to properly import required utilities
+import { majorForexPairs  } from '@/utils/event-names';
+import { parseCotData, findLatestCotDataForAsset } from '@/utils/cot-data';
 import fs from 'fs';
+import { getPairData } from '@/utils/pair-data';
 import path from 'path';
 
 export default async (req, res) => {
