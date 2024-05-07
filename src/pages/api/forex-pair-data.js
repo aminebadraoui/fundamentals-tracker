@@ -41,7 +41,7 @@ export default async (req, res) => {
   }
 
   try {
-    news_sentiment_json = await getNewsSentimentData(pair)
+    news_sentiment_json = await getNewsSentimentData(majorForexPairs[pair].apiSymbol)
   } catch (error) {
     console.error('Error fetching news sentiment:', error);
     return res.status(500).json({ error: 'Failed to fetch news sentiment', details: error.message });
