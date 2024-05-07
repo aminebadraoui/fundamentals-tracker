@@ -128,7 +128,7 @@ const Scanner = (props) => {
 
                     <div className='flex space-x-8'>
                       
-                      <ChartComponent data={pairData.weekly_price_data} symbol={pair} timeframe={'Weekly'}></ChartComponent>
+                     { <ChartComponent data={pairData.weekly_price_data} symbol={pair} timeframe={'Weekly'}></ChartComponent>}
                     
                       <div className='flex flex-col space-y-4'>
                       <TitledCard key={`${pair}_economy_card_`} className={Style.InternalCard} title="Economy">

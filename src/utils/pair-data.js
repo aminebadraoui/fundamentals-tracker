@@ -194,7 +194,7 @@ const getPairData = (pair, rawData, cotData, news_sentiment_data, weekly_price_d
   //   pairData.news.total_news_score = 0
   // }
 
-  pairData.weekly_price_data = weekly_price_data.weekly_price_data
+  pairData.weekly_price_data = weekly_price_data
   
   pairData.totalScore = (pairData.totalEconomicScore + pairData.institutional.score + pairData.retail.score  + pairData.news.total_news_score) / 4
 
