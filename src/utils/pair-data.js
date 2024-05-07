@@ -180,19 +180,19 @@ const getPairData = (pair, rawData, cotData, news_sentiment_data, weekly_price_d
 
   console.log("news_sentiment_data", news_sentiment_data)
 
-  // if (news_sentiment_data.news_sentiment[`${pair}.FOREX`]) {
-  //   news_sentiment_data.news_sentiment[`${pair}.FOREX`].slice(0,7).map((news) => {
-  //     pairData.news.news_set.push({date: news.date, count: news.count, score: (news.normalized * 100)})
-  //   })
+  if (news_sentiment_data[`${pair}.FOREX`]) {
+    news_sentiment_data[`${pair}.FOREX`].slice(0,7).map((news) => {
+      pairData.news.news_set.push({date: news.date, count: news.count, score: (news.normalized * 100)})
+    })
   
-  //   pairData.news.avg_score = pairData.news.news_set.reduce((acc, news) => acc + news.score, 0) / pairData.news.news_set.length 
-  //   pairData.news.total_news_score = pairData.news.avg_score > 0 ? 100 : pairData.news.avg_score < 0 ? -100 : 0
+    pairData.news.avg_score = pairData.news.news_set.reduce((acc, news) => acc + news.score, 0) / pairData.news.news_set.length 
+    pairData.news.total_news_score = pairData.news.avg_score > 0 ? 100 : pairData.news.avg_score < 0 ? -100 : 0
 
-  // } else {
-  //   pairData.news.news_set = []
-  //   pairData.news.avg_score = 0
-  //   pairData.news.total_news_score = 0
-  // }
+  } else {
+    pairData.news.news_set = []
+    pairData.news.avg_score = 0
+    pairData.news.total_news_score = 0
+  }
 
   pairData.weekly_price_data = weekly_price_data
   
