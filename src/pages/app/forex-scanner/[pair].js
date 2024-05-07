@@ -1,101 +1,60 @@
 import { useEffect, useState } from 'react';
 import { DashboardLayout } from '@/components/layout/dashboard-layout'
-import { getDataSortedByTotalScore } from '@/utils/getDataSortedByTotalScore';
-import { inflationKeys, employmentKeys, interestRatesKeys, majorEventsKeys } from '@/utils/event-names';
 import { Loader } from '@/components/ui/loader'
-
-import { majorForexPairs  } from '@/utils/event-names';
-import { ForexPairComparisonTable } from '@/components/ui/forex-pair-comparison-table';
 import { TitledCard } from '@/components/shadcn/titled-card';
-
-import { getPairData } from '@/utils/pair-data';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/shadcn/table';
 import { getScoreBackgroundColor, getScoreTextColor } from '@/utils/get-score-color';
-import { parseCotData, findLatestCotDataForAsset } from '@/utils/cot-data';
+
+import { ChartComponent } from '@/components/ui/chart-component';
 
 import withSession from '@/lib/withSession';
 import withSubscription from '@/lib/withSubscription';
 
-import fs from 'fs';
-import ScoreIndicator from '@/components/ui/score-indicator';
-import Gauge from '@/components/ui/gauge';
-
 import dynamic from "next/dynamic";
-
 
 export const getServerSideProps = async (context) => {
   return withSession(context, async(context, session) => {
     return withSubscription(context, session, async(context) => {
       const params = context.params
-      console.log('params', params)
-      const cot_2024_currencies_path = 'public/assets/cot-data/2024/currencies.xml';
-      const cot_2024_currencies_xml = fs.readFileSync(cot_2024_currencies_path, 'utf-8');
-
-      try {
-        const cot_2024_currencies_json = await parseCotData(cot_2024_currencies_xml);
-
+     
         return { 
           props: {
-            params,
-            cot_2024_currencies: cot_2024_currencies_json ,
-            } 
+            params, 
+          } 
           };
-      } catch (error) {
-        console.error('Failed to parse COT data:', error);
-        return { props: { error: 'Failed to load data' } };
-      }
       })
     })
 }
 
 const Scanner = (props) => {
   const pair = props.params.pair;
-  const cot_2024_currencies = props.cot_2024_currencies;
-  const countries = majorForexPairs[pair].countries
-
-  const cot_for_pair = findLatestCotDataForAsset(majorForexPairs[pair].cotName, cot_2024_currencies)
   const GaugeComponent = dynamic(() => import('react-gauge-component'), { ssr: false });
-
   // keep track of different arrays of events as part of one object
   const [pairData , setPairData] = useState(null);
   const [isLoading, setLoading] = useState(false);
+
+
+    const candlestickData = [
+      { time: '2018-12-22', open: 32.51, high: 34.10, low: 32.10, close: 33.98 },
+      { time: '2018-12-23', open: 33.98, high: 34.50, low: 33.11, close: 33.82 },
+      // Add more data points similarly
+  ];
+
 
   const handleDownload = async () => {
     setLoading(true);
 
     try {
-      const data = await fetch(`../../api/event-calendar?countries=${countries}`)
-      const jsonData = await data.json()
+      const pairData_local = await fetch(`../../api/forex-pair-data?pair=${pair}`)
 
-      const last_sma50 = await fetch(`../../api/technical-sma?symbol=${pair}.FOREX&period=20`)
-      const last_sma50_json = await last_sma50.json()
-
-      const last_sma_200 = await fetch(`../../api/technical-sma?symbol=${pair}.FOREX&period=50`)
-      const last_sma200_json = await last_sma_200.json()
-
-      const last_close = await fetch(`../../api/last-close?symbol=${pair}.FOREX`)
-      const last_close_json = await last_close.json()
-
-      const news_sentiment = await fetch(`../../api/news-sentiment?symbol=${pair}.FOREX`)
-      const news_sentiment_json = await news_sentiment.json()
-
-      const technical_data_for_pair = {
-        last_sma_50: last_sma50_json,
-        last_sma_200: last_sma200_json,
-        last_close: last_close_json
-      }
-
-      const news_data_for_pair = {
-        news_sentiment: news_sentiment_json
-      }
-
-      const pairData_local = getPairData(pair, jsonData, cot_for_pair, technical_data_for_pair, news_data_for_pair)
-      console.log(pairData_local)
+      const pairData_local_json = await pairData_local.json()
 
       // set the state with the sorted data
-      setPairData(pairData_local);
+      setPairData(pairData_local_json);
 
-      if (pairData_local) {
+      console.log("pairData_local_json", pairData_local_json)
+
+      if (pairData_local_json) {
         setLoading(false);
       }
       
@@ -166,6 +125,8 @@ const Scanner = (props) => {
                 return (
                   pairData && <div className=' space-y-8'>
                     {console.log("news section", pairData.news)}
+
+                    <ChartComponent data={pairData.weekly_price_data}></ChartComponent>
 
                       <TitledCard key={`${pair}_economy_card_`} className={Style.InternalCard} title="Economy">
                        <Table>

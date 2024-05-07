@@ -18,7 +18,7 @@ const getCountryData = (country, rawData) => {
   }
 }
 
-const getPairData = (pair, rawData, cotData, technical_data, news_sentiment_data) => {
+const getPairData = (pair, rawData, cotData, technical_data, news_sentiment_data, weekly_price_data) => {
   const pairData = {
     "pair": "EURUSD",
 
@@ -90,6 +90,9 @@ const getPairData = (pair, rawData, cotData, technical_data, news_sentiment_data
       }
     ], 
     "total_news_score": 0,
+    },
+
+    "weekly_price_data": {
     },
 
     "totalScore": 0,
@@ -210,6 +213,8 @@ const getPairData = (pair, rawData, cotData, technical_data, news_sentiment_data
     pairData.news.avg_score = 0
     pairData.news.total_news_score = 0
   }
+
+  pairData.weekly_price_data = weekly_price_data.weekly_price_data
   
   pairData.totalScore = (pairData.totalEconomicScore + pairData.institutional.score + pairData.retail.score  + pairData.news.total_news_score) / 5
 
