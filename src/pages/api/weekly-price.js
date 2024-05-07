@@ -2,7 +2,7 @@
 
 export default async (req, res) => {
   const symbol = req.query.symbol
-  
+
   const formatted_weekly_price_data = getWeeklyPriceData(symbol)
 
   res.status(200).json(formatted_weekly_price_data)
@@ -13,7 +13,12 @@ export const getWeeklyPriceData = async (symbol) => {
 
   const weekly_price_res = await fetch(url);
 
+  console.log("weekly_price_res", weekly_price_res)
+
   const weekly_price_json = await weekly_price_res.json()
+
+  console.log("weekly_price_json", weekly_price_json)
+
 
   const formatted_weekly_price_data = weekly_price_json.map((data) => {
     return {
