@@ -2,7 +2,7 @@ import { majorForexPairs  } from '@/utils/event-names';
 import { parseCotData, findLatestCotDataForAsset } from '@/utils/cot-data';
 import fs from 'fs';
 import { getPairData } from '@/utils/pair-data';
-
+import path from 'path';
 
 export default async (req, res) => {
   const baseUrl = process.env.VERCEL_URL ? 'https://' + process.env.VERCEL_URL : 'http://localhost:3000'
@@ -11,7 +11,7 @@ export default async (req, res) => {
   const pair = req.query.pair
   const countries = majorForexPairs[pair].countries
 
-  const cot_2024_currencies_path = 'public/assets/cot-data/2024/currencies.xml';
+  const cot_2024_currencies_path = path.resolve('public/assets/cot-data/2024/currencies.xml');
   const cot_2024_currencies_xml = fs.readFileSync(cot_2024_currencies_path, 'utf-8');
 
   const cot_2024_currencies_json = await parseCotData(cot_2024_currencies_xml);
