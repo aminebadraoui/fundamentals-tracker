@@ -220,13 +220,11 @@ const Scanner = (props) => {
                           </Table>
                           </TitledCard>
 
-                      
-
                           <TitledCard key={`${pair}_news_sentiment_card`} className={Style.InternalCard} title="News Sentiment">
                             <Table> 
                               <TableHeader>
                                 {
-                                    pairData.news.news_set.length > 0 && 
+                                    pairData.news.news_set && pairData.news.news_set.length > 0 && 
                                     <TableRow className='hover:bg-transparent'>
                                     <TableHead className='font-bold'> Date</TableHead>
                                     <TableHead className='font-bold'> Count </TableHead>
@@ -236,7 +234,7 @@ const Scanner = (props) => {
                               
                               <TableBody>
                               {
-                                pairData.news.news_set.length > 0 && pairData.news.news_set.map((news) => {
+                                pairData.news.news_set &&  pairData.news.news_set.length > 0 && pairData.news.news_set.map((news) => {
                                     return (
                                       <TableRow>
                                         <TableCell> {news.date} </TableCell>
@@ -248,7 +246,7 @@ const Scanner = (props) => {
                                 }
 
                               {
-                                pairData.news.news_set.length > 0 && 
+                                pairData.news.news_set &&  pairData.news.news_set.length > 0 && 
                                 <TableRow>
                                   <TableCell colSpan={2} className='font-bold'> 7-Day Average Score </TableCell>
                                   <TableCell > {pairData.news.avg_score.toFixed(2)} </TableCell>
@@ -256,7 +254,7 @@ const Scanner = (props) => {
                               }
 
                               {
-                                pairData.news.news_set.length == 0 &&
+                                pairData.news.news_set &&  pairData.news.news_set.length == 0 &&
                                 <TableRow>
                                   <TableCell colSpan={3}> No News Available </TableCell>
                                 </TableRow>
