@@ -126,147 +126,156 @@ const Scanner = (props) => {
                   pairData && <div className=' space-y-8'>
                     {console.log("news section", pairData.news)}
 
-                    <ChartComponent data={pairData.weekly_price_data}></ChartComponent>
-
+                    <div className='flex space-x-8'>
+                      
+                      <ChartComponent data={pairData.weekly_price_data} symbol={pair} timeframe={'Weekly'}></ChartComponent>
+                    
+                      <div className='flex flex-col space-y-4'>
                       <TitledCard key={`${pair}_economy_card_`} className={Style.InternalCard} title="Economy">
-                       <Table>
-                        <TableHeader>
-                          <TableRow className='hover:bg-transparent'>
-                            <TableHead className='bg-transparent border-0 hover:bg-transparent'>  </TableHead>
-                            <TableHead className='font-bold'> {pairData.country_1.name} </TableHead>
-                            <TableHead className='font-bold'> {pairData.country_2.name} </TableHead>
-                            <TableHead className='font-bold'> {`${pair}`}</TableHead>
-                          </TableRow>
-                        </TableHeader>
+                          <Table>
+                          <TableHeader>
+                            <TableRow className='hover:bg-transparent'>
+                              <TableHead className='bg-transparent border-0 hover:bg-transparent'>  </TableHead>
+                              <TableHead className='font-bold'> {pairData.country_1.name} </TableHead>
+                              <TableHead className='font-bold'> {pairData.country_2.name} </TableHead>
+                              <TableHead className='font-bold'> {`${pair}`}</TableHead>
+                            </TableRow>
+                          </TableHeader>
 
-                        <TableBody>
-                            <TableRow>
-                              <TableCell className='font-bold'> Inflation Score </TableCell>
-                              <TableCell> {pairData.country_1.inflationScore.toFixed(2)} </TableCell>
-                              <TableCell> {pairData.country_2.inflationScore.toFixed(2)} </TableCell>
-                              <TableCell className={ `${getScoreTextColor(pairData.inflationScore)}`}> {pairData.inflationScore} </TableCell>
-                            </TableRow>
-                            <TableRow>
-                              <TableCell className='font-bold'> Interest Rate Score </TableCell>
-                              <TableCell> {pairData.country_1.interestRateScore.toFixed(2)} </TableCell>
-                              <TableCell> {pairData.country_2.interestRateScore.toFixed(2)} </TableCell>
-                              <TableCell className={ `${getScoreTextColor(pairData.interestRateScore)}`}> {pairData.interestRateScore} </TableCell>
-                            </TableRow>
-                            <TableRow>
-                              <TableCell className='font-bold'>  Employement Score </TableCell>
-                              <TableCell> {pairData.country_1.employmentScore.toFixed(2)} </TableCell>
-                              <TableCell> {pairData.country_2.employmentScore.toFixed(2)} </TableCell>
-                              <TableCell className={ `${getScoreTextColor(pairData.employmentScore)}`}> {pairData.employmentScore} </TableCell>
-                            </TableRow>
-                            <TableRow>
-                              <TableCell className='font-bold'> Housing Score </TableCell>
-                              <TableCell> {pairData.country_1.housingScore.toFixed(2)} </TableCell>
-                              <TableCell> {pairData.country_2.housingScore.toFixed(2)} </TableCell>
-                              <TableCell className={ `${getScoreTextColor(pairData.housingScore)}`}> {pairData.housingScore} </TableCell>
-                            </TableRow>
-                            <TableRow>
-                              <TableCell className='font-bold'> Growth Score </TableCell>
-                              <TableCell> {pairData.country_1.growthScore.toFixed(2)} </TableCell>
-                              <TableCell> {pairData.country_2.growthScore.toFixed(2)} </TableCell>
-                              <TableCell className={ `${getScoreTextColor(pairData.growthScore)}`}> {pairData.growthScore} </TableCell>
-                            </TableRow>
-                            <TableRow>
-                              <TableCell colSpan={3} className='font-bold'> Final Score </TableCell>
+                          <TableBody>
+                              <TableRow>
+                                <TableCell className='font-bold'> Inflation Score </TableCell>
+                                <TableCell> {pairData.country_1.inflationScore.toFixed(2)} </TableCell>
+                                <TableCell> {pairData.country_2.inflationScore.toFixed(2)} </TableCell>
+                                <TableCell className={ `${getScoreTextColor(pairData.inflationScore)}`}> {pairData.inflationScore} </TableCell>
+                              </TableRow>
+                              <TableRow>
+                                <TableCell className='font-bold'> Interest Rate Score </TableCell>
+                                <TableCell> {pairData.country_1.interestRateScore.toFixed(2)} </TableCell>
+                                <TableCell> {pairData.country_2.interestRateScore.toFixed(2)} </TableCell>
+                                <TableCell className={ `${getScoreTextColor(pairData.interestRateScore)}`}> {pairData.interestRateScore} </TableCell>
+                              </TableRow>
+                              <TableRow>
+                                <TableCell className='font-bold'>  Employement Score </TableCell>
+                                <TableCell> {pairData.country_1.employmentScore.toFixed(2)} </TableCell>
+                                <TableCell> {pairData.country_2.employmentScore.toFixed(2)} </TableCell>
+                                <TableCell className={ `${getScoreTextColor(pairData.employmentScore)}`}> {pairData.employmentScore} </TableCell>
+                              </TableRow>
+                              <TableRow>
+                                <TableCell className='font-bold'> Housing Score </TableCell>
+                                <TableCell> {pairData.country_1.housingScore.toFixed(2)} </TableCell>
+                                <TableCell> {pairData.country_2.housingScore.toFixed(2)} </TableCell>
+                                <TableCell className={ `${getScoreTextColor(pairData.housingScore)}`}> {pairData.housingScore} </TableCell>
+                              </TableRow>
+                              <TableRow>
+                                <TableCell className='font-bold'> Growth Score </TableCell>
+                                <TableCell> {pairData.country_1.growthScore.toFixed(2)} </TableCell>
+                                <TableCell> {pairData.country_2.growthScore.toFixed(2)} </TableCell>
+                                <TableCell className={ `${getScoreTextColor(pairData.growthScore)}`}> {pairData.growthScore} </TableCell>
+                              </TableRow>
+                              <TableRow>
+                                <TableCell colSpan={3} className='font-bold'> Final Score </TableCell>
+                            
+                                <TableCell className={ `${getScoreBackgroundColor(pairData.totalEconomicScore)} font-bold `}> {pairData.totalEconomicScore} </TableCell>
+                              </TableRow>
+                          </TableBody>
                           
-                              <TableCell className={ `${getScoreBackgroundColor(pairData.totalEconomicScore)} font-bold `}> {pairData.totalEconomicScore} </TableCell>
+                          </Table>
+                          </TitledCard>
+                        <TitledCard key={`${pair}_institional_Positioning_card`} className={Style.InternalCard} title="Institutional Positioning">
+                          <Table> 
+                          <TableHeader>
+                            <TableRow className='hover:bg-transparent'>
+                              <TableHead className='font-bold'> Net Positions Current </TableHead>
+                              <TableHead className='font-bold'> Net Positions Old </TableHead>
+                              <TableHead className='font-bold'> Final Score </TableHead>
                             </TableRow>
-                        </TableBody>
-                        
-                       </Table>
-                        </TitledCard>
-                      <TitledCard key={`${pair}_institional_Positioning_card`} className={Style.InternalCard} title="Institutional Positioning">
+                          </TableHeader>
+                          <TableBody>
+                            <TableRow>
+                              <TableCell> {pairData.institutional.net_positions} </TableCell>
+                              <TableCell> {pairData.institutional.net_positions_old} </TableCell>
+                              <TableCell className={ `${getScoreBackgroundColor(pairData.institutional.score)} font-bold `}> {pairData.institutional.score} </TableCell>
+                              </TableRow>
+                          </TableBody>
+                          </Table>   
+                          </TitledCard>
+                      
+                        <TitledCard key={`${pair}_retail_positioning_card`} className={Style.InternalCard} title="Retail Positioning">
                         <Table> 
-                        <TableHeader>
-                          <TableRow className='hover:bg-transparent'>
-                            <TableHead className='font-bold'> Net Positions Current </TableHead>
-                            <TableHead className='font-bold'> Net Positions Old </TableHead>
-                            <TableHead className='font-bold'> Final Score </TableHead>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          <TableRow>
-                            <TableCell> {pairData.institutional.net_positions} </TableCell>
-                            <TableCell> {pairData.institutional.net_positions_old} </TableCell>
-                            <TableCell className={ `${getScoreBackgroundColor(pairData.institutional.score)} font-bold `}> {pairData.institutional.score} </TableCell>
+                          <TableHeader>
+                            <TableRow className='hover:bg-transparent'>
+                              <TableHead className='font-bold'> Net Positions Current </TableHead>
+                              <TableHead className='font-bold'> Net Positions Old </TableHead>
+                              <TableHead className='font-bold'> Final Score </TableHead>
                             </TableRow>
-                        </TableBody>
-                        </Table>   
-                        </TitledCard>
-                   
-                      <TitledCard key={`${pair}_retail_positioning_card`} className={Style.InternalCard} title="Retail Positioning">
-                      <Table> 
-                        <TableHeader>
-                          <TableRow className='hover:bg-transparent'>
-                            <TableHead className='font-bold'> Net Positions Current </TableHead>
-                            <TableHead className='font-bold'> Net Positions Old </TableHead>
-                            <TableHead className='font-bold'> Final Score </TableHead>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          <TableRow>
-                            <TableCell> {pairData.retail.net_positions} </TableCell>
-                            <TableCell> {pairData.retail.net_positions_old} </TableCell>
-                            <TableCell className={ `${getScoreBackgroundColor(pairData.retail.score)} font-bold `}>  {pairData.retail.score} </TableCell>
-                            </TableRow>
-                        </TableBody>
-                        </Table>
-                        </TitledCard>
+                          </TableHeader>
+                          <TableBody>
+                            <TableRow>
+                              <TableCell> {pairData.retail.net_positions} </TableCell>
+                              <TableCell> {pairData.retail.net_positions_old} </TableCell>
+                              <TableCell className={ `${getScoreBackgroundColor(pairData.retail.score)} font-bold `}>  {pairData.retail.score} </TableCell>
+                              </TableRow>
+                          </TableBody>
+                          </Table>
+                          </TitledCard>
+
+                      
+
+                          <TitledCard key={`${pair}_news_sentiment_card`} className={Style.InternalCard} title="News Sentiment">
+                            <Table> 
+                              <TableHeader>
+                                {
+                                    pairData.news.news_set.length > 0 && 
+                                    <TableRow className='hover:bg-transparent'>
+                                    <TableHead className='font-bold'> Date</TableHead>
+                                    <TableHead className='font-bold'> Count </TableHead>
+                                  <TableHead className='font-bold'> Score </TableHead>
+                                </TableRow>}
+                              </TableHeader>
+                              
+                              <TableBody>
+                              {
+                                pairData.news.news_set.length > 0 && pairData.news.news_set.map((news) => {
+                                    return (
+                                      <TableRow>
+                                        <TableCell> {news.date} </TableCell>
+                                        <TableCell> {news.count} </TableCell>
+                                        <TableCell>  {news.score.toFixed(2)} </TableCell>
+                                      </TableRow>
+                                    )
+                                  })
+                                }
+
+                              {
+                                pairData.news.news_set.length > 0 && 
+                                <TableRow>
+                                  <TableCell colSpan={2} className='font-bold'> 7-Day Average Score </TableCell>
+                                  <TableCell > {pairData.news.avg_score.toFixed(2)} </TableCell>
+                                </TableRow>
+                              }
+
+                              {
+                                pairData.news.news_set.length == 0 &&
+                                <TableRow>
+                                  <TableCell colSpan={3}> No News Available </TableCell>
+                                </TableRow>
+
+                              }
+                                <TableRow>
+                                  <TableCell colSpan={2} className='font-bold'> Final Score </TableCell>
+                              
+                                  <TableCell className={ `${getScoreBackgroundColor(pairData.news.total_news_score)} font-bold `}> {pairData.news.total_news_score} </TableCell>
+                                </TableRow>
+                              </TableBody>
+                              </Table>
+                          </TitledCard>
+                      </div>
+                    </div>
 
                     
 
-                        <TitledCard key={`${pair}_news_sentiment_card`} className={Style.InternalCard} title="News Sentiment">
-                          <Table> 
-                            <TableHeader>
-                              {
-                                 pairData.news.news_set.length > 0 && 
-                                 <TableRow className='hover:bg-transparent'>
-                                  <TableHead className='font-bold'> Date</TableHead>
-                                  <TableHead className='font-bold'> Count </TableHead>
-                                <TableHead className='font-bold'> Score </TableHead>
-                              </TableRow>}
-                            </TableHeader>
-                            
-                            <TableBody>
-                            {
-                              pairData.news.news_set.length > 0 && pairData.news.news_set.map((news) => {
-                                  return (
-                                    <TableRow>
-                                      <TableCell> {news.date} </TableCell>
-                                      <TableCell> {news.count} </TableCell>
-                                      <TableCell>  {news.score.toFixed(2)} </TableCell>
-                                    </TableRow>
-                                  )
-                                })
-                              }
-
-                            {
-                              pairData.news.news_set.length > 0 && 
-                              <TableRow>
-                                <TableCell colSpan={2} className='font-bold'> 7-Day Average Score </TableCell>
-                                <TableCell > {pairData.news.avg_score.toFixed(2)} </TableCell>
-                              </TableRow>
-                            }
-
-                            {
-                              pairData.news.news_set.length == 0 &&
-                              <TableRow>
-                                <TableCell colSpan={3}> No News Available </TableCell>
-                              </TableRow>
-
-                            }
-                              <TableRow>
-                                <TableCell colSpan={2} className='font-bold'> Final Score </TableCell>
-                           
-                                <TableCell className={ `${getScoreBackgroundColor(pairData.news.total_news_score)} font-bold `}> {pairData.news.total_news_score} </TableCell>
-                              </TableRow>
-                            </TableBody>
-                            </Table>
-                        </TitledCard>
+                     
                   </div>
                   
 

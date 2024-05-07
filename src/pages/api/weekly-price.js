@@ -1,4 +1,4 @@
-import { data } from "autoprefixer";
+
 
 export default async (req, res) => {
   const symbol = req.query.symbol
@@ -19,8 +19,6 @@ export default async (req, res) => {
       volume: data.volume
     }
   })
-
-  console.log("weekly price data called", formatted_weekly_price_data)
 
   res.status(200).json(formatted_weekly_price_data)
 }

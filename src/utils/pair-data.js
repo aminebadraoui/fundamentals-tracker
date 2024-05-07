@@ -18,7 +18,7 @@ const getCountryData = (country, rawData) => {
   }
 }
 
-const getPairData = (pair, rawData, cotData, technical_data, news_sentiment_data, weekly_price_data) => {
+const getPairData = (pair, rawData, cotData, news_sentiment_data, weekly_price_data) => {
   const pairData = {
     "pair": "EURUSD",
 
@@ -72,13 +72,6 @@ const getPairData = (pair, rawData, cotData, technical_data, news_sentiment_data
       "openIntrest": 0,
       "openIntrest_old": 0,
       "score": 0
-    },
-   
-    "technicals": {
-      "last_close": 0,
-      "last_sma_50": 0,
-      "last_sma_200": 0,
-      "sma_score": 0,
     },
 
     "news": {
@@ -182,21 +175,6 @@ const getPairData = (pair, rawData, cotData, technical_data, news_sentiment_data
 
   pairData.retail.score = retailScore / 2
 
-  pairData.technicals.last_close = technical_data.last_close
-  pairData.technicals.last_sma_50 = technical_data.last_sma_50
-  pairData.technicals.last_sma_200 = technical_data.last_sma_200
-
-  let sma_score = 0
-
-  if (pairData.technicals.last_sma_50 > pairData.technicals.last_sma_200) {
-    sma_score += 100
-  }
-  if (pairData.technicals.last_sma_50 < pairData.technicals.last_sma_200) {
-    sma_score -= 100
-  }
-
-  pairData.technicals.sma_score = sma_score 
-
   // News
   pairData.news.news_set = []
 
@@ -216,7 +194,7 @@ const getPairData = (pair, rawData, cotData, technical_data, news_sentiment_data
 
   pairData.weekly_price_data = weekly_price_data.weekly_price_data
   
-  pairData.totalScore = (pairData.totalEconomicScore + pairData.institutional.score + pairData.retail.score  + pairData.news.total_news_score) / 5
+  pairData.totalScore = (pairData.totalEconomicScore + pairData.institutional.score + pairData.retail.score  + pairData.news.total_news_score) / 4
 
   
  // if total score is between -100 and -50 bias is very bearish, if between -50 and -25 bias is bearish, if between 0 and 25 bias is neutral, if between 25 and 50 bias is bullish, if between 50 and 100 bias is very bullish
