@@ -2,6 +2,27 @@
 import { getDataSortedByTotalScore } from '@/utils/getDataSortedByTotalScore';
 import { inflationKeys, employmentKeys, interestRatesKeys, majorEventsKeys, majorForexPairs, housingKeys } from '@/utils/event-names';
 
+const mapCotDataToTimeValue = (cotData) => {
+  const dataWithParsedDates = cotData.map(item => {
+    const date = new Date(item.report_date_as_yyyy_mm_dd[0]);
+    const formattedDate = date.toISOString().split('T')[0]; // Format the date as 'yyyy-mm-dd'
+
+    const netPositions = parseInt(item.comm_positions_long_all[0]) - parseInt(item.comm_positions_short_all[0]);
+
+    return {
+      time: formattedDate,
+      value: netPositions,
+      timestamp: date.getTime() // Add a timestamp for sorting
+    };
+  });
+
+  // Sort by timestamp to ensure the data is in ascending order
+  dataWithParsedDates.sort((a, b) => a.timestamp - b.timestamp);
+
+  // Return data formatted for the chart, removing the extra 'timestamp' property
+  return dataWithParsedDates.map(({ time, value }) => ({ time, value }));
+};
+
 const getCountryData = (country, rawData) => {
   const inflationData = getDataSortedByTotalScore(rawData, inflationKeys, null)[country]
   const employmentData = getDataSortedByTotalScore(rawData, employmentKeys, null)[country]
@@ -47,6 +68,8 @@ const getPairData = (pair, rawData, cotData, news_sentiment_data, weekly_price_d
     "interestRateScore": 0,
 
     "totalEconomicScore": 0,
+
+    "cotData":  [],
 
     "institutional": {
       "long": 0,
@@ -119,6 +142,10 @@ const getPairData = (pair, rawData, cotData, news_sentiment_data, weekly_price_d
   pairData.interestRateScore = pairData.country_1.interestRateScore > pairData.country_2.interestRateScore ? 100 : pairData.country_1.interestRateScore < pairData.country_2.interestRateScore ? -100 : 0
 
   pairData.totalEconomicScore = (pairData.inflationScore + pairData.employmentScore + pairData.housingScore + pairData.growthScore + pairData.interestRateScore) / 5
+
+  pairData.cotData = cotData
+
+  pairData.cotPositions = mapCotDataToTimeValue(cotData)
 
   pairData.institutional.long = parseInt(cotData[0].comm_positions_long_all[0])
   pairData.institutional.short = parseInt(cotData[0].comm_positions_short_all[0])

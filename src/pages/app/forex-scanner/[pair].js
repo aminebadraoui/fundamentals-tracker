@@ -89,14 +89,14 @@ const Scanner = (props) => {
               </div>
 
               <div className='flex space-x-4' >
-              { <ChartComponent data={pairData.weekly_price_data} symbol={pair} timeframe={'Weekly'}></ChartComponent>}
+              { <ChartComponent data={pairData.weekly_price_data} positionsData={pairData.cotPositions} symbol={pair} timeframe={'Weekly'}></ChartComponent>}
              
               { [pair].map((pair) => {
                 return (
                   pairData && 
                   <div className='flex flex-col space-y-4'>
                     <GaugeComponent
-                              value={pairData.totalScore} 
+                              value={pairData.totalScore}  
                               type="radial"
                               labels={{
                                 valueLabel: {
@@ -127,7 +127,7 @@ const Scanner = (props) => {
                                 elastic: true,
                                 animationDelay: 0
                               }}/>
-                              
+
                     <TitledCard key={`${pair}_economy_card_`} className={Style.InternalCard} title="Economy">
                         <Table>
                         <TableHeader>
