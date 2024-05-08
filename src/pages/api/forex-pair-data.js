@@ -13,21 +13,27 @@ export default async (req, res) => {
   const pair = req.query.pair;
   const countries = majorForexPairs[pair].countries;
   
-  let jsonData, weekly_price_data_json, news_sentiment_json, cot_2024_currencies_json, cot_history_currencies_json, cot_for_pair;
+  let jsonData, weekly_price_data_json, news_sentiment_json, cot_all_json, cot_for_pair;
 
   try {
-    const cot_2024_currencies_path = path.resolve('public/assets/cot-data/2024/currencies.xml');
-    const cot_history_currencies_path = path.resolve('public/assets/cot-data/2021-2023/currencies.xml');
+    const cot_2024_path = path.resolve('public/assets/cot-data/2024/currencies.xml');
+    const cot_2023_path = path.resolve('public/assets/cot-data/2023/currencies.xml');
+    const cot_2022_path = path.resolve('public/assets/cot-data/2022/currencies.xml');
+    const cot_2021_path = path.resolve('public/assets/cot-data/2021/currencies.xml');
 
-    const cot_2024_currencies_xml = fs.readFileSync(cot_2024_currencies_path, 'utf-8');
-    const cot_history_currencies_xml = fs.readFileSync(cot_history_currencies_path, 'utf-8');
+    const cot_2024_xml = fs.readFileSync(cot_2024_path, 'utf-8');
+    const cot_2023_xml = fs.readFileSync(cot_2023_path, 'utf-8');
+    const cot_2022_xml = fs.readFileSync(cot_2022_path, 'utf-8');
+    const cot_2021_xml = fs.readFileSync(cot_2021_path, 'utf-8');
 
-    cot_2024_currencies_json = await parseCotData(cot_2024_currencies_xml);
-    cot_history_currencies_json = await parseCotData(cot_history_currencies_xml);
+    const cot_2024_json = await parseCotData(cot_2024_xml);
+    const cot_2023_json = await parseCotData(cot_2023_xml);
+    const cot_2022_json = await parseCotData(cot_2022_xml);
+    const cot_2021_json = await parseCotData(cot_2021_xml);
 
-    const cot_all_currencies_json = cot_2024_currencies_json.concat(cot_history_currencies_json);
+    cot_all_json = cot_2024_json.concat(cot_2023_json).concat(cot_2022_json).concat(cot_2021_json);
 
-    cot_for_pair = findLatestCotDataForAsset(majorForexPairs[pair].cotName, cot_all_currencies_json);
+    cot_for_pair = findLatestCotDataForAsset(majorForexPairs[pair].cotName, cot_all_json);
 
     console.log('COT for pair:', cot_for_pair);
   } catch (error) {
