@@ -20,18 +20,21 @@ export default async (req, res) => {
     const cot_2023_path = path.resolve('public/assets/cot-data/2023/currencies.xml');
     const cot_2022_path = path.resolve('public/assets/cot-data/2022/currencies.xml');
     const cot_2021_path = path.resolve('public/assets/cot-data/2021/currencies.xml');
+    const cot_2020_path = path.resolve('public/assets/cot-data/2020/currencies.xml');
 
     const cot_2024_xml = fs.readFileSync(cot_2024_path, 'utf-8');
     const cot_2023_xml = fs.readFileSync(cot_2023_path, 'utf-8');
     const cot_2022_xml = fs.readFileSync(cot_2022_path, 'utf-8');
     const cot_2021_xml = fs.readFileSync(cot_2021_path, 'utf-8');
+    const cot_2020_xml = fs.readFileSync(cot_2020_path, 'utf-8');
 
     const cot_2024_json = await parseCotData(cot_2024_xml);
     const cot_2023_json = await parseCotData(cot_2023_xml);
     const cot_2022_json = await parseCotData(cot_2022_xml);
     const cot_2021_json = await parseCotData(cot_2021_xml);
+    const cot_2020_json = await parseCotData(cot_2020_xml);
 
-    cot_all_json = cot_2024_json.concat(cot_2023_json).concat(cot_2022_json).concat(cot_2021_json);
+    cot_all_json = cot_2024_json.concat(cot_2023_json).concat(cot_2022_json).concat(cot_2021_json).concat(cot_2020_json);
 
     cot_for_pair = findLatestCotDataForAsset(majorForexPairs[pair].cotName, cot_all_json);
 
