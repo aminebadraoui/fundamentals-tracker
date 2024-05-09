@@ -33,7 +33,7 @@ export const ChartComponent = props => {
             lineColor = '#2196f3', // Color for the line chart
             zeroLineColor = '#f87315', // Orange color for the zero line
             sixMonthmovingAverageColor = '#ff0000', // Orange color for the moving average line
-            threeYearsMovingAverageColor = '#a717d3', // Red color for the moving average line
+            threeYearsMovingAverageColor: oneYearMovingAverageColor = '#a717d3', // Red color for the moving average line
         } = {},
     } = props;
 
@@ -45,7 +45,7 @@ export const ChartComponent = props => {
 
     const [priceChartLegendText, setPriceChartLegendText] = useState('');
     const [sixMonthMAText, setSixMonthMAText] = useState('');
-    const [threeYearsMAText, setThreeYearsMAText] = useState('');
+    const [oneYearMAText, setThreeYearsMAText] = useState('');
     const [positionChartLegendText, setPositionChartLegendText] = useState('');
 
     useEffect(() => {
@@ -133,23 +133,23 @@ export const ChartComponent = props => {
         });
         sixMonthsMovingAverageSeries.setData(sixMonthsMovingAverageData);
 
-        const threeYearsMovingAverageData = calculateMovingAverage(netPositions, 156);
-        console.log("threeYearsMovingAverageData", threeYearsMovingAverageData);
+        const oneYearMovingAverageData = calculateMovingAverage(netPositions, 52);
+        console.log("threeYearsMovingAverageData", oneYearMovingAverageData);
 
-        const threeYearsMovingAverageSeries = positionsChart.addLineSeries({
-            color: threeYearsMovingAverageColor,
+        const oneYearMovingAverageSeries = positionsChart.addLineSeries({
+            color: oneYearMovingAverageColor,
             lineWidth: 1,
         });
-        threeYearsMovingAverageSeries.setData(threeYearsMovingAverageData);
+        oneYearMovingAverageSeries.setData(oneYearMovingAverageData);
 
         chart.timeScale().scrollToPosition(positionsChart.timeScale().scrollPosition(), false);
         positionsChart.timeScale().scrollToPosition(chart.timeScale().scrollPosition(), false);
 
         setPriceChartLegendText(`${symbol} - Weekly`);
       
-        setPositionChartLegendText(`Net Positions (Longs-Shorts) - Weekly`);
+        setPositionChartLegendText(`Weekly Net Positions (Longs-Shorts)`);
         setSixMonthMAText(`6-Month Average`);
-        setThreeYearsMAText(`3-Year Average `);
+        setThreeYearsMAText(`1-Year Average `);
 
        
 
@@ -184,14 +184,20 @@ export const ChartComponent = props => {
         </div>
         <div style={{ position: 'relative', width: '100%', height: '700px' }}>
             <div ref={positionsChartContainerRef} style={{ height: '350px', marginTop: '4px' }} />
-            <div style={{ position: 'absolute', left: '10px', top: '10px', color: '#2196f3', zIndex: 10 }}>
-                {positionChartLegendText}
+            <div> 
+                <div style={{ position: 'absolute', left: '10px', top: '10px', color: '#000', zIndex: 10 }}>
+                <div className='flex flex-col'>
+              <div  style={{ color: `${lineColor}`}}>
+                  {positionChartLegendText}
+              </div>
+              <div  style={{ color: `${sixMonthmovingAverageColor}`}}>
+                  {sixMonthMAText}
+              </div>
+              <div  style={{ color: `${oneYearMovingAverageColor}`}}>
+                  {oneYearMAText}
+              </div>
+                  </div>
             </div>
-            <div style={{ position: 'absolute', left: '10px', top: '30px', color: '#ff0000', zIndex: 10 }}>
-                {sixMonthMAText}
-            </div>
-            <div style={{ position: 'absolute', left: '10px', top: '50px', color: '#a717d3', zIndex: 10 }}>
-                {threeYearsMAText}
             </div>
         </div>
 
