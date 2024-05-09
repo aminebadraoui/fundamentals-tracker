@@ -17,22 +17,38 @@ const links = [
     name: 'Forex Scanner',
     type: 'section',
     links: [
-      { name: 'EURUSD', href: '/app/forex-scanner/EURUSD' },
-      { name: 'GBPUSD', href: '/app/forex-scanner/GBPUSD' },
-      { name: 'AUDUSD', href: '/app/forex-scanner/AUDUSD' },
-      { name: 'NZDUSD', href: '/app/forex-scanner/NZDUSD' },
-      { name: 'USDCHF', href: '/app/forex-scanner/USDCHF' },
-      { name: 'USDJPY', href: '/app/forex-scanner/USDJPY' },
-      { name: 'USDCAD', href: '/app/forex-scanner/USDCAD' },
+      { name: 'EURUSD', href: '/app/scanner/EURUSD' },
+      { name: 'GBPUSD', href: '/app/scanner/GBPUSD' },
+      { name: 'AUDUSD', href: '/app/scanner/AUDUSD' },
+      { name: 'NZDUSD', href: '/app/scanner/NZDUSD' },
+      { name: 'USDCHF', href: '/app/scanner/USDCHF' },
+      { name: 'USDJPY', href: '/app/scanner/USDJPY' },
+      { name: 'USDCAD', href: '/app/scanner/USDCAD' },
     ]
   },
   {
     name: 'Crypto Scanner',
     type: 'section',
     links: [
-      { name: 'BITCOIN', href: '/app/crypto-scanner/BITCOIN' },
+      { name: 'BITCOIN', href: '/app/scanner/BITCOIN' },
     ]
   },
+  {
+    name: 'Precious Metals Scanner',
+    type: 'section',
+    links: [
+      { name: 'GOLD', href: '/app/scanner/GOLD' },
+      { name: 'SILVER', href: '/app/scanner/SILVER' },
+    ]
+  },
+  {
+    name: 'Commodity Scanner',
+    type: 'section',
+    links: [
+      { name: 'OIL', href: '/app/scanner/OIL' },
+    ]
+  },
+
   {
     name: 'International Economy',
     type: 'section',

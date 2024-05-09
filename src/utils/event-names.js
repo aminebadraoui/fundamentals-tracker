@@ -100,76 +100,92 @@ const majorEventsKeys = [
   "FOMC Minutes",
 ]
 
-const majorForexPairs =  {
+const assets =  {
   'EURUSD': {
     countries: ["EU", "US"],
     cotName: "EURO FX",
+    cotFileName: 'currencies',
+    cotType: 'nonComm',
     apiSymbol: 'EURUSD.FOREX'
   },
   
   'GBPUSD': {
     countries: ["UK", "US"],
     cotName: "BRITISH POUND",
+    cotFileName: 'currencies',
+    cotType: 'nonComm',
     apiSymbol: 'GBPUSD.FOREX'
   },
 
   'AUDUSD': {
     countries: ["AU", "US"],
     cotName: "AUSTRALIAN DOLLAR",
+    cotFileName: 'currencies',
+    cotType: 'nonComm',
     apiSymbol: 'AUDUSD.FOREX'
   },
 
   'NZDUSD': {
     countries: ["NZ", "US"],
     cotName: "NZ DOLLAR",
+    cotFileName: 'currencies',
+    cotType: 'nonComm',
     apiSymbol: 'NZDUSD.FOREX'
   },
 
   'USDCHF': {
     countries: ["US", "CH"],
     cotName: "SWISS FRANC",
+    cotFileName: 'currencies',
+    ccotType: 'nonComm',
     apiSymbol: 'USDCHF.FOREX'
   },
 
   'USDJPY': {
     countries: ["US", "JP"],
     cotName: "JAPANESE YEN",
+    cotFileName: 'currencies',
+    cotType: 'nonComm',
     apiSymbol: 'USDJPY.FOREX'
   },
 
   'USDCAD': {
     countries: ["US", "CA"],
     cotName: "CANADIAN DOLLAR",
+    cotFileName: 'currencies',
+    cotType: 'nonComm',
     apiSymbol: 'USDCAD.FOREX'
   },
-}
-
-const cryptoAssets = {
   'BITCOIN': {
     countries: ["US"],
     cotName: "BITCOIN",
+    cotFileName: 'crypto',
+    cotType: 'nonComm',
     apiSymbol: 'BTC-USD.CC'
   },
-}
-
-const commodities = {
   'GOLD': {
     countries: ["US"],
     cotName: "GOLD",
+    cotFileName: 'precious-metals',
+    cotType: 'comm',
     apiSymbol: ''
   },
   'SILVER': {
     countries: ["US"],
     cotName: "SILVER",
+    cotFileName: 'precious-metals',
+    cotType: 'comm',
     apiSymbol: ''
   },
   'OIL': {
     countries: ["US"],
     cotName: "WTI FINANCIAL CRUDE OIL",
+    cotFileName: 'commodities',
+    cotType: 'comm',
     apiSymbol: ''
   },
 }
- 
+
 export {inflationKeys,
   eventCategoryList, 
   countryList_Iso3166, 
@@ -178,7 +194,5 @@ export {inflationKeys,
   housingKeys, 
   flippedScoringKeys,
   majorEventsKeys,
-  majorForexPairs,
-  cryptoAssets,
-  commodities
+  assets,
 }

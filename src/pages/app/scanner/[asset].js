@@ -27,34 +27,26 @@ export const getServerSideProps = async (context) => {
 }
 
 const Scanner = (props) => {
-  const pair = props.params.pair;
+  const asset = props.params.asset;
   const GaugeComponent = dynamic(() => import('react-gauge-component'), { ssr: false });
   // keep track of different arrays of events as part of one object
-  const [pairData , setPairData] = useState(null);
+  const [assetData , setAssetData] = useState(null);
   const [isLoading, setLoading] = useState(false);
-
-
-    const candlestickData = [
-      { time: '2018-12-22', open: 32.51, high: 34.10, low: 32.10, close: 33.98 },
-      { time: '2018-12-23', open: 33.98, high: 34.50, low: 33.11, close: 33.82 },
-      // Add more data points similarly
-  ];
-
 
   const handleDownload = async () => {
     setLoading(true);
 
     try {
-      const pairData_local = await fetch(`../../api/forex-pair-data?pair=${pair}`)
+      const assetDataRes  = await fetch(`../../api/get-asset-data?asset=${asset}`)
 
-      const pairData_local_json = await pairData_local.json()
+      const assetDataJson = await assetDataRes.json()
 
       // set the state with the sorted data
-      setPairData(pairData_local_json);
+      setAssetData(assetDataJson);
 
-      console.log("pairData_local_json", pairData_local_json)
+      console.log("assetDataJson", assetDataJson)
 
-      if (pairData_local_json) {
+      if (assetDataJson) {
         setLoading(false);
       }
       
@@ -65,7 +57,7 @@ const Scanner = (props) => {
 
   useEffect( () => {
     handleDownload()
-  }, [pair])
+  }, [asset])
 
   const Style = {
     Title: "flex flex-row w-full justify-between items-start" ,
@@ -83,20 +75,20 @@ const Scanner = (props) => {
           </div>
          :  
     
-            pairData && <div className={Style.Wrapper}>
+         assetData && <div className={Style.Wrapper}>
               <div className={Style.Title}>
-                <h1 className="text-secondary-foreground mb-8"> {pair} </h1>
+                <h1 className="text-secondary-foreground mb-8"> {asset} </h1>
               </div>
 
               <div className='flex space-x-4' >
-              { <ChartComponent data={pairData.weekly_price_data} positionsData={pairData.cotPositions} symbol={pair} timeframe={'Weekly'}></ChartComponent>}
+              { <ChartComponent data={assetData.chartData.weeklyPrice} positionsData={assetData.chartData.netPositions} symbol={asset} timeframe={'Weekly'}></ChartComponent>}
              
-              { [pair].map((pair) => {
+              { [asset].map((asset) => {
                 return (
-                  pairData && 
+                  assetData && 
                   <div className='flex flex-col space-y-4'>
                     <GaugeComponent
-                              value={pairData.totalScore}  
+                              value={assetData.score}  
                               type="radial"
                               labels={{
                                 valueLabel: {
@@ -128,78 +120,115 @@ const Scanner = (props) => {
                                 animationDelay: 0
                               }}/>
 
-                    <TitledCard key={`${pair}_economy_card_`} className={Style.InternalCard} title="Economy">
-                        <Table>
+                    <TitledCard key={`${asset}_economy_card_`} className={Style.InternalCard} title="Economy">
+                        
+                        { assetData.countries.length == 2 ? <Table>
                         <TableHeader>
                           <TableRow className='hover:bg-transparent'>
                             <TableHead className='bg-transparent border-0 hover:bg-transparent'>  </TableHead>
-                            <TableHead className='font-bold'> {pairData.country_1.name} </TableHead>
-                            <TableHead className='font-bold'> {pairData.country_2.name} </TableHead>
-                            <TableHead className='font-bold'> {`${pair}`}</TableHead>
+                            <TableHead className='font-bold'> {assetData.economics.countriesEvents[0].country} </TableHead>
+                            <TableHead className='font-bold'> {assetData.economics.countriesEvents[1].country} </TableHead>
+                            <TableHead className='font-bold'> {`${asset}`}</TableHead>
                           </TableRow>
                         </TableHeader>
 
                         <TableBody>
                             <TableRow>
                               <TableCell className='font-bold'> Inflation Score </TableCell>
-                              <TableCell> {pairData.country_1.inflationScore.toFixed(2)} </TableCell>
-                              <TableCell> {pairData.country_2.inflationScore.toFixed(2)} </TableCell>
-                              <TableCell className={ `${getScoreTextColor(pairData.inflationScore)}`}> {pairData.inflationScore} </TableCell>
+                              <TableCell> {assetData.economics.countriesEvents[0].inflationData.totalScore.toFixed(2)} </TableCell>
+                              <TableCell>  {assetData.economics.countriesEvents[1].inflationData.totalScore.toFixed(2)} </TableCell>
+                              <TableCell className={ `${getScoreTextColor(assetData.economics.inflationScore)}`}> {assetData.economics.inflationScore} </TableCell>
                             </TableRow>
                             <TableRow>
                               <TableCell className='font-bold'> Interest Rate Score </TableCell>
-                              <TableCell> {pairData.country_1.interestRateScore.toFixed(2)} </TableCell>
-                              <TableCell> {pairData.country_2.interestRateScore.toFixed(2)} </TableCell>
-                              <TableCell className={ `${getScoreTextColor(pairData.interestRateScore)}`}> {pairData.interestRateScore} </TableCell>
+                              <TableCell> {assetData.economics.countriesEvents[0].interestRateData.totalScore.toFixed(2)} </TableCell>
+                              <TableCell>  {assetData.economics.countriesEvents[1].interestRateData.totalScore.toFixed(2)} </TableCell>
+                              <TableCell className={ `${getScoreTextColor(assetData.economics.interestRateScore)}`}> {assetData.economics.interestRateScore} </TableCell>
                             </TableRow>
                             <TableRow>
                               <TableCell className='font-bold'>  Employement Score </TableCell>
-                              <TableCell> {pairData.country_1.employmentScore.toFixed(2)} </TableCell>
-                              <TableCell> {pairData.country_2.employmentScore.toFixed(2)} </TableCell>
-                              <TableCell className={ `${getScoreTextColor(pairData.employmentScore)}`}> {pairData.employmentScore} </TableCell>
+                              <TableCell> {assetData.economics.countriesEvents[0].employmentData.totalScore.toFixed(2)} </TableCell>
+                              <TableCell>  {assetData.economics.countriesEvents[1].employmentData.totalScore.toFixed(2)} </TableCell>
+                              <TableCell className={ `${getScoreTextColor(assetData.economics.employmentScore)}`}> {assetData.economics.employmentScore} </TableCell>
                             </TableRow>
                             <TableRow>
                               <TableCell className='font-bold'> Housing Score </TableCell>
-                              <TableCell> {pairData.country_1.housingScore.toFixed(2)} </TableCell>
-                              <TableCell> {pairData.country_2.housingScore.toFixed(2)} </TableCell>
-                              <TableCell className={ `${getScoreTextColor(pairData.housingScore)}`}> {pairData.housingScore} </TableCell>
+                              <TableCell> {assetData.economics.countriesEvents[0].housingData.totalScore.toFixed(2)} </TableCell>
+                              <TableCell>  {assetData.economics.countriesEvents[1].housingData.totalScore.toFixed(2)} </TableCell>
+                              <TableCell className={ `${getScoreTextColor(assetData.economics.housingScore)}`}> {assetData.economics.housingScore} </TableCell>
                             </TableRow>
                             <TableRow>
                               <TableCell className='font-bold'> Growth Score </TableCell>
-                              <TableCell> {pairData.country_1.growthScore.toFixed(2)} </TableCell>
-                              <TableCell> {pairData.country_2.growthScore.toFixed(2)} </TableCell>
-                              <TableCell className={ `${getScoreTextColor(pairData.growthScore)}`}> {pairData.growthScore} </TableCell>
+                              <TableCell> {assetData.economics.countriesEvents[0].growthData.totalScore.toFixed(2)} </TableCell>
+                              <TableCell>  {assetData.economics.countriesEvents[1].growthData.totalScore.toFixed(2)} </TableCell>
+                              <TableCell className={ `${getScoreTextColor(assetData.economics.growthScore)}`}> {assetData.economics.growthScore} </TableCell>
                             </TableRow>
                             <TableRow>
                               <TableCell colSpan={3} className='font-bold'> Final Score </TableCell>
                           
-                              <TableCell className={ `${getScoreBackgroundColor(pairData.totalEconomicScore)} font-bold `}> {pairData.totalEconomicScore} </TableCell>
+                              <TableCell className={ `${getScoreBackgroundColor(assetData.economics.score)} font-bold `}> {assetData.economics.score} </TableCell>
                             </TableRow>
                         </TableBody>
                         
-                        </Table>
+                        </Table>  
+                        
+                        : <div></div>}
                     </TitledCard>
 
-                    <TitledCard key={`${pair}_institional_Positioning_card`} className={Style.InternalCard} title="Institutional Positioning">
+                    <TitledCard key={`${asset}_institional_Positioning_card`} className={Style.InternalCard} title="Institutional Positioning">
                       <Table> 
                       <TableHeader>
                         <TableRow className='hover:bg-transparent'>
-                          <TableHead className='font-bold'> Net Positions Current </TableHead>
-                          <TableHead className='font-bold'> Net Positions Old </TableHead>
+                          <TableHead className='font-bold'> Longs </TableHead>
+                          <TableHead className='font-bold'> Shorts </TableHead>
                           <TableHead className='font-bold'> Final Score </TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
                         <TableRow>
-                          <TableCell> {pairData.institutional.net_positions} </TableCell>
-                          <TableCell> {pairData.institutional.net_positions_old} </TableCell>
-                          <TableCell className={ `${getScoreBackgroundColor(pairData.institutional.score)} font-bold `}> {pairData.institutional.score} </TableCell>
+                          <TableCell> {assetData.cot.institutional.long} </TableCell>
+                          <TableCell> {assetData.cot.institutional.short} </TableCell>
+                          <TableCell className={ `${getScoreBackgroundColor(assetData.cot.institutional.netScore)} font-bold `}> {assetData.cot.institutional.netScore} </TableCell>
+                          </TableRow>
+                      </TableBody>
+                      </Table>   
+
+                      <Table> 
+                      <TableHeader>
+                        <TableRow className='hover:bg-transparent'>
+                          <TableHead className='font-bold'> Longs </TableHead>
+                          <TableHead className='font-bold'> Longs Previous </TableHead>
+                          <TableHead className='font-bold'> Final Score </TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        <TableRow>
+                          <TableCell> {assetData.cot.institutional.long} </TableCell>
+                          <TableCell> {assetData.cot.institutional.longOld} </TableCell>
+                          <TableCell className={ `${getScoreBackgroundColor(assetData.cot.institutional.longScore)} font-bold `}> {assetData.cot.institutional.longScore} </TableCell>
+                          </TableRow>
+                      </TableBody>
+                      </Table>   
+
+                      <Table> 
+                      <TableHeader>
+                        <TableRow className='hover:bg-transparent'>
+                          <TableHead className='font-bold'> Shorts </TableHead>
+                          <TableHead className='font-bold'> Shorts Previous </TableHead>
+                          <TableHead className='font-bold'> Final Score </TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        <TableRow>
+                          <TableCell> {assetData.cot.institutional.short} </TableCell>
+                          <TableCell> {assetData.cot.institutional.shortOld} </TableCell>
+                          <TableCell className={ `${getScoreBackgroundColor(assetData.cot.institutional.shortScore)} font-bold `}> {assetData.cot.institutional.shortScore} </TableCell>
                           </TableRow>
                       </TableBody>
                       </Table>   
                     </TitledCard>
                     
-                    <TitledCard key={`${pair}_retail_positioning_card`} className={Style.InternalCard} title="Retail Positioning">
+                    {/* <TitledCard key={`${asset}_retail_positioning_card`} className={Style.InternalCard} title="Retail Positioning">
                     <Table> 
                       <TableHeader>
                         <TableRow className='hover:bg-transparent'>
@@ -210,19 +239,19 @@ const Scanner = (props) => {
                       </TableHeader>
                       <TableBody>
                         <TableRow>
-                          <TableCell> {pairData.retail.net_positions} </TableCell>
-                          <TableCell> {pairData.retail.net_positions_old} </TableCell>
-                          <TableCell className={ `${getScoreBackgroundColor(pairData.retail.score)} font-bold `}>  {pairData.retail.score} </TableCell>
+                          <TableCell> {assetData.retail.net_positions} </TableCell>
+                          <TableCell> {assetData.retail.net_positions_old} </TableCell>
+                          <TableCell className={ `${getScoreBackgroundColor(assetData.retail.score)} font-bold `}>  {assetData.retail.score} </TableCell>
                           </TableRow>
                       </TableBody>
                       </Table>
-                    </TitledCard>
+                    </TitledCard> */}
 
-                    <TitledCard key={`${pair}_news_sentiment_card`} className={Style.InternalCard} title="News Sentiment">
+                    <TitledCard key={`${asset}_news_sentiment_card`} className={Style.InternalCard} title="News Sentiment">
                       <Table> 
                         <TableHeader>
                           {
-                              pairData.news.news_set && pairData.news.news_set.length > 0 && 
+                              assetData.news.newsSet && assetData.news.newsSet.length > 0 && 
                               <TableRow className='hover:bg-transparent'>
                               <TableHead className='font-bold'> Date</TableHead>
                               <TableHead className='font-bold'> Count </TableHead>
@@ -232,7 +261,7 @@ const Scanner = (props) => {
                         
                         <TableBody>
                         {
-                          pairData.news.news_set &&  pairData.news.news_set.length > 0 && pairData.news.news_set.map((news) => {
+                          assetData.news.newsSet &&  assetData.news.newsSet.length > 0 && assetData.news.newsSet.map((news) => {
                               return (
                                 <TableRow>
                                   <TableCell> {news.date} </TableCell>
@@ -244,15 +273,15 @@ const Scanner = (props) => {
                           }
 
                         {
-                          pairData.news.news_set &&  pairData.news.news_set.length > 0 && 
+                          assetData.news.newsSet &&  assetData.news.newsSet.length > 0 && 
                           <TableRow>
                             <TableCell colSpan={2} className='font-bold'> 7-Day Average Score </TableCell>
-                            <TableCell > {pairData.news.avg_score.toFixed(2)} </TableCell>
+                            <TableCell > {assetData.news.avgScore.toFixed(2)} </TableCell>
                           </TableRow>
                         }
 
                         {
-                          pairData.news.news_set &&  pairData.news.news_set.length == 0 &&
+                          assetData.news.newsSet &&  assetData.news.newsSet.length == 0 &&
                           <TableRow>
                             <TableCell colSpan={3}> No News Available </TableCell>
                           </TableRow>
@@ -261,7 +290,7 @@ const Scanner = (props) => {
                           <TableRow>
                             <TableCell colSpan={2} className='font-bold'> Final Score </TableCell>
                         
-                            <TableCell className={ `${getScoreBackgroundColor(pairData.news.total_news_score)} font-bold `}> {pairData.news.total_news_score} </TableCell>
+                            <TableCell className={ `${getScoreBackgroundColor(assetData.news.score)} font-bold `}> {assetData.news.score} </TableCell>
                           </TableRow>
                         </TableBody>
                         </Table>
