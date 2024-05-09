@@ -1,6 +1,6 @@
 
 import { getDataSortedByTotalScore } from '@/utils/getDataSortedByTotalScore';
-import { inflationKeys, employmentKeys, interestRatesKeys, majorEventsKeys, cryptoAssets, housingKeys } from '@/utils/event-names';
+import { inflationKeys, employmentKeys, interestRatesKeys, majorEventsKeys, housingKeys } from '@/utils/event-names';
 
 const getCountryData = (country, rawData) => {
   const inflationData = getDataSortedByTotalScore(rawData, inflationKeys, null)[country]

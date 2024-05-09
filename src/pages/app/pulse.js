@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { DashboardLayout } from '@/components/layout/dashboard-layout';
-import { inflationKeys, employmentKeys, interestRatesKeys, majorEventsKeys, majorForexPairs, cryptoAssets} from '@/utils/event-names';
+import { inflationKeys, employmentKeys, interestRatesKeys, majorEventsKeys, assets} from '@/utils/event-names';
 import { Loader } from '@/components/ui/loader';
 import { TitledCard } from '@/components/shadcn/titled-card';
 import { Table, TableHeader, TableRow, TableHead, TableCell, TableBody } from '@/components/shadcn/table';
