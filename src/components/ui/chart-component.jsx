@@ -148,8 +148,8 @@ export const ChartComponent = props => {
         setPriceChartLegendText(`${symbol} - Weekly`);
       
         setPositionChartLegendText(`Net Positions (Longs-Shorts) - Weekly`);
-        setSixMonthMAText(`6 Month Average`);
-        setThreeYearsMAText(`3 Years Average `);
+        setSixMonthMAText(`6-Month Average`);
+        setThreeYearsMAText(`3-Year Average `);
 
        
 
