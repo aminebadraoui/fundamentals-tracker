@@ -4,7 +4,6 @@ import React, { useEffect, useRef, useState } from 'react';
 export const ChartComponent = props => {
     const {
         data,
-        positionsData,
         symbol,
         colors: {
             backgroundColor = '#fff', // Dark background for better visibility
@@ -17,6 +16,9 @@ export const ChartComponent = props => {
             lineColor = '#2196f3', // Color for the line chart
         } = {},
     } = props;
+
+    const weeklyPrice = data.weeklyPrice;
+    const netPositions = data.netPositions;
 
     const chartContainerRef = useRef();
     const positionsChartContainerRef = useRef();
@@ -76,14 +78,17 @@ export const ChartComponent = props => {
             wickUpColor: wickUpColor,
         });
 
-        candleSeries.setData(data);
+        
+
+        console.log("weeklyPrice", weeklyPrice);
+        weeklyPrice && candleSeries.setData(weeklyPrice);
 
         const lineSeries = positionsChart.addLineSeries({
           color: lineColor,
           lineWidth: 2,
         });
 
-        lineSeries.setData(positionsData);
+        lineSeries.setData(netPositions);
 
         chart.timeScale().scrollToPosition(positionsChart.timeScale().scrollPosition(), false);
         positionsChart.timeScale().scrollToPosition(chart.timeScale().scrollPosition(), false);

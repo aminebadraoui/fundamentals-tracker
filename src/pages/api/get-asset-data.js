@@ -52,7 +52,7 @@ export default async (req, res) => {
     console.log('COT for asset:', cot_for_asset_no_dup);
   } catch (error) {
     console.error('Error parsing COT data:', error);
-    return res.status(500).json({ error: 'Failed to parse COT data', details: error.message });
+    //return res.status(500).json({ error: 'Failed to parse COT data', details: error.message });
   }
 
   // EVENTS DATA
@@ -61,16 +61,16 @@ export default async (req, res) => {
     
   } catch (error) {
     console.error('Error fetching event data:', error);
-    return res.status(500).json({ error: 'Failed to fetch event data', details: error.message });
+    //return res.status(500).json({ error: 'Failed to fetch event data', details: error.message });
   }
 
   // WEEKLY PRICE DATA
 
   try {
-    weekly_price_data_json = await getWeeklyPriceData(assets[asset].apiSymbol)
+    weekly_price_data_json = await getWeeklyPriceData(assets[asset])
   } catch (error) {
     console.error('Error fetching weekly price data:', error);
-    return res.status(500).json({ error: 'Failed to fetch weekly price data', details: error.message });
+    //return res.status(500).json({ error: 'Failed to fetch weekly price data', details: error.message });
   }
 
   // NEWS SENTIMENT DATA
@@ -79,12 +79,12 @@ export default async (req, res) => {
     news_sentiment_json = await getNewsSentimentData(assets[asset].apiSymbol)
   } catch (error) {
     console.error('Error fetching news sentiment:', error);
-    return res.status(500).json({ error: 'Failed to fetch news sentiment', details: error.message });
+    //return res.status(500).json({ error: 'Failed to fetch news sentiment', details: error.message });
   }
 
   try {
     const assetData = processAssetData(asset, eventsForCountriesData, cot_for_asset_no_dup, news_sentiment_json, weekly_price_data_json);
-    console.log(assetData);
+  
     res.status(200).json(assetData);
   } catch (error) {
     console.error('Error preparing pair data:', error);

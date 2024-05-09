@@ -106,7 +106,9 @@ const assets =  {
     cotName: "EURO FX",
     cotFileName: 'currencies',
     cotType: 'nonComm',
-    apiSymbol: 'EURUSD.FOREX'
+    apiSymbol: 'EURUSD.FOREX',
+    apiType: 'eod',
+    twelveDataSymbol: ``
   },
   
   'GBPUSD': {
@@ -114,7 +116,9 @@ const assets =  {
     cotName: "BRITISH POUND",
     cotFileName: 'currencies',
     cotType: 'nonComm',
-    apiSymbol: 'GBPUSD.FOREX'
+    apiSymbol: 'GBPUSD.FOREX',
+    apiType: 'eod',
+    twelveDataSymbol: ``
   },
 
   'AUDUSD': {
@@ -122,7 +126,9 @@ const assets =  {
     cotName: "AUSTRALIAN DOLLAR",
     cotFileName: 'currencies',
     cotType: 'nonComm',
-    apiSymbol: 'AUDUSD.FOREX'
+    apiSymbol: 'AUDUSD.FOREX',
+    apiType: 'eod',
+    twelveDataSymbol: ``
   },
 
   'NZDUSD': {
@@ -130,7 +136,9 @@ const assets =  {
     cotName: "NZ DOLLAR",
     cotFileName: 'currencies',
     cotType: 'nonComm',
-    apiSymbol: 'NZDUSD.FOREX'
+    apiSymbol: 'NZDUSD.FOREX',
+    apiType: 'eod',
+    twelveDataSymbol: ``
   },
 
   'USDCHF': {
@@ -138,7 +146,9 @@ const assets =  {
     cotName: "SWISS FRANC",
     cotFileName: 'currencies',
     ccotType: 'nonComm',
-    apiSymbol: 'USDCHF.FOREX'
+    apiSymbol: 'USDCHF.FOREX',
+    apiType: 'eod',
+    twelveDataSymbol: ``
   },
 
   'USDJPY': {
@@ -146,7 +156,9 @@ const assets =  {
     cotName: "JAPANESE YEN",
     cotFileName: 'currencies',
     cotType: 'nonComm',
-    apiSymbol: 'USDJPY.FOREX'
+    apiSymbol: 'USDJPY.FOREX',
+    apiType: 'eod',
+    twelveDataSymbol: ``
   },
 
   'USDCAD': {
@@ -154,35 +166,45 @@ const assets =  {
     cotName: "CANADIAN DOLLAR",
     cotFileName: 'currencies',
     cotType: 'nonComm',
-    apiSymbol: 'USDCAD.FOREX'
+    apiSymbol: 'USDCAD.FOREX',
+    apiType: 'eod',
+    twelveDataSymbol: ``
   },
   'BITCOIN': {
     countries: ["US"],
     cotName: "BITCOIN",
     cotFileName: 'crypto',
     cotType: 'nonComm',
-    apiSymbol: 'BTC-USD.CC'
+    apiSymbol: 'BTC-USD.CC',
+    apiType: 'eod',
+    twelveDataSymbol: ``
   },
   'GOLD': {
     countries: ["US"],
     cotName: "GOLD",
     cotFileName: 'precious-metals',
     cotType: 'comm',
-    apiSymbol: ''
+    apiSymbol: '',
+    apiType: 'openExchange',
+    twelveDataSymbol: `XAU/USD`
   },
   'SILVER': {
     countries: ["US"],
     cotName: "SILVER",
     cotFileName: 'precious-metals',
     cotType: 'comm',
-    apiSymbol: ''
+    apiSymbol: '',
+    apiType: 'openExchange',
+    twelveDataSymbol: `XAG/USD`
   },
   'OIL': {
     countries: ["US"],
     cotName: "WTI FINANCIAL CRUDE OIL",
     cotFileName: 'commodities',
     cotType: 'comm',
-    apiSymbol: ''
+    apiSymbol: '',
+    apiType: '',
+    twelveDataSymbol: ``
   },
 }
 

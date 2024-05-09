@@ -81,7 +81,7 @@ const Scanner = (props) => {
               </div>
 
               <div className='flex space-x-4' >
-              { <ChartComponent data={assetData.chartData.weeklyPrice} positionsData={assetData.chartData.netPositions} symbol={asset} timeframe={'Weekly'}></ChartComponent>}
+              { assetData.chartData && <ChartComponent data={assetData.chartData}  symbol={asset} timeframe={'Weekly'}></ChartComponent>}
              
               { [asset].map((asset) => {
                 return (
