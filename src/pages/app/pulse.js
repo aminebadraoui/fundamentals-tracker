@@ -7,7 +7,7 @@ import { Table, TableHeader, TableRow, TableHead, TableCell, TableBody } from '@
 import { parseCotData, findLatestReports, findLatestCotDataForAsset } from '@/utils/cot-data';
 import fs from 'fs';
 import { getScoreBackgroundColor, getScoreTextColor } from '@/utils/get-score-color';
-import { getPairData } from '@/utils/pair-data';
+import { processAssetData } from '@/utils/pair-data';
 import { getCryptoData } from '@/utils/crypto-data';
 
 import path from 'path';
@@ -86,7 +86,7 @@ const Pulse = (props) => {
 
         const cot_for_pair = findLatestCotDataForAsset(majorForexPairs[pair].cotName, cot_2024_currencies)
 
-        const pairData_local = getPairData(pair, rawPairData, cot_for_pair, technical_data_for_pair, news_data_for_pair)
+        const pairData_local = processAssetData(pair, rawPairData, cot_for_pair, technical_data_for_pair, news_data_for_pair)
        
         return pairData_local
         

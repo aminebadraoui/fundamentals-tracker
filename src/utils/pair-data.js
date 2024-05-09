@@ -1,6 +1,6 @@
 
 import { getDataSortedByTotalScore } from '@/utils/getDataSortedByTotalScore';
-import { inflationKeys, employmentKeys, interestRatesKeys, majorEventsKeys, majorForexPairs, housingKeys, assets } from '@/utils/event-names';
+import { inflationKeys, employmentKeys, interestRatesKeys, housingKeys, assets } from '@/utils/event-names';
 import { get } from 'mongoose';
 
 // HELPERS 
