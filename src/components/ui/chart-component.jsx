@@ -184,7 +184,7 @@ export const ChartComponent = props => {
         </div>
         <div style={{ position: 'relative', width: '100%', height: '700px' }}>
             <div ref={positionsChartContainerRef} style={{ height: '350px', marginTop: '4px' }} />
-            <div style={{ position: 'absolute', left: '10px', top: '10px', color: '#000', zIndex: 10 }}>
+            <div style={{ position: 'absolute', left: '10px', top: '10px', color: '#2196f3', zIndex: 10 }}>
                 {positionChartLegendText}
             </div>
             <div style={{ position: 'absolute', left: '10px', top: '30px', color: '#ff0000', zIndex: 10 }}>
