@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { DashboardLayout } from '@/components/layout/dashboard-layout';
-import { majorForexPairs, cryptoAssets, commodities } from '@/utils/event-names';
+import { assets } from '@/utils/event-names';
 import { Loader } from '@/components/ui/loader';
 import { TitledCard } from '@/components/shadcn/titled-card';
 import { parseCotData, findLatestCotDataForAsset } from '@/utils/cot-data';
@@ -26,16 +26,16 @@ export const getServerSideProps = async (context) => {
       const cot_2024_currencies_path = path.join(process.cwd(), 'public/assets/cot-data/2024/currencies.xml');
       const cot_2024_currencies_xml = fs.readFileSync(cot_2024_currencies_path, 'utf-8');
 
-      const cot_2024_bitcoin_path = path.join(process.cwd(), 'public/assets/cot-data/2024/bitcoin.xml');
+      const cot_2024_bitcoin_path = path.join(process.cwd(), 'public/assets/cot-data/2024/crypto.xml');
       const cot_2024_bitcoin_xml = fs.readFileSync(cot_2024_bitcoin_path, 'utf-8');
 
-      const cot_2024_gold_path = path.join(process.cwd(), 'public/assets/cot-data/2024/gold.xml');
+      const cot_2024_gold_path = path.join(process.cwd(), 'public/assets/cot-data/2024/precious-metals.xml');
       const cot_2024_gold_xml = fs.readFileSync(cot_2024_gold_path, 'utf-8');
 
-      const cot_2024_silver_path = path.join(process.cwd(), 'public/assets/cot-data/2024/silver.xml');
+      const cot_2024_silver_path = path.join(process.cwd(), 'public/assets/cot-data/2024/precious-metals.xml');
       const cot_2024_silver_xml = fs.readFileSync(cot_2024_silver_path, 'utf-8');
 
-      const cot_2024_oil_path = path.join(process.cwd(), 'public/assets/cot-data/2024/oil.xml');
+      const cot_2024_oil_path = path.join(process.cwd(), 'public/assets/cot-data/2024/precious-metals.xml');
       const cot_2024_oil_xml = fs.readFileSync(cot_2024_oil_path, 'utf-8');
 
       try {
@@ -64,7 +64,7 @@ export const getServerSideProps = async (context) => {
 };
 
 const Institutional = (props) => {
-  console.log (props)
+  
   const [forexData, setForexData] = useState({});
   const [cryptoData, setCryptoData] = useState({});
   const [commodityData, setCommodityData] = useState({});
@@ -78,36 +78,45 @@ const Institutional = (props) => {
     const commodities_cot_data = {};
   
     // Assuming findLatestCotDataForAsset is synchronous or properly awaited if asynchronous
-    Object.keys(majorForexPairs).forEach(pair => {
-      forex_cot_data[pair] = findLatestCotDataForAsset(majorForexPairs[pair].cotName, props.cot_2024_currencies);
+    Object.keys(assets).forEach(asset => {
+      if (assets[asset].cotFileName === 'currencies') {
+      forex_cot_data[asset] = findLatestCotDataForAsset(assets[asset].cotName, props.cot_2024_currencies);
+      }
     });
   
-    Object.keys(cryptoAssets).forEach(asset => {
-      crypto_cot_data[asset] = findLatestCotDataForAsset(cryptoAssets[asset].cotName, props.cot_2024_bitcoin);
+    Object.keys(assets).forEach(asset => {
+      if (assets[asset].cotFileName === 'crypto') {
+      crypto_cot_data[asset] = findLatestCotDataForAsset(assets[asset].cotName, props.cot_2024_bitcoin);
+      }
     });
 
-    Object.keys(commodities).forEach(commodity => {
-      let commodityCotData = {}
+    Object.keys(assets).forEach(asset => {
+      if (assets[asset].cotFileName === 'precious-metals') {
+        let commodityCotData = {}
 
-      if (commodity === 'GOLD') { 
-        commodityCotData = props.cot_2024_gold;
-      } else if (commodity === 'SILVER') {
-        commodityCotData = props.cot_2024_silver;
-      }
-      else if (commodity === 'OIL') {
-        commodityCotData = props.cot_2024_oil;
-      }
+        if (asset === 'GOLD') { 
+          commodityCotData = props.cot_2024_gold;
+        } else if (asset === 'SILVER') {
+          commodityCotData = props.cot_2024_silver;
+        }
+        else if (asset === 'OIL') {
+          commodityCotData = props.cot_2024_oil;
+        }
 
-      commodities_cot_data[commodity] = findLatestCotDataForAsset(commodities[commodity].cotName, commodityCotData);
+        commodities_cot_data[asset] = findLatestCotDataForAsset(assets[asset].cotName, commodityCotData);
+    }
     });
 
+    console.log(forex_cot_data)
+    console.log(crypto_cot_data)
     console.log(commodities_cot_data)
+
   
     // Create a new object with only the first array element of each key and keep only the two specified properties
     const forexFirstElements = Object.keys(forex_cot_data).reduce((acc, key) => {
       const firstElement = forex_cot_data[key][0]; // assuming each key's value is an array
-      const longs = parseFloat(firstElement.comm_positions_long_all[0]);
-      const shorts = parseFloat(firstElement.comm_positions_short_all[0]);
+      const longs = parseFloat(firstElement.noncomm_positions_long_all[0]);
+      const shorts = parseFloat(firstElement.noncomm_positions_short_all[0]);
       const totalPositions = longs + shorts;
       acc[key] = {
         name: key, // Adding name for easier chart data integration
@@ -123,8 +132,8 @@ const Institutional = (props) => {
      // Create a new object with only the first array element of each key and keep only the two specified properties
      const cryptoFirstElements = Object.keys(crypto_cot_data).reduce((acc, key) => {
       const firstElement = crypto_cot_data[key][0]; // assuming each key's value is an array
-      const longs = parseFloat(firstElement.comm_positions_long_all[0]);
-      const shorts = parseFloat(firstElement.comm_positions_short_all[0]);
+      const longs = parseFloat(firstElement.noncomm_positions_long_all[0]);
+      const shorts = parseFloat(firstElement.noncomm_positions_short_all[0]);
       const totalPositions = longs + shorts;
       acc[key] = {
         name: key, // Adding name for easier chart data integration
@@ -140,8 +149,8 @@ const Institutional = (props) => {
        // Create a new object with only the first array element of each key and keep only the two specified properties
        const commoditiesFirstElements = Object.keys(commodities_cot_data).reduce((acc, key) => {
         const firstElement = commodities_cot_data[key][0]; // assuming each key's value is an array
-        const longs = parseFloat(firstElement.noncomm_positions_long_all[0]);
-        const shorts = parseFloat(firstElement.noncomm_positions_short_all[0]);
+        const longs = parseFloat(firstElement.comm_positions_long_all[0]);
+        const shorts = parseFloat(firstElement.comm_positions_short_all[0]);
         const totalPositions = longs + shorts;
         acc[key] = {
           name: key, // Adding name for easier chart data integration

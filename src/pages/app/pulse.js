@@ -22,7 +22,7 @@ export const getServerSideProps = async (context) => {
     const cot_2024_currencies_path = path.join(process.cwd(), 'public/assets/cot-data/2024/currencies.xml');
     const cot_2024_currencies_xml = fs.readFileSync(cot_2024_currencies_path, 'utf-8');
   
-    const cot_2024_bitcoin_path = path.join(process.cwd(), 'public/assets/cot-data/2024/bitcoin.xml');
+    const cot_2024_bitcoin_path = path.join(process.cwd(), 'public/assets/cot-data/2024/crypto.xml');
     const cot_2024_bitcoin_xml = fs.readFileSync(cot_2024_bitcoin_path, 'utf-8');
 
   try {
