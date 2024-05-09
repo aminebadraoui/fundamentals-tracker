@@ -204,7 +204,7 @@ const assets =  {
     cotType: 'comm',
     apiSymbol: '',
     apiType: '',
-    twelveDataSymbol: ``
+    twelveDataSymbol: `WTI/USD`
   },
 }
 

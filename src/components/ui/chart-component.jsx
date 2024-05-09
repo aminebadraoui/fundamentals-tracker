@@ -14,6 +14,7 @@ export const ChartComponent = props => {
             wickUpColor = '#4caf50', // Green wick for rising candle
             wickDownColor = '#f44336', // Red wick for falling candle
             lineColor = '#2196f3', // Color for the line chart
+            zeroLineColor = '#f87315', // Orange color for the zero line
         } = {},
     } = props;
 
@@ -78,8 +79,6 @@ export const ChartComponent = props => {
             wickUpColor: wickUpColor,
         });
 
-        
-
         console.log("weeklyPrice", weeklyPrice);
         weeklyPrice && candleSeries.setData(weeklyPrice);
 
@@ -89,6 +88,19 @@ export const ChartComponent = props => {
         });
 
         lineSeries.setData(netPositions);
+
+        const zeroLineSeries = positionsChart.addLineSeries({
+          color: zeroLineColor, // Red color for the zero line
+          lineWidth: 1,
+      });
+
+          // Create data for the zero line
+          const zeroLineData = netPositions.map(point => ({
+            time: point.time,
+            value: 0
+        }));
+
+        zeroLineSeries.setData(zeroLineData);
 
         chart.timeScale().scrollToPosition(positionsChart.timeScale().scrollPosition(), false);
         positionsChart.timeScale().scrollToPosition(chart.timeScale().scrollPosition(), false);
