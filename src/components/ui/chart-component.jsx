@@ -1,6 +1,23 @@
 import { createChart, ColorType, CrosshairMode } from 'lightweight-charts';
 import React, { useEffect, useRef, useState } from 'react';
 
+function calculateMovingAverage(data, period) {
+  const movingAverageData = [];
+  for (let i = 0; i < data.length; i++) {
+      if (i < period - 1) {
+          movingAverageData.push({ time: data[i].time, value: 0 });
+          continue;
+      }
+      let sum = 0;
+      for (let j = 0; j < period; j++) {
+          sum += data[i - j].value;
+      }
+      const avg = sum / period;
+      movingAverageData.push({ time: data[i].time, value: avg });
+  }
+  return movingAverageData;
+}
+
 export const ChartComponent = props => {
     const {
         data,
@@ -15,6 +32,8 @@ export const ChartComponent = props => {
             wickDownColor = '#f44336', // Red wick for falling candle
             lineColor = '#2196f3', // Color for the line chart
             zeroLineColor = '#f87315', // Orange color for the zero line
+            sixMonthmovingAverageColor = '#ff0000', // Orange color for the moving average line
+            threeYearsMovingAverageColor = '#a717d3', // Red color for the moving average line
         } = {},
     } = props;
 
@@ -25,6 +44,8 @@ export const ChartComponent = props => {
     const positionsChartContainerRef = useRef();
 
     const [priceChartLegendText, setPriceChartLegendText] = useState('');
+    const [sixMonthMAText, setSixMonthMAText] = useState('');
+    const [threeYearsMAText, setThreeYearsMAText] = useState('');
     const [positionChartLegendText, setPositionChartLegendText] = useState('');
 
     useEffect(() => {
@@ -90,7 +111,7 @@ export const ChartComponent = props => {
         lineSeries.setData(netPositions);
 
         const zeroLineSeries = positionsChart.addLineSeries({
-          color: zeroLineColor, // Red color for the zero line
+          color: zeroLineColor, 
           lineWidth: 1,
       });
 
@@ -102,11 +123,33 @@ export const ChartComponent = props => {
 
         zeroLineSeries.setData(zeroLineData);
 
+        // Calculate and add the 26-period moving average
+        const sixMonthsMovingAverageData = calculateMovingAverage(netPositions, 26);
+        console.log("sixMonthsmovingAverageData", sixMonthsMovingAverageData);
+
+        const sixMonthsMovingAverageSeries = positionsChart.addLineSeries({
+            color: sixMonthmovingAverageColor,
+            lineWidth: 1,
+        });
+        sixMonthsMovingAverageSeries.setData(sixMonthsMovingAverageData);
+
+        const threeYearsMovingAverageData = calculateMovingAverage(netPositions, 156);
+        console.log("threeYearsMovingAverageData", threeYearsMovingAverageData);
+
+        const threeYearsMovingAverageSeries = positionsChart.addLineSeries({
+            color: threeYearsMovingAverageColor,
+            lineWidth: 1,
+        });
+        threeYearsMovingAverageSeries.setData(threeYearsMovingAverageData);
+
         chart.timeScale().scrollToPosition(positionsChart.timeScale().scrollPosition(), false);
         positionsChart.timeScale().scrollToPosition(chart.timeScale().scrollPosition(), false);
 
         setPriceChartLegendText(`${symbol} - Weekly`);
+      
         setPositionChartLegendText(`Net Positions (Longs-Shorts) - Weekly`);
+        setSixMonthMAText(`6 Month Average`);
+        setThreeYearsMAText(`3 Years Average `);
 
        
 
@@ -143,6 +186,12 @@ export const ChartComponent = props => {
             <div ref={positionsChartContainerRef} style={{ height: '350px', marginTop: '4px' }} />
             <div style={{ position: 'absolute', left: '10px', top: '10px', color: '#000', zIndex: 10 }}>
                 {positionChartLegendText}
+            </div>
+            <div style={{ position: 'absolute', left: '10px', top: '30px', color: '#ff0000', zIndex: 10 }}>
+                {sixMonthMAText}
+            </div>
+            <div style={{ position: 'absolute', left: '10px', top: '50px', color: '#a717d3', zIndex: 10 }}>
+                {threeYearsMAText}
             </div>
         </div>
 
