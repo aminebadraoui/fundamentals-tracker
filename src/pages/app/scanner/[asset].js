@@ -9,10 +9,13 @@ import { assets } from '@/utils/event-names';
 
 import { ChartComponent } from '@/components/ui/chart-component';
 
+import { Bar, BarChart, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis, Cell} from 'recharts';
+
 import withSession from '@/lib/withSession';
 import withSubscription from '@/lib/withSubscription';
 
 import dynamic from "next/dynamic";
+import { set } from 'mongoose';
 
 export const getServerSideProps = async (context) => {
   return withSession(context, async(context, session) => {
@@ -63,6 +66,8 @@ const Scanner = (props) => {
   const GaugeComponent = dynamic(() => import('react-gauge-component'), { ssr: false });
   // keep track of different arrays of events as part of one object
   const [assetData , setAssetData] = useState(null);
+  const [institutionalChartData , setInstitutionalChartData] = useState(null);
+  const [netChartData , setNetChartData] = useState(null);
   const [isLoading, setLoading] = useState(false);
 
   const handleDownload = async () => {
@@ -80,8 +85,30 @@ const Scanner = (props) => {
 
       const assetDataJson = processAssetData(asset, eventData, cotData, newsSentimentData, weeklyPriceData);
 
+      const chartData =  [{
+          name: asset,
+          long: assetDataJson.cot.institutional.long,
+          short: assetDataJson.cot.institutional.short
+        }]
+
+        const netChartData = [
+          { 
+            name: "Longs",
+            current: assetDataJson.cot.institutional.long,
+            previous: assetDataJson.cot.institutional.longOld,
+          },
+          {
+            name: "Shorts",
+            current: assetDataJson.cot.institutional.short,
+            previous: assetDataJson.cot.institutional.shortOld,
+          }
+        ];
+  
+
       // set the state with the sorted data
       setAssetData(assetDataJson);
+      setInstitutionalChartData(chartData);
+      setNetChartData(netChartData);
 
       console.log("assetDataJson", assetDataJson)
 
@@ -125,7 +152,7 @@ const Scanner = (props) => {
               { [asset].map((asset) => {
                 return (
                   assetData && 
-                  <div className='flex flex-col space-y-4'>
+                  <div className='flex w-1/2 flex-col space-y-4'>
                     <GaugeComponent
                               value={assetData.score}  
                               type="radial"
@@ -156,12 +183,14 @@ const Scanner = (props) => {
                               maxValue={100}
                               pointer={{
                                 elastic: true,
-                                animationDelay: 0
+                                animationDelay: 0,
+                                color: '#9ea7c6',
                               }}/>
 
                     <TitledCard key={`${asset}_economy_card_`} className={Style.InternalCard} title="Economy">
                         
-                        { assetData.countries.length == 2 ? <Table>
+                        { assetData.countries.length == 2 ? 
+                        <Table>
                         <TableHeader>
                           <TableRow className='hover:bg-transparent'>
                             <TableHead className='bg-transparent border-0 hover:bg-transparent'>  </TableHead>
@@ -210,11 +239,93 @@ const Scanner = (props) => {
                         </TableBody>
                         
                         </Table>  
+                        :  <Table>
+                        <TableHeader>
+                          <TableRow className='hover:bg-transparent'>
+                            <TableHead className='bg-transparent border-0 hover:bg-transparent'>  </TableHead>
+                            <TableHead className='font-bold'> {assetData.economics.countriesEvents[0].country} </TableHead>
+                           
+                            <TableHead className='font-bold'> {`${asset}`}</TableHead>
+                          </TableRow>
+                        </TableHeader>
+
+                        <TableBody>
+                            <TableRow>
+                              <TableCell className='font-bold'> Inflation Score </TableCell>
+                              <TableCell> {assetData.economics.countriesEvents[0].inflationData.totalScore.toFixed(2)} </TableCell>
+                             
+                              <TableCell className={ `${getScoreTextColor(assetData.economics.inflationScore)}`}> {assetData.economics.inflationScore} </TableCell>
+                            </TableRow>
+                            <TableRow>
+                              <TableCell className='font-bold'> Interest Rate Score </TableCell>
+                              <TableCell> {assetData.economics.countriesEvents[0].interestRateData.totalScore.toFixed(2)} </TableCell>
+                              
+                              <TableCell className={ `${getScoreTextColor(assetData.economics.interestRateScore)}`}> {assetData.economics.interestRateScore} </TableCell>
+                            </TableRow>
+                            <TableRow>
+                              <TableCell className='font-bold'>  Employement Score </TableCell>
+                              <TableCell> {assetData.economics.countriesEvents[0].employmentData.totalScore.toFixed(2)} </TableCell>
+                              
+                              <TableCell className={ `${getScoreTextColor(assetData.economics.employmentScore)}`}> {assetData.economics.employmentScore} </TableCell>
+                            </TableRow>
+                            <TableRow>
+                              <TableCell className='font-bold'> Housing Score </TableCell>
+                              <TableCell> {assetData.economics.countriesEvents[0].housingData.totalScore.toFixed(2)} </TableCell>
+                
+                              <TableCell className={ `${getScoreTextColor(assetData.economics.housingScore)}`}> {assetData.economics.housingScore} </TableCell>
+                            </TableRow>
+                            <TableRow>
+                              <TableCell className='font-bold'> Growth Score </TableCell>
+                              <TableCell> {assetData.economics.countriesEvents[0].growthData.totalScore.toFixed(2)} </TableCell>
+                      
+                              <TableCell className={ `${getScoreTextColor(assetData.economics.growthScore)}`}> {assetData.economics.growthScore} </TableCell>
+                            </TableRow>
+                            <TableRow>
+                              <TableCell colSpan={2} className='font-bold'> Final Score </TableCell>
+                          
+                              <TableCell className={ `${getScoreBackgroundColor(assetData.economics.score)} font-bold `}> {assetData.economics.score} </TableCell>
+                            </TableRow>
+                        </TableBody>
                         
-                        : <div></div>}
+                        </Table>  }
                     </TitledCard>
 
                     <TitledCard key={`${asset}_institional_Positioning_card`} className={Style.InternalCard} title="Institutional Positioning">
+                      <div className='flex'>
+                      <ResponsiveContainer  height={400}>
+                      <BarChart data={institutionalChartData} barCategoryGap={20} >
+                        <XAxis dataKey="name" tick={{ fill: 'white' }} />
+                        <YAxis domain={[0, 100]} />
+                        <Tooltip cursor={{fill: 'transparent'}} />
+                        <Legend />
+                        <Bar dataKey="long" name="Total Longs"  fill="#009900"   />
+                        <Bar dataKey="short" name="Total Shorts"  fill="#c20b0a" />
+                      </BarChart>
+                    </ResponsiveContainer>
+                    <ResponsiveContainer height={400}>
+                      <BarChart data={netChartData} barCategoryGap={20} barGap={3}>
+                        
+                        <XAxis dataKey="name" tick={{ fill: 'white' }} />
+                        <YAxis />
+                        <Tooltip cursor={{fill: 'transparent'}} />
+                        <Legend />
+                        <Bar dataKey="current" name="Current" fill="#009900" stackId="a">
+                          {netChartData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={index % 2 === 0 ? '#009900' : '#c20b0a'} />
+                          ))}
+                        </Bar>
+                        <Bar dataKey="previous" name="Previous" fill="#006600" stackId="b">
+                          {netChartData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={index % 2 === 0 ? '#006600' : '#8b0000'} />
+                          ))}
+                        </Bar>
+                      </BarChart>
+                    </ResponsiveContainer>
+
+                        
+                    </div>
+                   
+                      
                       <Table> 
                       <TableHeader>
                         <TableRow className='hover:bg-transparent'>
