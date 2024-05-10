@@ -51,7 +51,7 @@ const Pulse = (props) => {
   const handleDownload = async () => {
     setLoading(true);
     try {
-      const years = [2024, 2023, 2022, 2021, 2020, 2019, 2018, 2017];
+      const years = [2024];
       const assetPromises = Object.keys(assets).map(asset => 
         Promise.all([
           fetchCotDataForYears(asset, years),

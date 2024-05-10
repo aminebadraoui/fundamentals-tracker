@@ -61,9 +61,8 @@ const Institutional = (props) => {
     setLoading(true);
 
     try {
-      const years = [2024, 2023, 2022, 2021, 2020, 2019, 2018, 2017]; // or any range of years you have data for
+      const years = [2024]; // or any range of years you have data for
       
-
       const assetPromises = Object.keys(assets).map(asset => 
         Promise.all([
           fetchCotDataForYears(asset, years),
