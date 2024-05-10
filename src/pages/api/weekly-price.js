@@ -15,7 +15,7 @@ export const getWeeklyPriceData = async (asset) => {
   
   if (apiType === "eod") {
     const symbol = asset.apiSymbol
-    url = `https://eodhd.com/api/eod/${symbol}?&period=w&api_token=${process.env.EOD_TOKEN}&fmt=json`
+    url = `https://eodhd.com/api/eod/${symbol}?&period=w&from=2016-01-01&api_token=${process.env.EOD_TOKEN}&fmt=json`
     const weekly_price_res = await fetch(url);
     console.log("Weekly Price Response", weekly_price_res)
 
