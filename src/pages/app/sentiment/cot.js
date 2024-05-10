@@ -44,8 +44,7 @@ const fetchData = async (url, params = {}) => {
 
 const fetchCotDataForYears = async (asset, years) => {
   const cotFileName = assets[asset].cotFileName
-  console.log(asset)
-  console.log(assets[asset])
+
   const cotDataPromises = years.map(year => fetchData('/api/getCotDataByYear', { cotFileName, year }));
   const batchedCotData = await Promise.all(cotDataPromises);
   return batchedCotData.flat();

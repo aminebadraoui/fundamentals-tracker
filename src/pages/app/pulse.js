@@ -9,7 +9,6 @@ import { Table, TableHeader, TableRow, TableHead, TableCell, TableBody } from '@
 import { getScoreTextColor } from '@/utils/get-score-color';
 import { processAssetData } from '@/utils/pair-data';
 
-import { fetchCotData } from '../api/getCotDataByYear';
 
 import withSession from '@/lib/withSession';
 import withSubscription from '@/lib/withSubscription';
@@ -36,6 +35,15 @@ const fetchData = async (url, params = {}) => {
   return response.json();
 };
 
+const fetchCotDataForYears = async (asset, years) => {
+  const cotFileName = assets[asset].cotFileName
+
+  const cotDataPromises = years.map(year => fetchData('/api/getCotDataByYear', { cotFileName, year }));
+  const batchedCotData = await Promise.all(cotDataPromises);
+  return batchedCotData.flat();
+};
+
+
 const Pulse = (props) => {
   const [pulseData, setPulseData] = useState({});
   const [isLoading, setLoading] = useState(false);
@@ -43,9 +51,10 @@ const Pulse = (props) => {
   const handleDownload = async () => {
     setLoading(true);
     try {
+      const years = [2024, 2023, 2022, 2021, 2020, 2019, 2018, 2017];
       const assetPromises = Object.keys(assets).map(asset => 
         Promise.all([
-          fetchCotData(asset),
+          fetchCotDataForYears(asset, years),
           fetchData('/api/getEventData', { countries: assets[asset].countries.join(',') }),
           fetchData('/api/getWeeklyPriceData', { asset }),
           fetchData('/api/getNewsSentimentData', { symbol: assets[asset].apiSymbol })
