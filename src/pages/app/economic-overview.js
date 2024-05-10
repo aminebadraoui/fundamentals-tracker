@@ -40,7 +40,10 @@ const EconomicOverview = () => {
       const data = await fetch('../api/event-calendar');
       const rawData = await data.json();
 
+      console.log("rawData", rawData)
+
       const inflationData = getDataSortedByTotalScore(rawData, inflationKeys, null);
+      console.log("inflationData", inflationData)
       const employmentData = getDataSortedByTotalScore(rawData, employmentKeys, null);
       const housingData = getDataSortedByTotalScore(rawData, housingKeys, null)
       const growthData = getDataSortedByTotalScore(rawData, null, inflationKeys.concat(employmentKeys).concat(interestRatesKeys).concat(housingKeys));

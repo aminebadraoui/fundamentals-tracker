@@ -9,7 +9,7 @@ export default async (req, res) => {
   return res.status(200).json(eventData);
 };
 
-export const getEventData = async (countries = [], limit = 600) => {
+export const getEventData = async (countries = [], limit = 1000) => {
   let countriesList = [];
   if (countries.length > 0) {
     countriesList = countries;
@@ -17,7 +17,20 @@ export const getEventData = async (countries = [], limit = 600) => {
     countriesList = countryList_Iso3166;
   }
 
-  const promises = countriesList.map(country => fetch(`https://eodhd.com/api/economic-events?api_token=${process.env.EOD_TOKEN}&fmt=json&country=${country}&limit=${limit}`, { cache: 'force-cache' })
+  const currentDate = new Date(); 
+  // Make currentDate in YYYY-MM-DD format
+  const formattedCurrentDate = currentDate.toISOString().split('T')[0];
+
+  // first day of the previous quarter
+  const fromDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 3, 1);
+  // Make firstDayOfPreviousMonth in YYYY-MM-DD format
+  const formattedFromDate = fromDate.toISOString().split('T')[0];
+
+
+
+  console.log("formattedCurrentDate", formattedCurrentDate)
+
+  const promises = countriesList.map(country => fetch(`https://eodhd.com/api/economic-events?api_token=${process.env.EOD_TOKEN}&fmt=json&country=${country}&from=${formattedFromDate}&to=${formattedCurrentDate}&limit=${limit}`)
     .then(response => response.json())
     .then(eventsForCountryData => ({ [country]: eventsForCountryData }))
     .catch(error => {

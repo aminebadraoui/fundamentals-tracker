@@ -2,14 +2,19 @@ import { countryList_Iso3166, eventCategoryList, inflationKeys, flippedScoringKe
 
 const getScore = (event) => {
   let score = 0
-  const scoreStep = 50 // 0.5 so score is between -1 and 1
+  const scoreStep = event.estimate ? 50 : 100 // 0.5 so score is between -1 and 1
   if (flippedScoringKeys.includes(event.type)) {
-    if (event.actual > event.estimate) {
-      score -= scoreStep
+    if (event.estimate) {
+      if (event.actual > event.estimate) {
+        score -= scoreStep
+      }
+      if (event.actual < event.estimate) {
+        score += scoreStep
+      }
     }
-    if (event.actual < event.estimate) {
-      score += scoreStep
-    }
+    
+
+
     if (event.actual > event.previous) {
       score -= scoreStep
     }
@@ -17,12 +22,15 @@ const getScore = (event) => {
       score += scoreStep
     }
   } else {
-    if (event.actual > event.estimate) {
-      score += scoreStep
+    if (event.estimate)  {
+      if (event.actual > event.estimate) {
+        score += scoreStep
+      }
+      if (event.actual < event.estimate) {
+        score -= scoreStep
+      }
     }
-    if (event.actual < event.estimate) {
-      score -= scoreStep
-    }
+    
     if (event.actual > event.previous) {
       score += scoreStep
     }
@@ -49,7 +57,7 @@ const getDataSortedByTotalScore = (rawData, filter, antifilter) => {
       Object.keys(eventArray).map((eventIndex) => { 
         const event = eventArray[eventIndex]
 
-        if ((filter && filter.includes(event.type) || antifilter && !antifilter.includes(event.type)) && (event.actual && event.estimate && event.previous && event.date)) {
+        if ((filter && filter.includes(event.type) || antifilter && !antifilter.includes(event.type)) && (event.actual && event.previous && event.date)) {
             finalData[key]["events"].push(event)
         }
       })

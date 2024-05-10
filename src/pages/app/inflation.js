@@ -40,6 +40,9 @@ const Inflation = () => {
       // a.click();
 
       const inflationData = getDataSortedByTotalScore(jsonData, inflationKeys, null)
+
+      console.log(jsonData)
+
       const inflationChartData = getChartData(inflationData)
 
       setEvents({jsonData, inflationData, inflationChartData});
