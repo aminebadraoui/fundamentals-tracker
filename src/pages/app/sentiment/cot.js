@@ -15,6 +15,8 @@ import {
   ResponsiveContainer
 } from 'recharts';
 
+import { processAssetData } from '@/utils/pair-data';
+
 export const getServerSideProps = async (context) => {
   return withSession(context, async (context, session) => {
     return withSubscription(context, session, async (context) => {
@@ -25,10 +27,15 @@ export const getServerSideProps = async (context) => {
   });
 };
 
-const fetchAssetData = async (asset) => {
-  const response = await fetch(`/api/get-asset-data?asset=${asset}`);
+const fetchData = async (url, params = {}) => {
+  const queryString = new URLSearchParams(params).toString();
+  const response = await fetch(`${url}?${queryString}`);
+  if (!response.ok) {
+    throw new Error(`Failed to fetch data from ${url}`);
+  }
   return response.json();
 };
+
 
 const Institutional = (props) => {
   
@@ -40,7 +47,17 @@ const Institutional = (props) => {
     setLoading(true);
 
     try {
-      const assetPromises = Object.keys(assets).map(asset => fetchAssetData(asset));
+      const assetPromises = Object.keys(assets).map(asset => 
+        Promise.all([
+          fetchData('/api/getCotData', { asset }),
+          fetchData('/api/getEventData', { countries: assets[asset].countries.join(',') }),
+          fetchData('/api/getWeeklyPriceData', { asset }),
+          fetchData('/api/getNewsSentimentData', { symbol: assets[asset].apiSymbol })
+        ]).then(([cotData, eventData, weeklyPriceData, newsSentimentData]) => {
+          return processAssetData(asset, eventData, cotData, newsSentimentData, weeklyPriceData);
+        })
+      );
+
       const assetDataArray = await Promise.all(assetPromises);
 
       const institutionalChartDataArray = assetDataArray.map((data, index) => {
