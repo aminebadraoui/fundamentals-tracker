@@ -24,20 +24,29 @@ export default async (req, res) => {
     const cot_2022_path = path.resolve(`public/assets/cot-data/2022/${fileName}.xml`);
     const cot_2021_path = path.resolve(`public/assets/cot-data/2021/${fileName}.xml`);
     const cot_2020_path = path.resolve(`public/assets/cot-data/2020/${fileName}.xml`);
+    const cot_2019_path = path.resolve(`public/assets/cot-data/2019/${fileName}.xml`);
+    const cot_2018_path = path.resolve(`public/assets/cot-data/2018/${fileName}.xml`);
+    const cot_2017_path = path.resolve(`public/assets/cot-data/2017/${fileName}.xml`);
 
     const cot_2024_xml = fs.readFileSync(cot_2024_path, 'utf-8');
     const cot_2023_xml = fs.readFileSync(cot_2023_path, 'utf-8');
     const cot_2022_xml = fs.readFileSync(cot_2022_path, 'utf-8');
     const cot_2021_xml = fs.readFileSync(cot_2021_path, 'utf-8');
     const cot_2020_xml = fs.readFileSync(cot_2020_path, 'utf-8');
+    const cot_2019_xml = fs.readFileSync(cot_2019_path, 'utf-8');
+    const cot_2018_xml = fs.readFileSync(cot_2018_path, 'utf-8');
+    const cot_2017_xml = fs.readFileSync(cot_2017_path, 'utf-8');
 
     const cot_2024_json = await parseCotData(cot_2024_xml);
     const cot_2023_json = await parseCotData(cot_2023_xml);
     const cot_2022_json = await parseCotData(cot_2022_xml);
     const cot_2021_json = await parseCotData(cot_2021_xml);
     const cot_2020_json = await parseCotData(cot_2020_xml);
+    const cot_2019_json = await parseCotData(cot_2019_xml);
+    const cot_2018_json = await parseCotData(cot_2018_xml);
+    const cot_2017_json = await parseCotData(cot_2017_xml);
 
-    const cot_all_json = cot_2024_json.concat(cot_2023_json).concat(cot_2022_json).concat(cot_2021_json).concat(cot_2020_json);
+    const cot_all_json = cot_2024_json.concat(cot_2023_json).concat(cot_2022_json).concat(cot_2021_json).concat(cot_2020_json).concat(cot_2019_json).concat(cot_2018_json).concat(cot_2017_json);
     
 
     const cot_for_asset = findLatestCotDataForAsset(assets[asset].cotName, cot_all_json);

@@ -18,6 +18,29 @@ function calculateMovingAverage(data, period) {
   return movingAverageData;
 }
 
+function calculateZScore(data, period = 26) {
+  const zScoreData = [];
+  for (let i = 0; i < data.length; i++) {
+      if (i < period - 1) {
+          zScoreData.push({ time: data[i].time, value: 0 });
+          continue;
+      }
+      let sum = 0;
+      let sumSquares = 0;
+      for (let j = 0; j < period; j++) {
+          sum += data[i - j].value;
+          sumSquares += Math.pow(data[i - j].value, 2);
+      }
+      const mean = sum / period;
+      const variance = (sumSquares / period) - Math.pow(mean, 2);
+      const stdDev = Math.sqrt(variance);
+      const zScore = (data[i].value - mean) / stdDev;
+      zScoreData.push({ time: data[i].time, value: zScore });
+  }
+  return zScoreData;
+}
+
+
 export const ChartComponent = props => {
     const {
         data,
@@ -33,7 +56,11 @@ export const ChartComponent = props => {
             lineColor = '#2196f3', // Color for the line chart
             zeroLineColor = '#f87315', // Orange color for the zero line
             sixMonthmovingAverageColor = '#ff0000', // Orange color for the moving average line
-            threeYearsMovingAverageColor: oneYearMovingAverageColor = '#a717d3', // Red color for the moving average line
+            oneYearMovingAverageColor = '#a717d3', // Red color for the moving average line
+            zScoreColor = '#0000ff', // Blue color for the Z-score line
+            zScoreColor6M = '#800080', // Purple color for the 6-month z-score line
+            zScoreColor1Y =  '#ffa500', // Orange color for the 1-year z-score line
+            zScoreColor3Y = '#008000', // Green color for the 3-year z-score line
         } = {},
     } = props;
 
@@ -42,11 +69,15 @@ export const ChartComponent = props => {
 
     const chartContainerRef = useRef();
     const positionsChartContainerRef = useRef();
+    const zScoreChartContainerRef = useRef();
 
     const [priceChartLegendText, setPriceChartLegendText] = useState('');
     const [sixMonthMAText, setSixMonthMAText] = useState('');
     const [oneYearMAText, setThreeYearsMAText] = useState('');
     const [positionChartLegendText, setPositionChartLegendText] = useState('');
+    const [zScore6MLegendText, setZScore6MLegendText] = useState('');
+    const [zScore1YLegendText, setZScore1YLegendText] = useState('');
+    const [zScore3YLegendText, setZScore3YLegendText] = useState('');
 
     useEffect(() => {
         const handleResize = () => {
@@ -91,6 +122,21 @@ export const ChartComponent = props => {
           },
       });
 
+      const zScoreChart = createChart(zScoreChartContainerRef.current, {
+        width: zScoreChartContainerRef.current.clientWidth,
+        height: 350,
+        layout: {
+            background: { type: ColorType.Solid, color: backgroundColor },
+            textColor: '#000',
+        },
+        crosshair: {
+            mode: CrosshairMode.Normal,
+        },
+        timeScale: {
+            borderColor: `rgba(197, 203, 206, 0.8)`,
+        },
+    });
+
         const candleSeries = chart.addCandlestickSeries({
             upColor: upColor,
             downColor: downColor,
@@ -110,22 +156,48 @@ export const ChartComponent = props => {
 
         lineSeries.setData(netPositions);
 
+        const zScoreSeries6M = zScoreChart.addLineSeries({
+          color: zScoreColor6M,
+          lineWidth: 2,
+      });
+
+        const zScoreSeries1Y = zScoreChart.addLineSeries({
+            color: zScoreColor1Y,
+            lineWidth: 2,
+        });
+
+        const zScoreSeries3Y = zScoreChart.addLineSeries({
+            color: zScoreColor3Y,
+            lineWidth: 2,
+        });
+
+        // Calculate and add the Z-scores
+        const zScoreData6M = calculateZScore(netPositions, 26);
+        const zScoreData1Y = calculateZScore(netPositions, 52);
+        const zScoreData3Y = calculateZScore(netPositions, 156);
+
+        zScoreSeries6M.setData(zScoreData6M);
+        zScoreSeries1Y.setData(zScoreData1Y);
+        zScoreSeries3Y.setData(zScoreData3Y);
+
+
+
+
         const zeroLineSeries = positionsChart.addLineSeries({
           color: zeroLineColor, 
           lineWidth: 1,
-      });
+          });
 
-          // Create data for the zero line
-          const zeroLineData = netPositions.map(point => ({
-            time: point.time,
-            value: 0
-        }));
+        // Create data for the zero line
+        const zeroLineData = netPositions.map(point => ({
+          time: point.time,
+          value: 0
+          }));
 
-        zeroLineSeries.setData(zeroLineData);
+          zeroLineSeries.setData(zeroLineData);
 
         // Calculate and add the 26-period moving average
         const sixMonthsMovingAverageData = calculateMovingAverage(netPositions, 26);
-        console.log("sixMonthsmovingAverageData", sixMonthsMovingAverageData);
 
         const sixMonthsMovingAverageSeries = positionsChart.addLineSeries({
             color: sixMonthmovingAverageColor,
@@ -134,7 +206,6 @@ export const ChartComponent = props => {
         sixMonthsMovingAverageSeries.setData(sixMonthsMovingAverageData);
 
         const oneYearMovingAverageData = calculateMovingAverage(netPositions, 52);
-        console.log("threeYearsMovingAverageData", oneYearMovingAverageData);
 
         const oneYearMovingAverageSeries = positionsChart.addLineSeries({
             color: oneYearMovingAverageColor,
@@ -144,6 +215,7 @@ export const ChartComponent = props => {
 
         chart.timeScale().scrollToPosition(positionsChart.timeScale().scrollPosition(), false);
         positionsChart.timeScale().scrollToPosition(chart.timeScale().scrollPosition(), false);
+        zScoreChart.timeScale().scrollToPosition(chart.timeScale().scrollPosition(), false);
 
         setPriceChartLegendText(`${symbol} - Weekly`);
       
@@ -151,56 +223,91 @@ export const ChartComponent = props => {
         setSixMonthMAText(`6-Month Average`);
         setThreeYearsMAText(`1-Year Average `);
 
+        setZScore6MLegendText(`6-Month Z-Score`);
+        setZScore1YLegendText(`1-Year Z-Score`);
+        setZScore3YLegendText(`3-Year Z-Score`);
+
+
        
 
         chart.subscribeCrosshairMove(param => {
-          const dataPoint = getCrosshairDataPoint(candleSeries, param);
-          syncCrosshair(positionsChart, lineSeries, dataPoint);
-          
-      });
-      positionsChart.subscribeCrosshairMove(param => {
-          const dataPoint = getCrosshairDataPoint(lineSeries, param);
+            const dataPoint = getCrosshairDataPoint(candleSeries, param);
+            syncCrosshair(positionsChart, lineSeries, dataPoint);
+            syncCrosshair(zScoreChart, zScoreSeries6M, dataPoint);
+            syncCrosshair(zScoreChart, zScoreSeries1Y, dataPoint);
+            syncCrosshair(zScoreChart, zScoreSeries3Y, dataPoint);
+            
+        });
+        positionsChart.subscribeCrosshairMove(param => {
+            const dataPoint = getCrosshairDataPoint(lineSeries, param);
+            syncCrosshair(chart, candleSeries, dataPoint);
+            syncCrosshair(zScoreChart, zScoreSeries6M, dataPoint);
+            syncCrosshair(zScoreChart, zScoreSeries1Y, dataPoint);
+            syncCrosshair(zScoreChart, zScoreSeries3Y, dataPoint);
+            
+        });
+        
+        zScoreChart.subscribeCrosshairMove(param => {
+          const dataPoint = getCrosshairDataPoint(zScoreSeries6M, param);
           syncCrosshair(chart, candleSeries, dataPoint);
-          
+          syncCrosshair(positionsChart, lineSeries, dataPoint);
+          syncCrosshair(zScoreChart, zScoreSeries1Y, dataPoint);
+          syncCrosshair(zScoreChart, zScoreSeries3Y, dataPoint);
       });
-
-
         window.addEventListener('resize', handleResize);
 
         return () => {
             window.removeEventListener('resize', handleResize);
             chart.remove();
             positionsChart.remove();
+            zScoreChart.remove();
         };
     }, [data, backgroundColor, upColor, downColor, borderUpColor, borderDownColor, wickUpColor, wickDownColor, lineColor]);
 
     return (
-      <div style={{ position: 'relative', width: '100%', height: '700px' }}>
-         <div style={{ position: 'relative', width: '100%', height: '700px' }}>
+      <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+         <div style={{ position: 'relative', width: '100%', height: '700px', marginBottom: `4px` }}>
             <div ref={chartContainerRef} />
             <div style={{ position: 'absolute', left: '10px', top: '10px', color: '#000', zIndex: 10 }}>
                 {priceChartLegendText}
             </div>
-        </div>
-        <div style={{ position: 'relative', width: '100%', height: '700px' }}>
-            <div ref={positionsChartContainerRef} style={{ height: '350px', marginTop: '4px' }} />
-            <div> 
-                <div style={{ position: 'absolute', left: '10px', top: '10px', color: '#000', zIndex: 10 }}>
-                <div className='flex flex-col'>
-              <div  style={{ color: `${lineColor}`}}>
-                  {positionChartLegendText}
-              </div>
-              <div  style={{ color: `${sixMonthmovingAverageColor}`}}>
-                  {sixMonthMAText}
-              </div>
-              <div  style={{ color: `${oneYearMovingAverageColor}`}}>
-                  {oneYearMAText}
-              </div>
-                  </div>
-            </div>
-            </div>
-        </div>
+          </div>
 
+          <div style={{ position: 'relative', width: '100%', height: '350px' }}>
+              <div ref={positionsChartContainerRef} style={{ position: 'relative', width: '100%', height: '350px', marginTop: '4px' }} />
+              <div style={{ position: 'absolute', left: '10px', top: '10px', color: '#000', zIndex: 10 }}>
+                  <div className='flex flex-col'>
+                    <div  style={{ color: `${lineColor}`}}>
+                        {positionChartLegendText}
+                    </div>
+                    <div  style={{ color: `${sixMonthmovingAverageColor}`}}>
+                        {sixMonthMAText}
+                    </div>
+                    <div  style={{ color: `${oneYearMovingAverageColor}`}}>
+                        {oneYearMAText}
+                    </div>
+                  </div>
+              </div>
+            </div>
+
+        <div style={{ position: 'relative', width: '100%', height: '350px' }}>
+              <div ref={zScoreChartContainerRef} style={{ height: '350px', marginTop: '4px' }} />
+
+              <div style={{ position: 'absolute', left: '10px', top: '10px', color: '#000', zIndex: 10 }}>
+                <div className='flex flex-col'>
+                      <div  style={{ color: `${zScoreColor6M}`}}>
+                          {zScore6MLegendText}
+                      </div>
+                      <div  style={{ color: `${zScoreColor1Y}`}}>
+                          {zScore1YLegendText}
+                      </div>
+                      <div  style={{ color: `${zScoreColor3Y}`}}>
+                          {zScore3YLegendText}
+                      </div>
+                  </div>
+              </div>
+              
+            </div>
       </div>
        
         

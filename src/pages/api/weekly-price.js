@@ -37,7 +37,7 @@ export const getWeeklyPriceData = async (asset) => {
 
   } else {
     const symbol = asset.twelveDataSymbol
-    url = `https://api.twelvedata.com/time_series?apikey=${process.env.TWELVEDATA_API_KEY}&interval=1week&symbol=${symbol}&format=JSON&start_date=2020-01-01 10:42:00`
+    url = `https://api.twelvedata.com/time_series?apikey=${process.env.TWELVEDATA_API_KEY}&interval=1week&symbol=${symbol}&format=JSON&start_date=2016-01-01 10:42:00`
     const weekly_price_res = await fetch(url);
     
 
