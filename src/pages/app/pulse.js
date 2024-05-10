@@ -42,6 +42,11 @@ export const getServerSideProps = async (context) => {
     })
   })
 }
+
+const fetchAssetData = async (asset) => {
+  const response = await fetch(`/api/get-asset-data?asset=${asset}`);
+  return response.json();
+};
   
 
 const Pulse = (props) => {
@@ -55,102 +60,14 @@ const Pulse = (props) => {
   const handleDownload = async () => {
     setLoading(true);
     try {
-      const forexDataPromises = Object.keys(majorForexPairs).map(async (pair) => {
-        const countries = majorForexPairs[pair].countries;
-       
-        const dataForPair = await fetch(`../../api/event-calendar?countries=${countries}`);
-        const rawPairData = await dataForPair.json();
-        const last_sma20 = await fetch(`../../api/technical-sma?symbol=${pair}.FOREX&period=20`)
-        const last_sma20_json = await last_sma20.json()
+      const assetPromises = Object.keys(assets).map(asset => fetchAssetData(asset));
+      const assetDataArray = await Promise.all(assetPromises);
 
-        const last_sma_50 = await fetch(`../../api/technical-sma?symbol=${pair}.FOREX&period=50`)
-        const last_sma50_json = await last_sma_50.json()
+      const sortedDataForAllPairs = assetDataArray.sort((a, b) => b.score - a.score);
 
-        const last_close = await fetch(`../../api/last-close?symbol=${pair}.FOREX`)
-        const last_close_json = await last_close.json()
+      console.log("assetDataArray", sortedDataForAllPairs)
 
-        const technical_data_for_pair = {
-          last_sma_50: last_sma20_json,
-          last_sma_200: last_sma50_json,
-          last_close: last_close_json
-        }
-
-        const news_sentiment = await fetch(`../../api/news-sentiment?symbol=${pair}.FOREX`)
-        const news_sentiment_json = await news_sentiment.json()
-
-        const news_data_for_pair = {
-          news_sentiment: news_sentiment_json
-        }
-
- 
-
-        const cot_for_pair = findLatestCotDataForAsset(majorForexPairs[pair].cotName, cot_2024_currencies)
-
-        const pairData_local = processAssetData(pair, rawPairData, cot_for_pair, technical_data_for_pair, news_data_for_pair)
-       
-        return pairData_local
-        
-      });
-
-      const cryptoDataPromises = Object.keys(cryptoAssets).map(async (asset) => { 
-        const countries = cryptoAssets[asset].countries;
-        const apiSymbol = cryptoAssets[asset].apiSymbol;
-        const cotName = cryptoAssets[asset].cotName;
-       
-        const dataForPair = await fetch(`../../api/event-calendar?countries=${countries}`);
-        const rawPairData = await dataForPair.json();
-        const last_sma50 = await fetch(`../../api/technical-sma?symbol=${apiSymbol}&period=50`)
-        const last_sma50_json = await last_sma50.json()
-
-        const last_sma_200 = await fetch(`../../api/technical-sma?symbol=${apiSymbol}&period=200`)
-        const last_sma200_json = await last_sma_200.json()
-
-        const last_close = await fetch(`../../api/last-close?symbol=${apiSymbol}`)
-        const last_close_json = await last_close.json()
-
-        const technical_data_for_pair = {
-          last_sma_50: last_sma50_json,
-          last_sma_200: last_sma200_json,
-          last_close: last_close_json
-        }
-
-        const news_sentiment = await fetch(`../../api/news-sentiment?symbol=${apiSymbol}`)
-        const news_sentiment_json = await news_sentiment.json()
-
-        const news_data_for_pair = {
-          news_sentiment: news_sentiment_json
-        }
-
-     
-
-        const cot_for_pair = findLatestCotDataForAsset(cotName, cot_2024_bitcoin)
-
-        const pairData_local = getCryptoData(asset, rawPairData, cot_for_pair, technical_data_for_pair, news_data_for_pair)
-       
-        return pairData_local
-        
-      });
-
-
-      const pulseDataPromises = forexDataPromises.concat(cryptoDataPromises);
-
-      const resolvedPairs = await Promise.all(pulseDataPromises);
-
-      const dataForAllPairs = resolvedPairs.reduce((acc, data) => {
-        acc[data.pair] = data;
-        return acc;
-      }, {});
-
-      
-
-      // sort dataForAllPairs by total score in descending order
-      const sortedDataForAllPairs = Object.keys(dataForAllPairs).sort((a, b) => dataForAllPairs[b].totalScore - dataForAllPairs[a].totalScore).reduce((acc, key) => {
-        acc[key] = dataForAllPairs[key];
-        return acc;
-      }
-      , {});
-
-      
+   
       setPulseData(sortedDataForAllPairs);
     } catch (error) {
       console.error(error);
@@ -162,17 +79,6 @@ const Pulse = (props) => {
     handleDownload();
   }, []);
 
-  const calculateScore = (data, countries) => {
-    if (data[countries[0]] && data[countries[1]]) {
-      return data[countries[0]].totalScore > data[countries[1]].totalScore ? 100 : data[countries[0]].totalScore < data[countries[1]].totalScore ? -100 : 0;
-    }
-    return 0;
-  };
-
-  const calculateEconomicScore = (inflationData, employmentData, growthData, countries) => {
-    const scores = [calculateScore(inflationData, countries), calculateScore(employmentData, countries), calculateScore(growthData, countries)];
-    return (scores.reduce((sum, score) => sum + score, 0) / scores.length).toFixed(2);
-  };
 
   const Style = {
     Wrapper : "grid grid-cols-2 gap-4 p-8",
@@ -209,13 +115,12 @@ const Pulse = (props) => {
                     </TableRow>
                   </TableHeader>
 
-                  {pulseData && Object.keys(pulseData).map((pair) => {
+                  {pulseData && Object.keys(pulseData).map((asset) => {
                     return (
                       <TableRow className="!border-0 hover:bg-transparent">
-
-                        <TableCell className="bg-primary text-primary-foreground font-bold">{pair}</TableCell>
-                        <TableCell className={`bg-primary text-primary-foreground font-bold ${getScoreTextColor(pulseData[pair].totalScore)}`}> {pulseData[pair].bias}  </TableCell>
-                        <TableCell className={`bg-primary text-primary-foreground font-bold ${getScoreTextColor(pulseData[pair].totalScore)}`}>{pulseData[pair].totalScore}  </TableCell>
+                        <TableCell className="bg-primary text-primary-foreground font-bold">{pulseData[asset].pair}</TableCell>
+                        <TableCell className={`bg-primary text-primary-foreground font-bold ${getScoreTextColor(pulseData[asset].score)}`}> {pulseData[asset].bias}  </TableCell>
+                        <TableCell className={`bg-primary text-primary-foreground font-bold ${getScoreTextColor(pulseData[asset].score)}`}>{pulseData[asset].score.toFixed(2)}  </TableCell>
                       </TableRow>
                     )
                   })}
