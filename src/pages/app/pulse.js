@@ -108,15 +108,20 @@ const Pulse = (props) => {
                     </TableRow>
                   </TableHeader>
 
+                  <TableBody>
                   {pulseData && Object.keys(pulseData).map((asset) => {
                     return (
-                      <TableRow className="!border-0 hover:bg-transparent">
+                      <TableRow key={pulseData[asset].pair} className="!border-0 hover:bg-transparent">
                         <TableCell className="bg-primary text-primary-foreground font-bold">{pulseData[asset].pair}</TableCell>
                         <TableCell className={`bg-primary text-primary-foreground font-bold ${getScoreTextColor(pulseData[asset].score)}`}> {pulseData[asset].bias}  </TableCell>
                         <TableCell className={`bg-primary text-primary-foreground font-bold ${getScoreTextColor(pulseData[asset].score)}`}>{pulseData[asset].score.toFixed(2)}  </TableCell>
                       </TableRow>
                     )
                   })}
+
+                  </TableBody>
+
+                  
 
                   
                   <TableBody>
