@@ -41,6 +41,8 @@ const onCheckoutSessionCompleted = async (session) => {
         subscription: subscriptionId,
         status: paymentStatus,
     };
+
+    console.log(session)
     
     try {
       let customer = await Customer.findOne({ email: customerEmail });
