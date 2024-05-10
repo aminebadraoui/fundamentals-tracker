@@ -12,8 +12,6 @@ import { ChartComponent } from '@/components/ui/chart-component';
 import withSession from '@/lib/withSession';
 import withSubscription from '@/lib/withSubscription';
 
-import { fetchCotData } from '@/utils/getCotData';
-
 import dynamic from "next/dynamic";
 
 export const getServerSideProps = async (context) => {
@@ -39,6 +37,14 @@ const fetchData = async (url, params = {}) => {
   return response.json();
 };
 
+const fetchCotDataForYears = async (asset, years) => {
+  const cotFileName = assets[asset].cotFileName
+
+  const cotDataPromises = years.map(year => fetchData('/api/getCotDataByYear', { cotFileName, year }));
+  const batchedCotData = await Promise.all(cotDataPromises);
+  return batchedCotData.flat();
+};
+
 
 const Scanner = (props) => {
   const asset = props.params.asset;
@@ -51,8 +57,10 @@ const Scanner = (props) => {
     setLoading(true);
 
     try {
+      const years = [2024, 2023, 2022, 2021, 2020, 2019, 2018, 2017]; // or any range of years you have data for
+
       const [cotData, eventData, weeklyPriceData, newsSentimentData] = await Promise.all([
-        fetchCotData(asset),,
+        fetchCotDataForYears(asset, years),
         fetchData('/api/getEventData', { countries: assets[asset].countries.join(',') }),
         fetchData('/api/getWeeklyPriceData', { asset }),
         fetchData('/api/getNewsSentimentData', { symbol: assets[asset].apiSymbol })
