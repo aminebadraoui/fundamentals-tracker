@@ -42,7 +42,10 @@ const onCheckoutSessionCompleted = async (session) => {
         status: paymentStatus,
     };
 
-    console.log(session)
+    console.log(session.customer_details)
+    console.log(session.customer_details.email)
+
+    console.log(customerEmail)
     
     try {
       let customer = await Customer.findOne({ email: customerEmail });
