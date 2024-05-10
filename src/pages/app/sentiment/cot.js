@@ -32,7 +32,8 @@ const fetchAssetData = async (asset) => {
 
 const Institutional = (props) => {
   
-  const [assetChartData, setAssetChartData] = useState({});
+  const [institutionalChartData, setInstitutionalChartData] = useState({});
+  const [retailChartData, setRetailChartData] = useState({});
   const [isLoading, setLoading] = useState(true);
 
   const handleDownload = async () => {
@@ -42,7 +43,7 @@ const Institutional = (props) => {
       const assetPromises = Object.keys(assets).map(asset => fetchAssetData(asset));
       const assetDataArray = await Promise.all(assetPromises);
 
-      const assetChartDataArray = assetDataArray.map((data, index) => {
+      const institutionalChartDataArray = assetDataArray.map((data, index) => {
         const asset = Object.keys(assets)[index];
         const assetLongs = data.cot.institutional.long;
         const assetShorts = data.cot.institutional.short;
@@ -60,7 +61,38 @@ const Institutional = (props) => {
         };
       }).sort((a, b) => b.longs - a.longs);
 
-      setAssetChartData(assetChartDataArray);
+      setInstitutionalChartData(institutionalChartDataArray);
+
+      const retailChartDataArray = assetDataArray.map((data, index) => {
+        const asset = Object.keys(assets)[index];
+        const assetLongs = data.cot.retail.long;
+        const assetShorts = data.cot.retail.short;
+        const totalPositions = assetLongs + assetShorts;
+
+        const net = (assetLongs - assetShorts).toFixed(2);
+
+        const longs = (assetLongs / totalPositions * 100).toFixed(2);
+        const shorts = (assetShorts / totalPositions * 100).toFixed(2);
+        return {
+          name: asset,
+          longs: longs,
+          shorts: shorts,
+          net: net
+        };
+      })
+
+      // Create a map for the institutional sorting order
+      const institutionalOrder = institutionalChartDataArray.reduce((acc, curr, index) => {
+      acc[curr.name] = index;
+      return acc;
+      }, {});
+
+      // Sort the retailChartDataArray based on the institutional order
+      retailChartDataArray.sort((a, b) => {
+      return institutionalOrder[a.name] - institutionalOrder[b.name];
+      });
+
+      setRetailChartData(retailChartDataArray);
 
     } catch (error) {
       console.error('Failed to load data:', error);
@@ -87,10 +119,23 @@ return (
       </div>
     ) : (
       <div className="flex flex-col space-y-4 p-8">
-        <h1 className="text-secondary-foreground mb-8">Institutional Positioning</h1>
-        <TitledCard title="">
+        <h1 className="text-secondary-foreground mb-8">Latest COT Positions</h1>
+        <TitledCard title="Institutional">
           <ResponsiveContainer  height={400}>
-            <BarChart data={assetChartData} barCategoryGap={20} >
+            <BarChart data={institutionalChartData} barCategoryGap={20} >
+              <XAxis dataKey="name" tick={{ fill: 'white' }} />
+              <YAxis domain={[0, 100]} />
+              <Tooltip cursor={{fill: 'transparent'}} />
+              <Legend />
+              <Bar dataKey="longs" name="Total Longs" stackId="a" fill="#009900"   />
+              <Bar dataKey="shorts" name="Total Shorts" stackId="a" fill="#c20b0a" />
+            </BarChart>
+          </ResponsiveContainer>
+        </TitledCard>
+
+        <TitledCard title="Retail">
+          <ResponsiveContainer  height={400}>
+            <BarChart data={retailChartData} barCategoryGap={20} >
               <XAxis dataKey="name" tick={{ fill: 'white' }} />
               <YAxis domain={[0, 100]} />
               <Tooltip cursor={{fill: 'transparent'}} />

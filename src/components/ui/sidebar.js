@@ -64,7 +64,7 @@ const links = [
     name: 'Sentiment',
     type: 'section',
     links: [
-      { name: 'Insititutional Positioning', href: '/app/sentiment/institutional' },
+      { name: 'COT Positioning', href: '/app/sentiment/institutional' },
     ]
   },
 ];
