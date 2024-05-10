@@ -4,7 +4,7 @@ import Stripe from 'stripe';
 
 import mongoose from 'mongoose';
 
-const config = {
+export const config = {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     maxPoolSize: 1,
