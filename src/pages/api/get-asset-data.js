@@ -12,12 +12,14 @@ const readAndParseCotData = async (filePath) => {
   return parseCotData(xml);
 };
 
-const fetchDataWithRetry = async (fetchFunction, maxRetries = 3, retryDelay = 1000) => {
+const fetchDataWithRetry = async (fetchFunction, taskName, maxRetries = 3, retryDelay = 1000) => {
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
       return await fetchFunction();
     } catch (error) {
+      console.error(`Attempt ${attempt} for ${taskName} failed:`, error.message);
       if (attempt === maxRetries) {
+        console.error(`${taskName} failed after ${maxRetries} attempts.`);
         throw error;
       }
       await new Promise((resolve) => setTimeout(resolve, retryDelay));
@@ -52,7 +54,7 @@ export default async (req, res) => {
       path.resolve(`public/assets/cot-data/2017/${fileName}.xml`),
     ];
 
-    const cotDataPromises = cotPaths.map(filePath => fetchDataWithRetry(() => readAndParseCotData(filePath)));
+    const cotDataPromises = cotPaths.map(filePath => fetchDataWithRetry(() => readAndParseCotData(filePath), `Reading and parsing COT data from ${filePath}`));
     const batchedCotData = await batchFetch(cotDataPromises, 3);
 
     const cotAllJson = batchedCotData.flat();
@@ -67,9 +69,9 @@ export default async (req, res) => {
     console.log('COT for asset:', cotForAssetNoDup);
 
     const [eventsForCountriesData, weeklyPriceData, newsSentimentData] = await Promise.all([
-      fetchDataWithRetry(() => getEventData(countries)),
-      fetchDataWithRetry(() => getWeeklyPriceData(assets[asset])),
-      fetchDataWithRetry(() => getNewsSentimentData(assets[asset].apiSymbol)),
+      fetchDataWithRetry(() => getEventData(countries), 'Fetching event data'),
+      fetchDataWithRetry(() => getWeeklyPriceData(assets[asset]), 'Fetching weekly price data'),
+      fetchDataWithRetry(() => getNewsSentimentData(assets[asset].apiSymbol), 'Fetching news sentiment data'),
     ]);
 
     const assetData = processAssetData(asset, eventsForCountriesData, cotForAssetNoDup, newsSentimentData, weeklyPriceData);
