@@ -15,13 +15,19 @@ import {
   ResponsiveContainer
 } from 'recharts';
 
+import { fetchCotData } from '@/utils/getCotData';
 import { processAssetData } from '@/utils/pair-data';
+
+
 
 export const getServerSideProps = async (context) => {
   return withSession(context, async (context, session) => {
     return withSubscription(context, session, async (context) => {
+     
       return {
-        props: {}
+        props: {
+          
+        }
       };
     });
   });
@@ -36,6 +42,15 @@ const fetchData = async (url, params = {}) => {
   return response.json();
 };
 
+const fetchCotDataForYears = async (asset, years) => {
+  const cotFileName = assets[asset].cotFileName
+  console.log(asset)
+  console.log(assets[asset])
+  const cotDataPromises = years.map(year => fetchData('/api/getCotDataByYear', { cotFileName, year }));
+  const batchedCotData = await Promise.all(cotDataPromises);
+  return batchedCotData.flat();
+};
+
 
 const Institutional = (props) => {
   
@@ -47,9 +62,12 @@ const Institutional = (props) => {
     setLoading(true);
 
     try {
+      const years = [2024, 2023, 2022, 2021, 2020, 2019, 2018, 2017]; // or any range of years you have data for
+      
+
       const assetPromises = Object.keys(assets).map(asset => 
         Promise.all([
-          fetchData('/api/getCotData', { asset }),
+          fetchCotDataForYears(asset, years),
           fetchData('/api/getEventData', { countries: assets[asset].countries.join(',') }),
           fetchData('/api/getWeeklyPriceData', { asset }),
           fetchData('/api/getNewsSentimentData', { symbol: assets[asset].apiSymbol })

@@ -9,6 +9,8 @@ import { Table, TableHeader, TableRow, TableHead, TableCell, TableBody } from '@
 import { getScoreTextColor } from '@/utils/get-score-color';
 import { processAssetData } from '@/utils/pair-data';
 
+import { fetchCotData } from '../api/getCotDataByYear';
+
 import withSession from '@/lib/withSession';
 import withSubscription from '@/lib/withSubscription';
 
@@ -43,7 +45,7 @@ const Pulse = (props) => {
     try {
       const assetPromises = Object.keys(assets).map(asset => 
         Promise.all([
-          fetchData('/api/getCotData', { asset }),
+          fetchCotData(asset),
           fetchData('/api/getEventData', { countries: assets[asset].countries.join(',') }),
           fetchData('/api/getWeeklyPriceData', { asset }),
           fetchData('/api/getNewsSentimentData', { symbol: assets[asset].apiSymbol })

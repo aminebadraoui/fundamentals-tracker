@@ -12,6 +12,8 @@ import { ChartComponent } from '@/components/ui/chart-component';
 import withSession from '@/lib/withSession';
 import withSubscription from '@/lib/withSubscription';
 
+import { fetchCotData } from '@/utils/getCotData';
+
 import dynamic from "next/dynamic";
 
 export const getServerSideProps = async (context) => {
@@ -50,7 +52,7 @@ const Scanner = (props) => {
 
     try {
       const [cotData, eventData, weeklyPriceData, newsSentimentData] = await Promise.all([
-        fetchData('/api/getCotData', { asset }),
+        fetchCotData(asset),,
         fetchData('/api/getEventData', { countries: assets[asset].countries.join(',') }),
         fetchData('/api/getWeeklyPriceData', { asset }),
         fetchData('/api/getNewsSentimentData', { symbol: assets[asset].apiSymbol })
