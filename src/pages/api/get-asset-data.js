@@ -3,21 +3,41 @@ import { parseCotData, findLatestCotDataForAsset } from '@/utils/cot-data';
 import fs from 'fs';
 import { processAssetData } from '@/utils/pair-data';
 import path from 'path';
-
 import { getEventData } from './event-calendar';
 import { getWeeklyPriceData } from './weekly-price';
 import { getNewsSentimentData } from './news-sentiment';
+
+const readAndParseCotData = async (filePath) => {
+  const xml = fs.readFileSync(filePath, 'utf-8');
+  return parseCotData(xml);
+};
+
+const fetchDataWithRetry = async (fetchFunction, maxRetries = 3, retryDelay = 1000) => {
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      return await fetchFunction();
+    } catch (error) {
+      if (attempt === maxRetries) {
+        throw error;
+      }
+      await new Promise((resolve) => setTimeout(resolve, retryDelay));
+    }
+  }
+};
+
+const batchFetch = async (tasks, batchSize = 5) => {
+  const results = [];
+  for (let i = 0; i < tasks.length; i += batchSize) {
+    const batch = tasks.slice(i, i + batchSize);
+    results.push(...await Promise.all(batch));
+  }
+  return results;
+};
 
 export default async (req, res) => {
   const baseUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000';
   const asset = req.query.asset;
   const countries = assets[asset].countries;
-
-  // Helper function to read and parse XML files
-  const readAndParseCotData = async (filePath) => {
-    const xml = fs.readFileSync(filePath, 'utf-8');
-    return parseCotData(xml);
-  };
 
   try {
     const fileName = assets[asset].cotFileName;
@@ -32,18 +52,10 @@ export default async (req, res) => {
       path.resolve(`public/assets/cot-data/2017/${fileName}.xml`),
     ];
 
-    // Execute all the read and parse operations in parallel
-    const cotDataPromises = cotPaths.map(readAndParseCotData);
+    const cotDataPromises = cotPaths.map(filePath => fetchDataWithRetry(() => readAndParseCotData(filePath)));
+    const batchedCotData = await batchFetch(cotDataPromises, 3);
 
-    // Execute event data, weekly price data, and news sentiment data fetch operations in parallel
-    const [cotAllData, eventsForCountriesData, weeklyPriceData, newsSentimentData] = await Promise.all([
-      Promise.all(cotDataPromises),
-      getEventData(countries),
-      getWeeklyPriceData(assets[asset]),
-      getNewsSentimentData(assets[asset].apiSymbol),
-    ]);
-
-    const cotAllJson = cotAllData.flat();
+    const cotAllJson = batchedCotData.flat();
     const cotForAsset = findLatestCotDataForAsset(assets[asset].cotName, cotAllJson);
 
     const cotForAssetNoDup = cotForAsset.filter((item, index, self) =>
@@ -53,6 +65,12 @@ export default async (req, res) => {
     );
 
     console.log('COT for asset:', cotForAssetNoDup);
+
+    const [eventsForCountriesData, weeklyPriceData, newsSentimentData] = await Promise.all([
+      fetchDataWithRetry(() => getEventData(countries)),
+      fetchDataWithRetry(() => getWeeklyPriceData(assets[asset])),
+      fetchDataWithRetry(() => getNewsSentimentData(assets[asset].apiSymbol)),
+    ]);
 
     const assetData = processAssetData(asset, eventsForCountriesData, cotForAssetNoDup, newsSentimentData, weeklyPriceData);
 
