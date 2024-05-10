@@ -4,6 +4,8 @@ import { Loader } from '@/components/ui/loader'
 import { TitledCard } from '@/components/shadcn/titled-card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/shadcn/table';
 import { getScoreBackgroundColor, getScoreTextColor } from '@/utils/get-score-color';
+import { processAssetData } from '@/utils/pair-data';
+import { assets } from '@/utils/event-names';
 
 import { ChartComponent } from '@/components/ui/chart-component';
 
@@ -26,6 +28,16 @@ export const getServerSideProps = async (context) => {
     })
 }
 
+const fetchData = async (url, params = {}) => {
+  const queryString = new URLSearchParams(params).toString();
+  const response = await fetch(`${url}?${queryString}`);
+  if (!response.ok) {
+    throw new Error(`Failed to fetch data from ${url}`);
+  }
+  return response.json();
+};
+
+
 const Scanner = (props) => {
   const asset = props.params.asset;
   const GaugeComponent = dynamic(() => import('react-gauge-component'), { ssr: false });
@@ -37,9 +49,14 @@ const Scanner = (props) => {
     setLoading(true);
 
     try {
-      const assetDataRes  = await fetch(`../../api/get-asset-data?asset=${asset}`)
+      const [cotData, eventData, weeklyPriceData, newsSentimentData] = await Promise.all([
+        fetchData('/api/getCotData', { asset }),
+        fetchData('/api/getEventData', { countries: assets[asset].countries.join(',') }),
+        fetchData('/api/getWeeklyPriceData', { asset }),
+        fetchData('/api/getNewsSentimentData', { symbol: assets[asset].apiSymbol })
+      ]);
 
-      const assetDataJson = await assetDataRes.json()
+      const assetDataJson = processAssetData(asset, eventData, cotData, newsSentimentData, weeklyPriceData);
 
       // set the state with the sorted data
       setAssetData(assetDataJson);
