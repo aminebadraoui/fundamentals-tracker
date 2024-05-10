@@ -94,24 +94,17 @@ const Pulse = (props) => {
               <Loader />
           </div>
          :  
-      
             <div className={Style.Wrapper}>
               <div className='col-span-2'> 
               <h1 className="text-secondary-foreground mb-8"> The Pulse </h1>
-              <p>
-   
-              </p>
-
+         
               <TitledCard title="Scores">
                 <Table>
                   <TableHeader>
                     <TableRow className="!border-0 hover:bg-transparent">
-                  
                       <TableHead className="font-bold" >Asset</TableHead>
-
                       <TableHead className="font-bold" >Bias</TableHead>
-                      <TableHead className="font-bold" > Score</TableHead>
-
+                      <TableHead className="font-bold" >Score</TableHead>
                     </TableRow>
                   </TableHeader>
 
