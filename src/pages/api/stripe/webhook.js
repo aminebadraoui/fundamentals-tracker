@@ -5,13 +5,9 @@ import Stripe from 'stripe';
 import mongoose from 'mongoose';
 
 export const config = {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    maxPoolSize: 1,
-    minPoolSize: 1,
-    socketTimeoutMS: 10000,
-    serverSelectionTimeoutMS: 10000,
-    maxIdleTimeMS: 10000,
+  api: {
+      bodyParser: false,
+  },
 };
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
