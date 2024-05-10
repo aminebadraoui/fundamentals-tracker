@@ -17,7 +17,9 @@ const fetchDataWithRetry = async (fetchFunction, taskName, maxRetries = 3, retry
     try {
       return await fetchFunction();
     } catch (error) {
+      console.error(`Attempt ${attempt} for ${taskName} failed:`, error.message);
       if (attempt === maxRetries) {
+        console.error(`${taskName} failed after ${maxRetries} attempts.`);
         throw error;
       }
       await new Promise((resolve) => setTimeout(resolve, retryDelay));
@@ -26,7 +28,6 @@ const fetchDataWithRetry = async (fetchFunction, taskName, maxRetries = 3, retry
 };
 
 export default async (req, res) => {
-  console.time("Total API Request Time");
   const asset = req.query.asset;
   const countries = assets[asset].countries;
 
@@ -34,28 +35,42 @@ export default async (req, res) => {
     const fileName = assets[asset].cotFileName;
     const cotPaths = [
       path.resolve(`public/assets/cot-data/2024/${fileName}.xml`),
-      // Other paths omitted for brevity
+      path.resolve(`public/assets/cot-data/2023/${fileName}.xml`),
+      path.resolve(`public/assets/cot-data/2022/${fileName}.xml`),
+      path.resolve(`public/assets/cot-data/2021/${fileName}.xml`),
+      path.resolve(`public/assets/cot-data/2020/${fileName}.xml`),
+      path.resolve(`public/assets/cot-data/2019/${fileName}.xml`),
+      path.resolve(`public/assets/cot-data/2018/${fileName}.xml`),
+      path.resolve(`public/assets/cot-data/2017/${fileName}.xml`),
     ];
 
+    // Read and parse all COT files in parallel
     const cotDataPromises = cotPaths.map(filePath => fetchDataWithRetry(() => readAndParseCotData(filePath), `Reading and parsing COT data from ${filePath}`));
-    const cotAllJson = await Promise.all(cotDataPromises).then(results => results.flat());
+    const batchedCotData = await Promise.all(cotDataPromises);
 
+    // Flatten the results from batchedCotData
+    const cotAllJson = batchedCotData.flat();
     const cotForAsset = findLatestCotDataForAsset(assets[asset].cotName, cotAllJson);
-    const cotForAssetNoDup = cotForAsset.filter((item, index, self) => index === self.findIndex((t) => t.yyyy_report_week_ww[0] === item.yyyy_report_week_ww[0]));
 
+    const cotForAssetNoDup = cotForAsset.filter((item, index, self) =>
+      index === self.findIndex((t) => (
+        t.yyyy_report_week_ww[0] === item.yyyy_report_week_ww[0]
+      ))
+    );
+
+    // Fetch event data, weekly price data, and news sentiment in parallel
     const [eventsForCountriesData, weeklyPriceData, newsSentimentData] = await Promise.all([
       fetchDataWithRetry(() => getEventData(countries), 'Fetching event data'),
       fetchDataWithRetry(() => getWeeklyPriceData(assets[asset]), 'Fetching weekly price data'),
       fetchDataWithRetry(() => getNewsSentimentData(assets[asset].apiSymbol), 'Fetching news sentiment data'),
     ]);
 
+    // Process the asset data once all the necessary data is fetched
     const assetData = processAssetData(asset, eventsForCountriesData, cotForAssetNoDup, newsSentimentData, weeklyPriceData);
 
     res.status(200).json(assetData);
   } catch (error) {
     console.error('Error:', error);
     res.status(500).json({ error: 'Failed to prepare pair data', details: error.message });
-  } finally {
-    console.timeEnd("Total API Request Time");
   }
 };

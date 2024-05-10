@@ -1,16 +1,13 @@
 import { useEffect, useState } from 'react';
 import { DashboardLayout } from '@/components/layout/dashboard-layout';
-import { inflationKeys, employmentKeys, interestRatesKeys, majorEventsKeys, assets} from '@/utils/event-names';
+import { assets} from '@/utils/event-names';
 import { Loader } from '@/components/ui/loader';
 import { TitledCard } from '@/components/shadcn/titled-card';
 import { Table, TableHeader, TableRow, TableHead, TableCell, TableBody } from '@/components/shadcn/table';
-import { parseCotData, findLatestReports, findLatestCotDataForAsset } from '@/utils/cot-data';
-import fs from 'fs';
-import { getScoreBackgroundColor, getScoreTextColor } from '@/utils/get-score-color';
-import { processAssetData } from '@/utils/pair-data';
-import { getCryptoData } from '@/utils/crypto-data';
 
-import path from 'path';
+
+import { getScoreTextColor } from '@/utils/get-score-color';
+import { processAssetData } from '@/utils/pair-data';
 
 import withSession from '@/lib/withSession';
 import withSubscription from '@/lib/withSubscription';
@@ -19,55 +16,46 @@ export const getServerSideProps = async (context) => {
   return withSession(context, async(context, session) => {
    return withSubscription(context, session, async(context) => {
 
-    const cot_2024_currencies_path = path.join(process.cwd(), 'public/assets/cot-data/2024/currencies.xml');
-    const cot_2024_currencies_xml = fs.readFileSync(cot_2024_currencies_path, 'utf-8');
-  
-    const cot_2024_bitcoin_path = path.join(process.cwd(), 'public/assets/cot-data/2024/crypto.xml');
-    const cot_2024_bitcoin_xml = fs.readFileSync(cot_2024_bitcoin_path, 'utf-8');
 
-  try {
-    const cot_2024_currencies_json = await parseCotData(cot_2024_currencies_xml);
-    const cot_2024_bitcoin_json = await parseCotData(cot_2024_bitcoin_xml);
-  
     return { 
-      props: {
-        cot_2024_currencies: cot_2024_currencies_json ,
-        cot_2024_bitcoin: cot_2024_bitcoin_json
-        } 
+      props: {} 
       };
-    }  catch (error) {
-        console.error('Failed to parse COT data:', error);
-        return { props: { error: 'Failed to load data' } };
-      }
+  
     })
   })
 }
 
-const fetchAssetData = async (asset) => {
-  const response = await fetch(`/api/get-asset-data?asset=${asset}`);
+const fetchData = async (url, params = {}) => {
+  const queryString = new URLSearchParams(params).toString();
+  const response = await fetch(`${url}?${queryString}`);
+  if (!response.ok) {
+    throw new Error(`Failed to fetch data from ${url}`);
+  }
   return response.json();
 };
-  
 
 const Pulse = (props) => {
   const [pulseData, setPulseData] = useState({});
   const [isLoading, setLoading] = useState(false);
 
-  const cot_2024_currencies = props.cot_2024_currencies;
-  const cot_2024_bitcoin = props.cot_2024_bitcoin;
-
-
   const handleDownload = async () => {
     setLoading(true);
     try {
-      const assetPromises = Object.keys(assets).map(asset => fetchAssetData(asset));
+      const assetPromises = Object.keys(assets).map(asset => 
+        Promise.all([
+          fetchData('/api/getCotData', { asset }),
+          fetchData('/api/getEventData', { countries: assets[asset].countries.join(',') }),
+          fetchData('/api/getWeeklyPriceData', { asset }),
+          fetchData('/api/getNewsSentimentData', { symbol: assets[asset].apiSymbol })
+        ]).then(([cotData, eventData, weeklyPriceData, newsSentimentData]) => {
+          return processAssetData(asset, eventData, cotData, newsSentimentData, weeklyPriceData);
+        })
+      );
+
       const assetDataArray = await Promise.all(assetPromises);
 
       const sortedDataForAllPairs = assetDataArray.sort((a, b) => b.score - a.score);
 
-      console.log("assetDataArray", sortedDataForAllPairs)
-
-   
       setPulseData(sortedDataForAllPairs);
     } catch (error) {
       console.error(error);
