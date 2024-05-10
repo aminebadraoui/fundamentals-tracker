@@ -33,19 +33,29 @@ export const getServerSideProps = async (context) => {
   });
 };
 
-const fetchData = async (url, params = {}) => {
+const fetchDataWithRetry = async (url, params = {}, taskName, maxRetries = 3, retryDelay = 1000) => {
   const queryString = new URLSearchParams(params).toString();
-  const response = await fetch(`${url}?${queryString}`);
-  if (!response.ok) {
-    throw new Error(`Failed to fetch data from ${url}`);
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      const response = await fetch(`${url}?${queryString}`);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch data from ${url}`);
+      }
+      return await response.json();
+    } catch (error) {
+      console.error(`Attempt ${attempt} for ${taskName} failed:`, error.message);
+      if (attempt === maxRetries) {
+        console.error(`${taskName} failed after ${maxRetries} attempts.`);
+        throw error;
+      }
+      await new Promise((resolve) => setTimeout(resolve, retryDelay));
+    }
   }
-  return response.json();
 };
-
 const fetchCotDataForYears = async (asset, years) => {
   const cotFileName = assets[asset].cotFileName
 
-  const cotDataPromises = years.map(year => fetchData('/api/getCotDataByYear', { cotFileName, year }));
+  const cotDataPromises = years.map(year => fetchDataWithRetry('/api/getCotDataByYear', { cotFileName, year }));
   const batchedCotData = await Promise.all(cotDataPromises);
   return batchedCotData.flat();
 };
@@ -66,9 +76,9 @@ const Institutional = (props) => {
       const assetPromises = Object.keys(assets).map(asset => 
         Promise.all([
           fetchCotDataForYears(asset, years),
-          fetchData('/api/getEventData', { countries: assets[asset].countries.join(',') }),
-          fetchData('/api/getWeeklyPriceData', { asset }),
-          fetchData('/api/getNewsSentimentData', { symbol: assets[asset].apiSymbol })
+          fetchDataWithRetry('/api/getEventData', { countries: assets[asset].countries.join(',') }),
+          fetchDataWithRetry('/api/getWeeklyPriceData', { asset }),
+          fetchDataWithRetry('/api/getNewsSentimentData', { symbol: assets[asset].apiSymbol })
         ]).then(([cotData, eventData, weeklyPriceData, newsSentimentData]) => {
           return processAssetData(asset, eventData, cotData, newsSentimentData, weeklyPriceData);
         })
