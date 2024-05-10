@@ -296,7 +296,7 @@ const processAssetData = (symbol, rawData, cotData, news_sentiment_data, weekly_
   }
 
 
-  console.log(assetData)
+ 
 
 
 

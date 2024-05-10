@@ -17,11 +17,11 @@ export const getWeeklyPriceData = async (asset) => {
     const symbol = asset.apiSymbol
     url = `https://eodhd.com/api/eod/${symbol}?&period=w&from=2016-01-01&api_token=${process.env.EOD_TOKEN}&fmt=json`
     const weekly_price_res = await fetch(url);
-    console.log("Weekly Price Response", weekly_price_res)
+    
 
     const weekly_price_json = await weekly_price_res.json()
 
-    console.log("Weekly Price Data", weekly_price_json)
+   
 
 
   formatted_weekly_price_data = weekly_price_json.map((data) => {
@@ -62,7 +62,7 @@ export const getWeeklyPriceData = async (asset) => {
     })
     
 
-    console.log("Weekly Price Data", formatted_weekly_price_data)
+    
   }
 
 
