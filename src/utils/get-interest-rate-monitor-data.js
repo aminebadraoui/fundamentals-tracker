@@ -24,7 +24,7 @@ const getInterestRateMonitorData = (interestRateData) => {
   })
 
   // sort data by actual
-  const data_sorted_keys = Object.keys(data).sort((a, b) => data[b].actual - data[a].actual)
+  const data_sorted_keys = Object.keys(data).sort((a, b) => (data[b].actual-data[b].previous) - (data[a].actual - data[a].previous)) 
   const data_sorted = {}
 
   data_sorted_keys.map((key) => {

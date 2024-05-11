@@ -8,7 +8,7 @@ const Style = {
 }
 
 const getScoreCell = (score) => {
-  return <TableCell className={`font-bold ${score > 50 ? 'text-strongBuy' : score >= 25 ? 'text-buy' : score >= -25 ? 'text-neutral' : score  >= -50 ? 'text-sell' : 'text-strongSell '} `}>
+  return <TableCell className={` font-medium ${score > 0 ? 'text-strongBuy' :  score < -0 ? 'text-strongSell' : 'text-primary-foreground '} `}>
    { score > 0 ? `+${score}` : score} 
   </TableCell>
 }
@@ -54,10 +54,10 @@ export const EconomicOverviewDataTable = ({data}) => {
                   <TableCell className="font-bold bg-primary ">{key}</TableCell>
                   {getScoreCell(  (country.totalScore).toFixed(2)  ) }
 
-                  <TableCell className=" text-primary-foreground bg-primary ">{ country.inflationScore.toFixed(2) }</TableCell>
-                  <TableCell className=" text-primary-foreground bg-primary ">{ country.employmentScore.toFixed(2) }</TableCell>
-                  <TableCell className="text-primary-foreground bg-primary ">{ country.housingScore.toFixed(2) }</TableCell>
-                  <TableCell className=" text-primary-foreground bg-primary ">{ country.growthScore.toFixed(2) }</TableCell>
+                  <TableCell className=" text-primary-foreground bg-primary  font-medium">{ country.inflationScore.toFixed(2) }</TableCell>
+                  <TableCell className=" text-primary-foreground bg-primary font-medium">{ country.employmentScore.toFixed(2) }</TableCell>
+                  <TableCell className="text-primary-foreground bg-primary font-medium">{ country.housingScore.toFixed(2) }</TableCell>
+                  <TableCell className=" text-primary-foreground bg-primary font-medium">{ country.growthScore.toFixed(2) }</TableCell>
 
                   
                  

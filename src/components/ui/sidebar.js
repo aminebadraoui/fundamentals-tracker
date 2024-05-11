@@ -7,14 +7,14 @@ const Style = {
   sidebarWrapper: "bg-primary hidden md:block py-4 w-[200px] border-0 shadow-md shadow-secondary min-h-screen",
   linkStyle: "text-primary-foreground bg-primary cursor-pointer block w-full text-left px-4 py-4 font-medium text-sm",
   activeLink: "font-bold text-orange-500 bg-secondary cursor-pointer block w-full text-left px-4 py-4  text-sm",
-  sectionHeader: "font-bold bg-primary text-sm border-b border-secondary-foreground text-secondary-foreground hover:bg-secondary cursor-pointer py-8 pl-4 w-full text-left",
+  sectionHeader: "font-bold bg-primary text-sm border-b border-secondary-foreground text-secondary-foreground hover:bg-secondary cursor-pointer py-8 pr-2 pl-4 w-full text-left",
   subLink: "pl-4 py-4"
 };
 
 const links = [
   { name: 'The Pulse', href: '/app/pulse', type: 'link' },
   {
-    name: 'Forex Scanner',
+    name: 'Forex',
     type: 'section',
     links: [
       { name: 'EURUSD', href: '/app/scanner/EURUSD' },
@@ -27,14 +27,14 @@ const links = [
     ]
   },
   {
-    name: 'Crypto Scanner',
+    name: 'Crypto',
     type: 'section',
     links: [
       { name: 'BITCOIN', href: '/app/scanner/BITCOIN' },
     ]
   },
   {
-    name: 'Precious Metals Scanner',
+    name: 'Precious Metals',
     type: 'section',
     links: [
       { name: 'GOLD', href: '/app/scanner/GOLD' },
@@ -42,7 +42,7 @@ const links = [
     ]
   },
   {
-    name: 'Commodity Scanner',
+    name: 'Commodities',
     type: 'section',
     links: [
       { name: 'OIL', href: '/app/scanner/OIL' },

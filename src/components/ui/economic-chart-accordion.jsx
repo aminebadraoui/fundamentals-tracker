@@ -1,19 +1,30 @@
 import React from "react";
 import { EventsTable } from '@/components/ui/events-table';
-import { ComposedChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { ComposedChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from 'recharts';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/shadcn/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/shadcn/accordion";
 import { TitledCard } from "../shadcn/titled-card";
 
 export const EconomicChartAccordion = ({ data, chartData }) => {
   const axisStyle = {
-    fontWeight: 'bold',
+    fontWeight: 'medium',
     fill: '#ffffff',
   };
 
+  const getFillColor = (score) => {
+    if (score > 0) {
+      return '#009900'; // Green for positive scores
+    } else if (score < 0) {
+      return '#c20b0a'; // Red for negative scores
+    }
+    return '#808080'; // Grey for zero scores
+  };
+  
+  console.log(chartData)
+
   return (
     // Removed outer padding and margin on small screens, kept it for medium and larger screens
-    <div className="md:space-y-4 md:p-8 md:m-8 flex flex-col md:flex-row justify-between space-x-0 md:space-x-4">
+    chartData && <div className="md:space-y-4 md:p-8 md:m-8 flex flex-col md:flex-row justify-between space-x-0 md:space-x-4">
       <div className="flex-1 mb-4 md:mb-0"> {/* Flex item with conditional bottom margin */}
         <TitledCard title="Comparative Chart">
           <CardContent className="p-0"> {/* Remove padding from CardContent */}
@@ -23,12 +34,15 @@ export const EconomicChartAccordion = ({ data, chartData }) => {
                 data={chartData}
                 margin={{ top: 20, right: 30, left: 20, bottom: 5 }} // Consider reducing these margins on smaller screens if necessary
               >
-                <CartesianGrid strokeDasharray="3 3" />
                 <XAxis type="number" domain={[-100, 100]} tick={axisStyle} />
                 <YAxis dataKey="country" type="category" tick={axisStyle} />
                 <Tooltip />
-                <Legend />
-                <Bar dataKey="scores" fill="#f87315" barSize={30} />
+               
+                <Bar dataKey="scores" barSize={30}>
+                  {chartData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={getFillColor(entry.scores[1])} />
+                  ))}
+                </Bar>
               </ComposedChart>
             </ResponsiveContainer>
           </CardContent>
