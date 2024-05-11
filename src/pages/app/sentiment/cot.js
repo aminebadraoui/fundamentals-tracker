@@ -76,11 +76,8 @@ const Institutional = (props) => {
       const assetPromises = Object.keys(assets).map(asset => 
         Promise.all([
           fetchCotDataForYears(asset, years),
-          fetchDataWithRetry('/api/getEventData', { countries: assets[asset].countries.join(',') }),
-          fetchDataWithRetry('/api/getWeeklyPriceData', { asset }),
-          fetchDataWithRetry('/api/getNewsSentimentData', { symbol: assets[asset].apiSymbol })
-        ]).then(([cotData, eventData, weeklyPriceData, newsSentimentData]) => {
-          return processAssetData(asset, eventData, cotData, newsSentimentData, weeklyPriceData);
+        ]).then(([cotData]) => {
+          return processAssetData(asset, null, cotData, null, null);
         })
       );
 

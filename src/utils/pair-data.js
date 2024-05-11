@@ -167,31 +167,47 @@ const processAssetData = (symbol, rawData, cotData, news_sentiment_data, weekly_
   assetData.pair = symbol
   assetData.countries = assets[symbol].countries
   
-  const countriesEconomics = assets[symbol].countries.map((country) => {
-    return getCountryData(country, rawData)
-  })
+  if (rawData) {
+    const countriesEconomics = rawData && assets[symbol].countries.map((country) => {
+      return getCountryData(country, rawData)
+    })
+  
+    let inflationScore, employmentScore, housingScore, growthScore, interestRateScore, economicScore
+  
+    inflationScore = getInflationScore(countriesEconomics)
+    employmentScore = getEmploymentScore(countriesEconomics)
+    housingScore = getHousingScore(countriesEconomics)
+    growthScore = getGrowthScore(countriesEconomics)
+    interestRateScore = getInterestRateScore(countriesEconomics)
+  
+    economicScore = (inflationScore + employmentScore + housingScore + growthScore + interestRateScore) / 5
+  
+    assetData.economics = {
+      countriesEvents: countriesEconomics,
+  
+      inflationScore,
+      employmentScore,
+      housingScore,
+      growthScore,
+      interestRateScore,
+  
+      score: economicScore
+    }
 
-  let inflationScore, employmentScore, housingScore, growthScore, interestRateScore, economicScore
-
-  inflationScore = getInflationScore(countriesEconomics)
-  employmentScore = getEmploymentScore(countriesEconomics)
-  housingScore = getHousingScore(countriesEconomics)
-  growthScore = getGrowthScore(countriesEconomics)
-  interestRateScore = getInterestRateScore(countriesEconomics)
-
-  economicScore = (inflationScore + employmentScore + housingScore + growthScore + interestRateScore) / 5
-
-  assetData.economics = {
-    countriesEvents: countriesEconomics,
-
-    inflationScore,
-    employmentScore,
-    housingScore,
-    growthScore,
-    interestRateScore,
-
-    score: economicScore
+  } else {
+    assetData.economics = {
+      countriesEvents: [],
+  
+      inflationScore: 0,
+      employmentScore: 0,
+      housingScore: 0,
+      growthScore: 0,
+      interestRateScore: 0,
+  
+      score: 0
+    }
   }
+ 
 
   const institutionalLong = assets[symbol].cotType === 'comm' ? parseInt(cotData[0].comm_positions_long_all[0]) : parseInt(cotData[0].noncomm_positions_long_all[0])
   const institutionalShort = assets[symbol].cotType === 'comm' ? parseInt(cotData[0].comm_positions_short_all[0]) : parseInt(cotData[0].noncomm_positions_short_all[0])
@@ -250,8 +266,10 @@ const processAssetData = (symbol, rawData, cotData, news_sentiment_data, weekly_
     }
   }
 
+  const weeklyPriceData = weekly_price_data ? weekly_price_data : []
+
   assetData.chartData = {
-    weeklyPrice: weekly_price_data,
+    weeklyPrice: weeklyPriceData,
     netPositions: mapCotDataToTimeValue(cotData, assets[symbol].cotType)
   }
 
@@ -260,16 +278,19 @@ const processAssetData = (symbol, rawData, cotData, news_sentiment_data, weekly_
     score: 0
   }
 
-  if (news_sentiment_data[`${assets[symbol].apiSymbol}`]) {
-    news_sentiment_data[`${assets[symbol].apiSymbol}`].slice(0, 7).map((news) => {
-      assetData.news.newsSet.push({ date: news.date, count: news.count, score: (news.normalized * 100) })
-    })
-
-    assetData.news.avgScore = assetData.news.newsSet.reduce((acc, news) => acc + news.score, 0) / assetData.news.newsSet.length
-    assetData.news.score = assetData.news.avgScore > 0 ? 100 : assetData.news.avgScore < 0 ? -100 : 0
+  if (news_sentiment_data) {
+    if (news_sentiment_data[`${assets[symbol].apiSymbol}`]) {
+      news_sentiment_data[`${assets[symbol].apiSymbol}`].slice(0, 7).map((news) => {
+        assetData.news.newsSet.push({ date: news.date, count: news.count, score: (news.normalized * 100) })
+      })
+  
+      assetData.news.avgScore = assetData.news.newsSet.reduce((acc, news) => acc + news.score, 0) / assetData.news.newsSet.length
+      assetData.news.score = assetData.news.avgScore > 0 ? 100 : assetData.news.avgScore < 0 ? -100 : 0
+    }
   }
 
-  assetData.score = (economicScore + assetData.cot.institutional.score + assetData.news.score) / 3
+  
+  assetData.score = (assetData.economics.score + assetData.cot.institutional.score + assetData.news.score) / 3
 
   if (assetData.score >= 50) {
     assetData.bias = "Strong Buy"

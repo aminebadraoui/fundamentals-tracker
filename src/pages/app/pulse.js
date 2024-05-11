@@ -68,10 +68,9 @@ const Pulse = (props) => {
         Promise.all([
           fetchCotDataForYears(asset, years),
           fetchDataWithRetry('/api/getEventData', { countries: assets[asset].countries.join(',') }),
-          fetchDataWithRetry('/api/getWeeklyPriceData', { asset }),
           fetchDataWithRetry('/api/getNewsSentimentData', { symbol: assets[asset].apiSymbol })
-        ]).then(([cotData, eventData, weeklyPriceData, newsSentimentData]) => {
-          return processAssetData(asset, eventData, cotData, newsSentimentData, weeklyPriceData);
+        ]).then(([cotData, eventData, newsSentimentData]) => {
+          return processAssetData(asset, eventData, cotData, newsSentimentData, null);
         })
       );
 
