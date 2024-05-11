@@ -202,10 +202,7 @@ const processAssetData = (symbol, rawData, cotData, news_sentiment_data, weekly_
   const institutionalNetOld = institutionalLongOld - institutionalShortOld
 
   const institutionalNetScore = (institutionalNet > 0 ? 100 : institutionalNet < 0 ? -100 : 0)
-  const institutionalLongScore = (institutionalLong > institutionalLongOld ? 100 : institutionalLong < institutionalLongOld ? -100 : 0)
-  const institutionalShortScore = (institutionalShort > institutionalShortOld ? -100 : institutionalShort < institutionalShortOld ? 100 : 0)
-
-  const institutionalScore = (institutionalNetScore + institutionalLongScore + institutionalShortScore) / 3
+  const institutionalScore = institutionalNetScore
 
   const retailLong = parseInt(cotData[0].nonrept_positions_long_all[0])
   const retailShort = parseInt(cotData[0].nonrept_positions_short_all[0])
@@ -216,10 +213,9 @@ const processAssetData = (symbol, rawData, cotData, news_sentiment_data, weekly_
   const retailNetOld = retailLongOld - retailShortOld
 
   const retailNetScore = (retailNet > 0 ? -100 : retailNet < 0 ? 100 : 0)
-  const retailLongScore = (retailLong > retailLongOld ? -100 : retailLong < retailLongOld ? 100 : 0)
-  const retailShortScore = (retailShort > retailShortOld ? 100 : retailShort < retailShortOld ? -100 : 0)
 
-  const retailScore = (retailNetScore + retailLongScore + retailShortScore) / 3
+
+  const retailScore = retailNetScore
 
   
 
@@ -235,9 +231,7 @@ const processAssetData = (symbol, rawData, cotData, news_sentiment_data, weekly_
       shortOld: institutionalShortOld,
       netOld: institutionalNetOld,
 
-      netScore: institutionalNetScore,
-      longScore: institutionalLongScore,
-      shortScore: institutionalShortScore,
+      
       score: institutionalScore
 
      
@@ -250,9 +244,7 @@ const processAssetData = (symbol, rawData, cotData, news_sentiment_data, weekly_
       shortOld: retailShortOld,
       netOld: retailNetOld,
 
-      netScore: retailNetScore,
-      longScore: retailLongScore,
-      shortScore: retailShortScore,
+     
       score: retailScore
 
     }

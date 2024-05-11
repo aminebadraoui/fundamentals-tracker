@@ -258,36 +258,36 @@ const Scanner = (props) => {
                               <TableCell className='font-bold'> Inflation Score </TableCell>
                               <TableCell> {assetData.economics.countriesEvents[0].inflationData.totalScore.toFixed(2)} </TableCell>
                              
-                              <TableCell className={ `${getScoreTextColor(assetData.economics.inflationScore)}`}> {assetData.economics.inflationScore} </TableCell>
+                              <TableCell className={ `${getScoreTextColor(-assetData.economics.inflationScore)}`}> {-assetData.economics.inflationScore} </TableCell>
                             </TableRow>
                             <TableRow>
                               <TableCell className='font-bold'> Interest Rate Score </TableCell>
                               <TableCell> {assetData.economics.countriesEvents[0].interestRateData.totalScore.toFixed(2)} </TableCell>
                               
-                              <TableCell className={ `${getScoreTextColor(assetData.economics.interestRateScore)}`}> {assetData.economics.interestRateScore} </TableCell>
+                              <TableCell className={ `${getScoreTextColor(-assetData.economics.interestRateScore)}`}> {-assetData.economics.interestRateScore} </TableCell>
                             </TableRow>
                             <TableRow>
                               <TableCell className='font-bold'>  Employement Score </TableCell>
                               <TableCell> {assetData.economics.countriesEvents[0].employmentData.totalScore.toFixed(2)} </TableCell>
                               
-                              <TableCell className={ `${getScoreTextColor(assetData.economics.employmentScore)}`}> {assetData.economics.employmentScore} </TableCell>
+                              <TableCell className={ `${getScoreTextColor(-assetData.economics.employmentScore)}`}> {-assetData.economics.employmentScore} </TableCell>
                             </TableRow>
                             <TableRow>
                               <TableCell className='font-bold'> Housing Score </TableCell>
                               <TableCell> {assetData.economics.countriesEvents[0].housingData.totalScore.toFixed(2)} </TableCell>
                 
-                              <TableCell className={ `${getScoreTextColor(assetData.economics.housingScore)}`}> {assetData.economics.housingScore} </TableCell>
+                              <TableCell className={ `${getScoreTextColor(-assetData.economics.housingScore)}`}> {-assetData.economics.housingScore} </TableCell>
                             </TableRow>
                             <TableRow>
                               <TableCell className='font-bold'> Growth Score </TableCell>
                               <TableCell> {assetData.economics.countriesEvents[0].growthData.totalScore.toFixed(2)} </TableCell>
                       
-                              <TableCell className={ `${getScoreTextColor(assetData.economics.growthScore)}`}> {assetData.economics.growthScore} </TableCell>
+                              <TableCell className={ `${getScoreTextColor(-assetData.economics.growthScore)}`}> {-assetData.economics.growthScore} </TableCell>
                             </TableRow>
                             <TableRow>
                               <TableCell colSpan={2} className='font-bold'> Final Score </TableCell>
                           
-                              <TableCell className={ `${getScoreBackgroundColor(assetData.economics.score)} font-bold `}> {assetData.economics.score} </TableCell>
+                              <TableCell className={ `${getScoreBackgroundColor(-assetData.economics.score)} font-bold `}> {-assetData.economics.score} </TableCell>
                             </TableRow>
                         </TableBody>
                         
@@ -342,44 +342,11 @@ const Scanner = (props) => {
                         <TableRow>
                           <TableCell> {assetData.cot.institutional.long} </TableCell>
                           <TableCell> {assetData.cot.institutional.short} </TableCell>
-                          <TableCell className={ `${getScoreBackgroundColor(assetData.cot.institutional.netScore)} font-bold `}> {assetData.cot.institutional.netScore} </TableCell>
+                          <TableCell className={ `${getScoreBackgroundColor(assetData.cot.institutional.score)} font-bold `}> {assetData.cot.institutional.score} </TableCell>
                           </TableRow>
                       </TableBody>
                       </Table>   
 
-                      <Table> 
-                      <TableHeader>
-                        <TableRow className='hover:bg-transparent'>
-                          <TableHead className='font-bold'> Longs </TableHead>
-                          <TableHead className='font-bold'> Longs Previous </TableHead>
-                          <TableHead className='font-bold'> Final Score </TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        <TableRow>
-                          <TableCell> {assetData.cot.institutional.long} </TableCell>
-                          <TableCell> {assetData.cot.institutional.longOld} </TableCell>
-                          <TableCell className={ `${getScoreBackgroundColor(assetData.cot.institutional.longScore)} font-bold `}> {assetData.cot.institutional.longScore} </TableCell>
-                          </TableRow>
-                      </TableBody>
-                      </Table>   
-
-                      <Table> 
-                      <TableHeader>
-                        <TableRow className='hover:bg-transparent'>
-                          <TableHead className='font-bold'> Shorts </TableHead>
-                          <TableHead className='font-bold'> Shorts Previous </TableHead>
-                          <TableHead className='font-bold'> Final Score </TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        <TableRow>
-                          <TableCell> {assetData.cot.institutional.short} </TableCell>
-                          <TableCell> {assetData.cot.institutional.shortOld} </TableCell>
-                          <TableCell className={ `${getScoreBackgroundColor(assetData.cot.institutional.shortScore)} font-bold `}> {assetData.cot.institutional.shortScore} </TableCell>
-                          </TableRow>
-                      </TableBody>
-                      </Table>   
                     </TitledCard>
                     
                     {/* <TitledCard key={`${asset}_retail_positioning_card`} className={Style.InternalCard} title="Retail Positioning">

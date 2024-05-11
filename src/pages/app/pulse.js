@@ -4,6 +4,7 @@ import { assets} from '@/utils/event-names';
 import { Loader } from '@/components/ui/loader';
 import { TitledCard } from '@/components/shadcn/titled-card';
 import { Table, TableHeader, TableRow, TableHead, TableCell, TableBody } from '@/components/shadcn/table';
+import Link from 'next/link';
 
 
 import { getScoreTextColor } from '@/utils/get-score-color';
@@ -122,7 +123,11 @@ const Pulse = (props) => {
                   {pulseData && Object.keys(pulseData).map((asset) => {
                     return (
                       <TableRow key={pulseData[asset].pair} className="!border-0 hover:bg-transparent">
-                        <TableCell className="bg-primary text-primary-foreground font-bold">{pulseData[asset].pair}</TableCell>
+                        <TableCell className="bg-primary text-primary-foreground font-bold">
+                        <Link href={`/app/scanner/${pulseData[asset].pair}`}>
+                            {pulseData[asset].pair}
+                          </Link>
+                          </TableCell>
                         <TableCell className={`bg-primary text-primary-foreground font-bold ${getScoreTextColor(pulseData[asset].score)}`}> {pulseData[asset].bias}  </TableCell>
                         <TableCell className={`bg-primary text-primary-foreground font-bold ${getScoreTextColor(pulseData[asset].score)}`}>{pulseData[asset].score.toFixed(2)}  </TableCell>
                       </TableRow>
