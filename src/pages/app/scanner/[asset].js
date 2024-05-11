@@ -67,7 +67,10 @@ const Scanner = (props) => {
   // keep track of different arrays of events as part of one object
   const [assetData , setAssetData] = useState(null);
   const [institutionalChartData , setInstitutionalChartData] = useState(null);
-  const [netChartData , setNetChartData] = useState(null);
+  const [institutionalNetChartData , setInstitutionalNetChartData] = useState(null);
+
+  const [retailChartData , setRetailChartData] = useState(null);
+  const [retailNetChartData , setRetailNetChartData] = useState(null);
   const [isLoading, setLoading] = useState(false);
 
   const handleDownload = async () => {
@@ -85,13 +88,13 @@ const Scanner = (props) => {
 
       const assetDataJson = processAssetData(asset, eventData, cotData, newsSentimentData, weeklyPriceData);
 
-      const chartData =  [{
+      const institutionalChartData_local =  [{
           name: asset,
           long: assetDataJson.cot.institutional.long,
           short: assetDataJson.cot.institutional.short
         }]
 
-        const netChartData = [
+        const institutionalNetChartData_local = [
           { 
             name: "Longs",
             current: assetDataJson.cot.institutional.long,
@@ -103,12 +106,34 @@ const Scanner = (props) => {
             previous: assetDataJson.cot.institutional.shortOld,
           }
         ];
+
+        const retailChartData_local =  [{
+          name: asset,
+          long: assetDataJson.cot.retail.long,
+          short: assetDataJson.cot.retail.short
+        }]
+
+        const retailNetChartData_local = [
+          { 
+            name: "Longs",
+            current: assetDataJson.cot.retail.long,
+            previous: assetDataJson.cot.retail.longOld,
+          },
+          {
+            name: "Shorts",
+            current: assetDataJson.cot.retail.short,
+            previous: assetDataJson.cot.retail.shortOld,
+          }
+        ];
   
 
       // set the state with the sorted data
       setAssetData(assetDataJson);
-      setInstitutionalChartData(chartData);
-      setNetChartData(netChartData);
+      setInstitutionalChartData(institutionalChartData_local);
+      setInstitutionalNetChartData(institutionalNetChartData_local);
+
+      setRetailChartData(retailChartData_local);
+      setRetailNetChartData(retailNetChartData_local);
 
       console.log("assetDataJson", assetDataJson)
 
@@ -307,19 +332,19 @@ const Scanner = (props) => {
                       </BarChart>
                     </ResponsiveContainer>
                     <ResponsiveContainer height={400}>
-                      <BarChart data={netChartData} barCategoryGap={20} barGap={3}>
+                      <BarChart data={institutionalNetChartData} barCategoryGap={20} barGap={3}>
                         
                         <XAxis dataKey="name" tick={{ fill: 'white' }} />
                         <YAxis />
                         <Tooltip cursor={{fill: 'transparent'}} />
                        
                         <Bar dataKey="current" name="Current" fill="#009900" stackId="a">
-                          {netChartData.map((entry, index) => (
+                          {institutionalNetChartData.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={index % 2 === 0 ? '#009900' : '#c20b0a'} />
                           ))}
                         </Bar>
                         <Bar dataKey="previous" name="Previous" fill="#006600" stackId="b">
-                          {netChartData.map((entry, index) => (
+                          {institutionalNetChartData.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={index % 2 === 0 ? '#006600' : '#8b0000'} />
                           ))}
                         </Bar>
@@ -348,6 +373,61 @@ const Scanner = (props) => {
                       </Table>   
 
                     </TitledCard>
+
+                    <TitledCard key={`${asset}_retail_Positioning_card`} className={Style.InternalCard} title="Retail Sentiment">
+                      <div className='flex'>
+                      <ResponsiveContainer  height={400}>
+                      <BarChart data={retailChartData} barCategoryGap={20} >
+                        <XAxis dataKey="name" tick={{ fill: 'white' }} />
+                        <YAxis domain={[0, 100]} />
+                        <Tooltip cursor={{fill: 'transparent'}} />
+                        
+                        <Bar dataKey="long" name="Total Longs"  fill="#009900"   />
+                        <Bar dataKey="short" name="Total Shorts"  fill="#c20b0a" />
+                      </BarChart>
+                    </ResponsiveContainer>
+                    <ResponsiveContainer height={400}>
+                      <BarChart data={retailNetChartData} barCategoryGap={20} barGap={3}>
+                        
+                        <XAxis dataKey="name" tick={{ fill: 'white' }} />
+                        <YAxis />
+                        <Tooltip cursor={{fill: 'transparent'}} />
+                       
+                        <Bar dataKey="current" name="Current" fill="#009900" stackId="a">
+                          {retailNetChartData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={index % 2 === 0 ? '#009900' : '#c20b0a'} />
+                          ))}
+                        </Bar>
+                        <Bar dataKey="previous" name="Previous" fill="#006600" stackId="b">
+                          {retailNetChartData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={index % 2 === 0 ? '#006600' : '#8b0000'} />
+                          ))}
+                        </Bar>
+                      </BarChart>
+                    </ResponsiveContainer>
+
+                        
+                    </div>
+                   
+                      
+                      <Table> 
+                      <TableHeader>
+                        <TableRow className='hover:bg-transparent'>
+                          <TableHead className='font-bold'> Longs </TableHead>
+                          <TableHead className='font-bold'> Shorts </TableHead>
+                          <TableHead className='font-bold'> Final Score </TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        <TableRow>
+                          <TableCell> {assetData.cot.retail.long} </TableCell>
+                          <TableCell> {assetData.cot.retail.short} </TableCell>
+                          <TableCell className={ `${getScoreBackgroundColor(assetData.cot.retail.score)} font-bold `}> {assetData.cot.retail.score} </TableCell>
+                          </TableRow>
+                      </TableBody>
+                      </Table>   
+
+                    </TitledCard>
                     
                     {/* <TitledCard key={`${asset}_retail_positioning_card`} className={Style.InternalCard} title="Retail Positioning">
                     <Table> 
@@ -368,7 +448,7 @@ const Scanner = (props) => {
                       </Table>
                     </TitledCard> */}
 
-                    <TitledCard key={`${asset}_news_sentiment_card`} className={Style.InternalCard} title="News Sentiment">
+                    {/* <TitledCard key={`${asset}_news_sentiment_card`} className={Style.InternalCard} title="News Sentiment">
                       <Table> 
                         <TableHeader>
                           {
@@ -415,7 +495,7 @@ const Scanner = (props) => {
                           </TableRow>
                         </TableBody>
                         </Table>
-                    </TitledCard>
+                    </TitledCard> */}
                   </div>
                 )  
               })

@@ -113,57 +113,6 @@ const processAssetData = (symbol, rawData, cotData, news_sentiment_data, weekly_
     
   }
   
-  // const assetData = {
-  //   "symbol": "EURUSD",
-  //   "score": 0,
-  //   "countries": ["EU", "US"],
-  //   "bias": "neutral",
-  //   "chartData": {
-  //     "weeklyPrice": [],
-  //     "netPositions": []
-  //   },
-  //   "economics": {
-  //     "score": 0,
-  //     "inflation": {
-  //       "data": [],
-  //       "score": 0
-  //     },
-  //     "inflation": {
-  //       "data": [],
-  //       "score": 0
-  //     },
-  //     "employment": {
-  //       "data": [],
-  //       "score": 0
-  //     },
-  //     "housing": {
-  //       "data": [],
-  //       "score": 0
-  //     },
-  //     "growth": {
-  //       "data": [],
-  //       "score": 0
-  //     },
-  //   },
-  //   "cot": {
-  //     "cotData": [],
-  //     "institutional": {
-  //       "long": 0,
-  //       "short": 0,
-  //       "net": 0,
-  //       "score": 0
-  //     },
-  //     "retail": {
-  //       "long": 0,
-  //       "short": 0,
-  //       "net": 0,
-  //       "score": 0
-  //     }
-  //   },
-  //   "news": {},
-  // }
-
-
   assetData.pair = symbol
   assetData.countries = assets[symbol].countries
   
@@ -228,14 +177,9 @@ const processAssetData = (symbol, rawData, cotData, news_sentiment_data, weekly_
   const retailShortOld = parseInt(cotData[1].nonrept_positions_short_old[0])
   const retailNetOld = retailLongOld - retailShortOld
 
-  const retailNetScore = (retailNet > 0 ? -100 : retailNet < 0 ? 100 : 0)
-
+  const retailNetScore = (((retailNet > 0) && (institutionalNet < 0)) ? -100 : ((retailNet < 0) && (institutionalNet > 0)) ? 100 : 0 )
 
   const retailScore = retailNetScore
-
-  
-
-
 
   assetData.cot = {
     cotData: cotData,
@@ -246,11 +190,7 @@ const processAssetData = (symbol, rawData, cotData, news_sentiment_data, weekly_
       longOld: institutionalLongOld,
       shortOld: institutionalShortOld,
       netOld: institutionalNetOld,
-
-      
       score: institutionalScore
-
-     
     },
     retail: {
       long: retailLong,
@@ -259,10 +199,7 @@ const processAssetData = (symbol, rawData, cotData, news_sentiment_data, weekly_
       longOld: retailLongOld,
       shortOld: retailShortOld,
       netOld: retailNetOld,
-
-     
       score: retailScore
-
     }
   }
 
@@ -278,19 +215,19 @@ const processAssetData = (symbol, rawData, cotData, news_sentiment_data, weekly_
     score: 0
   }
 
-  if (news_sentiment_data) {
-    if (news_sentiment_data[`${assets[symbol].apiSymbol}`]) {
-      news_sentiment_data[`${assets[symbol].apiSymbol}`].slice(0, 7).map((news) => {
-        assetData.news.newsSet.push({ date: news.date, count: news.count, score: (news.normalized * 100) })
-      })
+  // if (news_sentiment_data) {
+  //   if (news_sentiment_data[`${assets[symbol].apiSymbol}`]) {
+  //     news_sentiment_data[`${assets[symbol].apiSymbol}`].slice(0, 7).map((news) => {
+  //       assetData.news.newsSet.push({ date: news.date, count: news.count, score: (news.normalized * 100) })
+  //     })
   
-      assetData.news.avgScore = assetData.news.newsSet.reduce((acc, news) => acc + news.score, 0) / assetData.news.newsSet.length
-      assetData.news.score = assetData.news.avgScore > 0 ? 100 : assetData.news.avgScore < 0 ? -100 : 0
-    }
-  }
+  //     assetData.news.avgScore = assetData.news.newsSet.reduce((acc, news) => acc + news.score, 0) / assetData.news.newsSet.length
+  //     assetData.news.score = assetData.news.avgScore > 0 ? 100 : assetData.news.avgScore < 0 ? -100 : 0
+  //   }
+  // }
 
   
-  assetData.score = (assetData.economics.score + assetData.cot.institutional.score + assetData.news.score) / 3
+  assetData.score = (assetData.economics.score + assetData.cot.institutional.score +  assetData.cot.retail.score ) / 3
 
   if (assetData.score >= 50) {
     assetData.bias = "Strong Buy"
