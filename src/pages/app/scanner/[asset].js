@@ -153,39 +153,43 @@ const Scanner = (props) => {
                 return (
                   assetData && 
                   <div className='flex w-1/2 flex-col space-y-4'>
-                    <GaugeComponent
-                              value={assetData.score}  
-                              type="radial"
-                              labels={{
-                                valueLabel: {
-                                  matchColorWithArc: true,
-                                },
-                                tickLabels: {
-                                  type: "inner",
-                                  ticks: [
-                                    { value: -100 },
-                                    { value: -50 },
-                                    { value: -25 },
-                                    { value: 0 },
-                                    { value: 25 },
-                                    { value: 50 },
-                                    { value: 100 },
-                                  ]
-                                }
-                              }}
-                              arc={{
-                                colorArray: ['#c20b0a','#009900'],
-                                subArcs: [{limit: -50}, {limit: -25}, {limit: 25}, {limit: 50}, {}],
-                                padding: 0.02,
-                                width: 0.3
-                              }}
-                              minValue={-100}
-                              maxValue={100}
-                              pointer={{
-                                elastic: true,
-                                animationDelay: 0,
-                                color: '#9ea7c6',
-                              }}/>
+                    <div className='flex justify-center items-center'>
+                      <GaugeComponent
+                                value={assetData.score}  
+                                style={{  width: '75%' }}
+                                type="radial"
+                                labels={{
+                                  valueLabel: {
+                                    matchColorWithArc: true,
+                                  },
+                                  tickLabels: {
+                                    type: "inner",
+                                    ticks: [
+                                      { value: -100 },
+                                      { value: -50 },
+                                      { value: -25 },
+                                      { value: 0 },
+                                      { value: 25 },
+                                      { value: 50 },
+                                      { value: 100 },
+                                    ]
+                                  }
+                                }}
+                                arc={{
+                                  colorArray: ['#c20b0a','#009900'],
+                                  subArcs: [{limit: -50}, {limit: -25}, {limit: 25}, {limit: 50}, {}],
+                                  padding: 0.02,
+                                  width: 0.3
+                                }}
+                                minValue={-100}
+                                maxValue={100}
+                                pointer={{
+                                  elastic: true,
+                                  animationDelay: 0,
+                                  color: '#9ea7c6',
+                                }}/>
+                      </div>
+                
 
                     <TitledCard key={`${asset}_economy_card_`} className={Style.InternalCard} title="Economy">
                         
@@ -297,7 +301,7 @@ const Scanner = (props) => {
                         <XAxis dataKey="name" tick={{ fill: 'white' }} />
                         <YAxis domain={[0, 100]} />
                         <Tooltip cursor={{fill: 'transparent'}} />
-                        <Legend />
+                        
                         <Bar dataKey="long" name="Total Longs"  fill="#009900"   />
                         <Bar dataKey="short" name="Total Shorts"  fill="#c20b0a" />
                       </BarChart>
@@ -308,7 +312,7 @@ const Scanner = (props) => {
                         <XAxis dataKey="name" tick={{ fill: 'white' }} />
                         <YAxis />
                         <Tooltip cursor={{fill: 'transparent'}} />
-                        <Legend />
+                       
                         <Bar dataKey="current" name="Current" fill="#009900" stackId="a">
                           {netChartData.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={index % 2 === 0 ? '#009900' : '#c20b0a'} />
