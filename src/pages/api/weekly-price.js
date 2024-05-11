@@ -56,8 +56,15 @@ export const getWeeklyPriceData = async (asset) => {
       }
     })
 
+    // remove duplicates where time is the same
+    const formatted_weekly_price_data_filtered = formatted_weekly_price_data_desc.filter((value, index, self) =>
+      index === self.findIndex((t) => (
+        t.time === value.time
+      ))
+    )
+
     // sort formatted_weekly_price_data by time in ascending order by converting time to date object
-    formatted_weekly_price_data = formatted_weekly_price_data_desc.sort((a, b) => {
+    formatted_weekly_price_data = formatted_weekly_price_data_filtered.sort((a, b) => {
       return new Date(a.time) - new Date(b.time)
     })
     

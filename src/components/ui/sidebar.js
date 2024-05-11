@@ -27,6 +27,15 @@ const links = [
     ]
   },
   {
+    name: 'Indices',
+    type: 'section',
+    links: [
+      { name: 'US30', href: '/app/scanner/US30' },
+      { name: 'SP500', href: '/app/scanner/SP500' },
+      { name: 'NAS100', href: '/app/scanner/NAS100' },
+    ]
+  },
+  {
     name: 'Crypto',
     type: 'section',
     links: [

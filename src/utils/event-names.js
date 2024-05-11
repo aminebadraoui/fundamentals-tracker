@@ -206,6 +206,33 @@ const assets =  {
     apiType: '',
     twelveDataSymbol: `WTI/USD`
   },
+  'NAS100': {
+    countries: ["US"],
+    cotName: "NASDAQ-100 Consolidated",
+    cotFileName: 'indices',
+    cotType: 'noncomm',
+    apiSymbol: '',
+    apiType: '',
+    twelveDataSymbol: `NDX`
+  },
+  'US30': {
+    countries: ["US"],
+    cotName: "DJIA Consolidated",
+    cotFileName: 'indices',
+    cotType: 'noncomm',
+    apiSymbol: '',
+    apiType: '',
+    twelveDataSymbol: `DJI`
+  },
+  'SP500': {
+    countries: ["US"],
+    cotName: "SP 500 Consolidated",
+    cotFileName: 'indices',
+    cotType: 'noncomm',
+    apiSymbol: '',
+    apiType: '',
+    twelveDataSymbol: `SPX`
+  },
 }
 
 export {inflationKeys,
