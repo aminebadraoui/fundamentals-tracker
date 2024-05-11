@@ -58,9 +58,9 @@ export const ChartComponent = props => {
             sixMonthmovingAverageColor = '#ff0000', // Orange color for the moving average line
             oneYearMovingAverageColor = '#a717d3', // Red color for the moving average line
             zScoreColor = '#0000ff', // Blue color for the Z-score line
-            zScoreColor6M = '#800080', // Purple color for the 6-month z-score line
-            zScoreColor1Y =  '#ffa500', // Orange color for the 1-year z-score line
-            zScoreColor3Y = '#008000', // Green color for the 3-year z-score line
+            zScoreColor6M = '#ffa500', // Purple color for the 6-month z-score line
+            zScoreColor1Y =  '#008000', // Orange color for the 1-year z-score line
+            zScoreColor3Y = '#800080', // Green color for the 3-year z-score line
         } = {},
     } = props;
 
@@ -180,9 +180,6 @@ export const ChartComponent = props => {
         zScoreSeries1Y.setData(zScoreData1Y);
         zScoreSeries3Y.setData(zScoreData3Y);
 
-
-
-
         const zeroLineSeries = positionsChart.addLineSeries({
           color: zeroLineColor, 
           lineWidth: 1,
@@ -196,22 +193,22 @@ export const ChartComponent = props => {
 
           zeroLineSeries.setData(zeroLineData);
 
-        // Calculate and add the 26-period moving average
-        const sixMonthsMovingAverageData = calculateMovingAverage(netPositions, 26);
+        // // Calculate and add the 26-period moving average
+        // const sixMonthsMovingAverageData = calculateMovingAverage(netPositions, 26);
 
-        const sixMonthsMovingAverageSeries = positionsChart.addLineSeries({
-            color: sixMonthmovingAverageColor,
-            lineWidth: 1,
-        });
-        sixMonthsMovingAverageSeries.setData(sixMonthsMovingAverageData);
+        // const sixMonthsMovingAverageSeries = positionsChart.addLineSeries({
+        //     color: sixMonthmovingAverageColor,
+        //     lineWidth: 1,
+        // });
+        // sixMonthsMovingAverageSeries.setData(sixMonthsMovingAverageData);
 
-        const oneYearMovingAverageData = calculateMovingAverage(netPositions, 52);
+        // const oneYearMovingAverageData = calculateMovingAverage(netPositions, 52);
 
-        const oneYearMovingAverageSeries = positionsChart.addLineSeries({
-            color: oneYearMovingAverageColor,
-            lineWidth: 1,
-        });
-        oneYearMovingAverageSeries.setData(oneYearMovingAverageData);
+        // const oneYearMovingAverageSeries = positionsChart.addLineSeries({
+        //     color: oneYearMovingAverageColor,
+        //     lineWidth: 1,
+        // });
+        // oneYearMovingAverageSeries.setData(oneYearMovingAverageData);
 
         chart.timeScale().scrollToPosition(positionsChart.timeScale().scrollPosition(), false);
         positionsChart.timeScale().scrollToPosition(chart.timeScale().scrollPosition(), false);
@@ -220,8 +217,8 @@ export const ChartComponent = props => {
         setPriceChartLegendText(`${symbol} - Weekly`);
       
         setPositionChartLegendText(`Weekly Net Positions (Longs-Shorts)`);
-        setSixMonthMAText(`6-Month Average`);
-        setThreeYearsMAText(`1-Year Average `);
+        // setSixMonthMAText(`6-Month Average`);
+        // setThreeYearsMAText(`1-Year Average `);
 
         setZScore6MLegendText(`6-Month Z-Score`);
         setZScore1YLegendText(`1-Year Z-Score`);
