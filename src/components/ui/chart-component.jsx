@@ -224,9 +224,8 @@ export const ChartComponent = props => {
         // });
         // oneYearMovingAverageSeries.setData(oneYearMovingAverageData);
 
-        chart.timeScale().scrollToPosition(positionsChart.timeScale().scrollPosition(), false);
-        positionsChart.timeScale().scrollToPosition(chart.timeScale().scrollPosition(), false);
-        zScoreChart.timeScale().scrollToPosition(chart.timeScale().scrollPosition(), false);
+   
+        
 
         setPriceChartLegendText(`${symbol} - Weekly`);
       
@@ -248,22 +247,33 @@ export const ChartComponent = props => {
             syncCrosshair(zScoreChart, zScoreSeries6M, dataPoint);
             syncCrosshair(zScoreChart, zScoreSeries1Y, dataPoint);
             syncCrosshair(zScoreChart, zScoreSeries3Y, dataPoint);
-            
+
         });
+
+        chart.timeScale().subscribeVisibleTimeRangeChange( () => {
+            positionsChart.timeScale().setVisibleRange(chart.timeScale().getVisibleRange());
+            zScoreChart.timeScale().setVisibleRange(chart.timeScale().getVisibleRange());
+        })
+
+       
+        
         positionsChart.subscribeCrosshairMove(param => {
             const dataPoint = getCrosshairDataPoint(lineSeries, param);
             syncCrosshair(chart, candleSeries, dataPoint);
             syncCrosshair(zScoreChart, zScoreSeries6M, dataPoint);
             syncCrosshair(zScoreChart, zScoreSeries1Y, dataPoint);
             syncCrosshair(zScoreChart, zScoreSeries3Y, dataPoint);
-            
+
         });
         
         zScoreChart.subscribeCrosshairMove(param => {
           const dataPoint = getCrosshairDataPoint(zScoreSeries6M, param);
           syncCrosshair(chart, candleSeries, dataPoint);
           syncCrosshair(positionsChart, lineSeries, dataPoint);
+
       });
+
+        
         window.addEventListener('resize', handleResize);
 
         return () => {
