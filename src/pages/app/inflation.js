@@ -30,6 +30,8 @@ const Inflation = () => {
       const data = await fetch('../api/event-calendar')
 
       const jsonData = await data.json()
+
+      
       
       // if data is not empty, classify data into categories and currencies and set state
       // const blob = new Blob([JSON.stringify(jsonData, null, 2)], { type: 'application/json' });

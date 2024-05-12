@@ -1,7 +1,7 @@
 import { assets } from '@/utils/event-names';
 import { parseCotData, findLatestCotDataForAsset } from '@/utils/cot-data';
 import fs from 'fs/promises';
-import { processAssetData } from '@/utils/pair-data';
+import { processAssetData } from '@/utils/processAssetData';
 import path from 'path';
 import { getEventData } from './event-calendar';
 import { getWeeklyPriceData } from './weekly-price';

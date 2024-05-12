@@ -4,7 +4,7 @@ import { Loader } from '@/components/ui/loader'
 import { TitledCard } from '@/components/shadcn/titled-card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/shadcn/table';
 import { getScoreBackgroundColor, getScoreTextColor } from '@/utils/get-score-color';
-import { processAssetData } from '@/utils/pair-data';
+import { processAssetData } from '@/utils/processAssetData';
 import { assets } from '@/utils/event-names';
 
 import { ChartComponent } from '@/components/ui/chart-component';
@@ -216,7 +216,7 @@ const Scanner = (props) => {
                       </div>
                 
 
-                    <TitledCard key={`${asset}_economy_card_`} className={Style.InternalCard} title="Economy">
+                    {/* <TitledCard key={`${asset}_economy_card_`} className={Style.InternalCard} title="Economy">
                         
                         { assetData.countries.length == 2 ? 
                         <Table>
@@ -317,7 +317,7 @@ const Scanner = (props) => {
                         </TableBody>
                         
                         </Table>  }
-                    </TitledCard>
+                    </TitledCard> */}
 
                     <TitledCard key={`${asset}_institional_Positioning_card`} className={Style.InternalCard} title="Institutional Positioning">
                       <div className='flex'>

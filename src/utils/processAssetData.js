@@ -52,16 +52,19 @@ const getInterestRateScore = (countriesEconomics) => {
 }
 
 
-const mapCotDataToTimeValue = (cotData, cotType) => {
+const mapCotDataToTimeValue = (cotData, cotType, netType) => {
   const dataWithParsedDates = cotData.map(item => {
+    let long, short;
     const date = new Date(item.report_date_as_yyyy_mm_dd[0]);
     const formattedDate = date.toISOString().split('T')[0]; // Format the date as 'yyyy-mm-dd'
 
-    const long = cotType === 'comm' ? parseInt(item.comm_positions_long_all[0]) : parseInt(item.noncomm_positions_long_all[0]);
-    const short = cotType === 'comm' ? parseInt(item.comm_positions_short_all[0]) : parseInt(item.noncomm_positions_short_all[0]);
-
-
-
+    if (netType === "institutional") {
+      long = cotType === 'comm' ? parseInt(item.comm_positions_long_all[0]) : parseInt(item.noncomm_positions_long_all[0]);
+      short = cotType === 'comm' ? parseInt(item.comm_positions_short_all[0]) : parseInt(item.noncomm_positions_short_all[0]);
+    } else {
+      long = parseInt(item.nonrept_positions_long_all[0]);
+      short = parseInt(item.nonrept_positions_short_all[0]);
+    }
 
     const netPositions = long - short;
 
@@ -72,20 +75,30 @@ const mapCotDataToTimeValue = (cotData, cotType) => {
     };
   });
 
-  const dataWithParsedDatesWithoutDuplicates = dataWithParsedDates.filter((item, index, self) => {
-    return index === self.findIndex((t) => (
-      t.time === item.time
-    ));
-  }
+  // Removing duplicates if any based on time
+  const uniqueData = dataWithParsedDates.filter((item, index, self) =>
+    index === self.findIndex((t) => t.time === item.time)
   );
 
-
   // Sort by timestamp to ensure the data is in ascending order
-  dataWithParsedDatesWithoutDuplicates.sort((a, b) => a.timestamp - b.timestamp);
+  uniqueData.sort((a, b) => a.timestamp - b.timestamp);
 
-  // Return data formatted for the chart, removing the extra 'timestamp' property
-  return dataWithParsedDatesWithoutDuplicates.map(({ time, value }) => ({ time, value }));
+  // Find min and max for normalization
+  const values = uniqueData.map(item => item.value);
+  const minNetPosition = Math.min(...values);
+  const maxNetPosition = Math.max(...values);
+
+  // Normalize the net positions to be between -100 and +100
+  const normalizedData = uniqueData.map(item => ({
+    time: item.time,
+    value: 200 * (item.value - minNetPosition) / (maxNetPosition - minNetPosition) - 100
+  }));
+
+  // Return the normalized data
+  return normalizedData;
 };
+
+
 
 const getCountryData = (country, rawData) => {
   const inflationData = getDataSortedByTotalScore(rawData, inflationKeys, null)[country]
@@ -160,22 +173,38 @@ const processAssetData = (symbol, rawData, cotData, news_sentiment_data, weekly_
 
   const institutionalLong = assets[symbol].cotType === 'comm' ? parseInt(cotData[0].comm_positions_long_all[0]) : parseInt(cotData[0].noncomm_positions_long_all[0])
   const institutionalShort = assets[symbol].cotType === 'comm' ? parseInt(cotData[0].comm_positions_short_all[0]) : parseInt(cotData[0].noncomm_positions_short_all[0])
-  const institutionalNet = institutionalLong - institutionalShort
+
+  const institutionalLong_final = (assets[symbol].isFlipped === true ) ? institutionalShort : institutionalLong
+  const institutionalShort_final = (assets[symbol].isFlipped === true ) ? institutionalLong : institutionalShort
+
+  const institutionalNet = institutionalLong_final - institutionalShort_final
 
   const institutionalLongOld = assets[symbol].cotType === 'comm' ? parseInt(cotData[1].comm_positions_long_old[0]) : parseInt(cotData[1].noncomm_positions_long_old[0])
   const institutionalShortOld = assets[symbol].cotType === 'comm' ? parseInt(cotData[1].comm_positions_short_old[0]) : parseInt(cotData[1].noncomm_positions_short_old[0])
-  const institutionalNetOld = institutionalLongOld - institutionalShortOld
 
+  const institutionalLongOld_final = (assets[symbol].isFlipped === true ) ? institutionalShortOld : institutionalLongOld
+  const institutionalShortOld_final = (assets[symbol].isFlipped === true ) ? institutionalLongOld : institutionalShortOld
+
+  const institutionalNetOld = institutionalLongOld_final - institutionalShortOld_final
   const institutionalNetScore = (institutionalNet > 0 ? 100 : institutionalNet < 0 ? -100 : 0)
   const institutionalScore = institutionalNetScore
 
   const retailLong = parseInt(cotData[0].nonrept_positions_long_all[0])
   const retailShort = parseInt(cotData[0].nonrept_positions_short_all[0])
-  const retailNet = retailLong - retailShort
+
+  const retail_final_long = (assets[symbol].isFlipped === true ) ? retailShort : retailLong
+  const retail_final_short = (assets[symbol].isFlipped === true ) ? retailLong : retailShort
+
+  const retailNet = retail_final_long - retail_final_short
 
   const retailLongOld = parseInt(cotData[1].nonrept_positions_long_old[0])
   const retailShortOld = parseInt(cotData[1].nonrept_positions_short_old[0])
-  const retailNetOld = retailLongOld - retailShortOld
+
+  const retail_final_long_old = (assets[symbol].isFlipped === true ) ? retailShortOld : retailLongOld
+  const retail_final_short_old = (assets[symbol].isFlipped === true ) ? retailLongOld : retailShortOld
+
+
+  const retailNetOld = retail_final_long_old - retail_final_short_old
 
   const retailNetScore = (((retailNet > 0) && (institutionalNet < 0)) ? -100 : ((retailNet < 0) && (institutionalNet > 0)) ? 100 : 0 )
 
@@ -184,20 +213,20 @@ const processAssetData = (symbol, rawData, cotData, news_sentiment_data, weekly_
   assetData.cot = {
     cotData: cotData,
     institutional: {
-      long: institutionalLong,
-      short: institutionalShort,
+      long: institutionalLong_final,
+      short: institutionalShort_final,
       net: institutionalNet,
-      longOld: institutionalLongOld,
-      shortOld: institutionalShortOld,
+      longOld: institutionalLongOld_final,
+      shortOld: institutionalShortOld_final,
       netOld: institutionalNetOld,
       score: institutionalScore
     },
     retail: {
-      long: retailLong,
-      short: retailShort,
+      long: retail_final_long,
+      short: retail_final_short,
       net: retailNet,
-      longOld: retailLongOld,
-      shortOld: retailShortOld,
+      longOld: retail_final_long_old,
+      shortOld: retail_final_short_old,
       netOld: retailNetOld,
       score: retailScore
     }
@@ -207,7 +236,8 @@ const processAssetData = (symbol, rawData, cotData, news_sentiment_data, weekly_
 
   assetData.chartData = {
     weeklyPrice: weeklyPriceData,
-    netPositions: mapCotDataToTimeValue(cotData, assets[symbol].cotType)
+    netPositions: mapCotDataToTimeValue(cotData, assets[symbol].cotType, "institutional"),
+    retailPositions: mapCotDataToTimeValue(cotData, assets[symbol].cotType, "retail")
   }
 
   assetData.news = {
@@ -226,8 +256,9 @@ const processAssetData = (symbol, rawData, cotData, news_sentiment_data, weekly_
   //   }
   // }
 
-  
-  assetData.score = (assetData.economics.score + assetData.cot.institutional.score +  assetData.cot.retail.score ) / 3
+  const scores = [assetData.cot.institutional.score, assetData.cot.retail.score]
+
+  assetData.score = scores.reduce((acc, score) => acc + score, 0) / scores.length
 
   if (assetData.score >= 50) {
     assetData.bias = "Strong Buy"
@@ -244,130 +275,6 @@ const processAssetData = (symbol, rawData, cotData, news_sentiment_data, weekly_
   else {
     assetData.bias = "Strong Sell"
   }
-
-
- 
-
-
-
-
-  // assetData.country_1.name = assets[symbol].countries[0]
-  // assetData.country_1.inflationScore = country1_data.inflationData.totalScore
-  // assetData.country_1.employmentScore = country1_data.employmentData.totalScore
-  // assetData.country_1.housingScore = country1_data.housingData.totalScore
-  // assetData.country_1.growthScore = country1_data.growthData.totalScore
-  // assetData.country_1.interestRateScore = country1_data.interestRateData.totalScore
-
-  // assetData.country_2.name = assets[symbol].countries[1]
-  // assetData.country_2.inflationScore = country2_data.inflationData.totalScore
-  // assetData.country_2.employmentScore = country2_data.employmentData.totalScore
-  // assetData.country_2.housingScore = country2_data.housingData.totalScore
-  // assetData.country_2.growthScore = country2_data.growthData.totalScore
-  // assetData.country_2.interestRateScore = country2_data.interestRateData.totalScore
-
-  // assetData.inflationScore = assetData.country_1.inflationScore > assetData.country_2.inflationScore ? 100 : assetData.country_1.inflationScore < assetData.country_2.inflationScore ? -100 : 0
-  // assetData.employmentScore = assetData.country_1.employmentScore > assetData.country_2.employmentScore ? 100 : assetData.country_1.employmentScore < assetData.country_2.employmentScore ? -100 : 0
-  // assetData.housingScore = assetData.country_1.housingScore > assetData.country_2.housingScore ? 100 : assetData.country_1.housingScore < assetData.country_2.housingScore ? -100 : 0
-  // assetData.growthScore = assetData.country_1.growthScore > assetData.country_2.growthScore ? 100 : assetData.country_1.growthScore < assetData.country_2.growthScore ? -100 : 0
-  // assetData.interestRateScore = assetData.country_1.interestRateScore > assetData.country_2.interestRateScore ? 100 : assetData.country_1.interestRateScore < assetData.country_2.interestRateScore ? -100 : 0
-
-  // assetData.totalEconomicScore = (assetData.inflationScore + assetData.employmentScore + assetData.housingScore + assetData.growthScore + assetData.interestRateScore) / 5
-
-//   assetData.cotData = cotData
-
-//   assetData.cotPositions = mapCotDataToTimeValue(cotData)
-
-//   assetData.institutional.long = parseInt(cotData[0].comm_positions_long_all[0])
-//   assetData.institutional.short = parseInt(cotData[0].comm_positions_short_all[0])
-//   assetData.institutional.long_old = parseInt(cotData[1].comm_positions_long_old[0])
-//   assetData.institutional.short_old = parseInt(cotData[1].comm_positions_short_old[0])
-//   assetData.institutional.net_positions = parseInt(cotData[0].comm_positions_long_all) - parseInt(cotData[0].comm_positions_short_all)
-//   assetData.institutional.net_positions_old = parseInt(cotData[1].comm_positions_long_old) - parseInt(cotData[1].comm_positions_short_old)
-//   let institutionalScore = 0
-//   if (assetData.institutional.net_positions > 0) {
-//     institutionalScore += 100
-//   } else if (assetData.institutional.net_positions < 0) {
-//     institutionalScore -= 100
-//   } else {
-//     institutionalScore += 0
-//   }
-
-//   if ( assetData.institutional.net_positions > assetData.institutional.net_positions_old) {
-//     institutionalScore += 100
-//   } else if ( assetData.institutional.net_positions < assetData.institutional.net_positions_old) {
-//     institutionalScore -= 100
-//   } else {
-//     institutionalScore += 0
-//   }
-
-//   assetData.institutional.score = institutionalScore / 2
-
-//   assetData.retail.long = parseInt(cotData[0].nonrept_positions_long_all[0])
-//   assetData.retail.short = parseInt(cotData[0].nonrept_positions_short_all[0])
-
-//   assetData.retail.long_old = parseInt(cotData[1].nonrept_positions_long_old[0])
-//   assetData.retail.short_old = parseInt(cotData[1].nonrept_positions_short_old[0])
-
-//   assetData.retail.net_positions = parseInt(cotData[0].nonrept_positions_long_all[0]) - parseInt(cotData[0].nonrept_positions_short_all[0])
-//   assetData.retail.net_positions_old = parseInt(cotData[1].nonrept_positions_long_all[0]) - parseInt(cotData[1].nonrept_positions_short_all[0])
-
-//   let retailScore = 0
-//   // Contrarian Signal
-
-//   if (assetData.retail.net_positions > 0) {
-//     retailScore -= 100
-//   } else if (assetData.retail.net_positions < 0) {
-//     retailScore += 100
-//   } else {
-//     retailScore += 0
-//   }
-
-//   if ( assetData.retail.net_positions > assetData.retail.net_positions_old) {
-//     retailScore -= 100
-//   } else if ( assetData.retail.net_positions < assetData.retail.net_positions_old) {
-//     retailScore += 100
-//   } else {
-//     retailScore += 0
-//   }
-
-//   assetData.retail.score = retailScore / 2
-
-//   // News
-//   assetData.news.news_set = []
-
-//   console.log("news_sentiment_data", news_sentiment_data)
-
-//   if (news_sentiment_data[`${symbol}.FOREX`]) {
-//     news_sentiment_data[`${symbol}.FOREX`].slice(0,7).map((news) => {
-//       assetData.news.news_set.push({date: news.date, count: news.count, score: (news.normalized * 100)})
-//     })
-  
-//     assetData.news.avg_score = assetData.news.news_set.reduce((acc, news) => acc + news.score, 0) / assetData.news.news_set.length 
-//     assetData.news.total_news_score = assetData.news.avg_score > 0 ? 100 : assetData.news.avg_score < 0 ? -100 : 0
-
-//   } else {
-//     assetData.news.news_set = []
-//     assetData.news.avg_score = 0
-//     assetData.news.total_news_score = 0
-//   }
-
-//   assetData.weekly_price_data = weekly_price_data
-  
-//   assetData.totalScore = (assetData.totalEconomicScore + assetData.institutional.score + assetData.retail.score  + assetData.news.total_news_score) / 4
-
-  
-//  // if total score is between -100 and -50 bias is very bearish, if between -50 and -25 bias is bearish, if between 0 and 25 bias is neutral, if between 25 and 50 bias is bullish, if between 50 and 100 bias is very bullish
-//   if (assetData.totalScore >= 50) {
-//     assetData.bias = "Strong Buy"
-//   } else if (assetData.totalScore >= 25) {
-//     assetData.bias = "Buy"
-//   } else if (assetData.totalScore >= -25) {
-//     assetData.bias = "Neutral"
-//   } else if (assetData.totalScore >= -50) {
-//     assetData.bias = "Sell"
-//   } else {
-//     assetData.bias = "Strong Sell"
-//   }
 
  return assetData
 }

@@ -8,7 +8,7 @@ import Link from 'next/link';
 
 
 import { getScoreTextColor } from '@/utils/get-score-color';
-import { processAssetData } from '@/utils/pair-data';
+import { processAssetData } from '@/utils/processAssetData';
 
 
 import withSession from '@/lib/withSession';

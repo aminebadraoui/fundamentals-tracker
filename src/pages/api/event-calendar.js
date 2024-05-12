@@ -9,6 +9,7 @@ export default async (req, res) => {
   return res.status(200).json(eventData);
 };
 
+
 export const getEventData = async (countries = [], limit = 1000) => {
   let countriesList = [];
   if (countries.length > 0) {
@@ -26,13 +27,13 @@ export const getEventData = async (countries = [], limit = 1000) => {
   // Make firstDayOfPreviousMonth in YYYY-MM-DD format
   const formattedFromDate = fromDate.toISOString().split('T')[0];
 
-
-
   console.log("formattedCurrentDate", formattedCurrentDate)
 
   const promises = countriesList.map(country => fetch(`https://eodhd.com/api/economic-events?api_token=${process.env.EOD_TOKEN}&fmt=json&country=${country}&from=${formattedFromDate}&to=${formattedCurrentDate}&limit=${limit}`)
     .then(response => response.json())
-    .then(eventsForCountryData => ({ [country]: eventsForCountryData }))
+    .then(eventsForCountryData => ({ 
+      // add significance to each event
+      [country]: eventsForCountryData.map(event => ({ ...event, significance: 1 })) }))
     .catch(error => {
       console.error(`Error fetching events for ${country}:`, error);
       return { [country]: { error: 'Failed to fetch data', details: error.message } }; // Return error details for each country
@@ -44,9 +45,13 @@ export const getEventData = async (countries = [], limit = 1000) => {
       const finalData = {};
       dataArray.forEach(data => {
         Object.keys(data).forEach(key => {
+          data[key].significance = 1
+
           finalData[key] = data[key];
         });
       });
+
+      console.log(finalData)
       return finalData;
     })
     .catch(error => {

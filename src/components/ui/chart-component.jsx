@@ -54,6 +54,7 @@ export const ChartComponent = props => {
             wickUpColor = '#4caf50', // Green wick for rising candle
             wickDownColor = '#f44336', // Red wick for falling candle
             lineColor = '#2196f3', // Color for the line chart
+            retailLineColor = '#ff0000',
             zeroLineColor = '#f87315', // Orange color for the zero line
             sixMonthmovingAverageColor = '#ff0000', // Orange color for the moving average line
             oneYearMovingAverageColor = '#a717d3', // Red color for the moving average line
@@ -66,6 +67,7 @@ export const ChartComponent = props => {
 
     const weeklyPrice = data.weeklyPrice;
     const netPositions = data.netPositions;
+    const retailNetPositions = data.retailPositions;
 
     const chartContainerRef = useRef();
     const positionsChartContainerRef = useRef();
@@ -75,6 +77,7 @@ export const ChartComponent = props => {
     const [sixMonthMAText, setSixMonthMAText] = useState('');
     const [oneYearMAText, setThreeYearsMAText] = useState('');
     const [positionChartLegendText, setPositionChartLegendText] = useState('');
+    const [retailPositionChartLegendText, setRetailPositionChartLegendText] = useState('');
     const [zScore6MLegendText, setZScore6MLegendText] = useState('');
     const [zScore1YLegendText, setZScore1YLegendText] = useState('');
     const [zScore3YLegendText, setZScore3YLegendText] = useState('');
@@ -156,6 +159,13 @@ export const ChartComponent = props => {
 
         lineSeries.setData(netPositions);
 
+        const retailLineSeries = positionsChart.addLineSeries({
+            color: retailLineColor,
+            lineWidth: 2,
+          });
+      
+        retailLineSeries.setData(retailNetPositions);
+
         const zScoreSeries6M = zScoreChart.addLineSeries({
           color: zScoreColor6M,
           lineWidth: 2,
@@ -217,6 +227,7 @@ export const ChartComponent = props => {
         setPriceChartLegendText(`${symbol} - Weekly`);
       
         setPositionChartLegendText(`Weekly Net Positions (Longs-Shorts)`);
+        setRetailPositionChartLegendText(`Retail Net Positions`);
         // setSixMonthMAText(`6-Month Average`);
         // setThreeYearsMAText(`1-Year Average `);
 
@@ -248,8 +259,6 @@ export const ChartComponent = props => {
           const dataPoint = getCrosshairDataPoint(zScoreSeries6M, param);
           syncCrosshair(chart, candleSeries, dataPoint);
           syncCrosshair(positionsChart, lineSeries, dataPoint);
-          syncCrosshair(zScoreChart, zScoreSeries1Y, dataPoint);
-          syncCrosshair(zScoreChart, zScoreSeries3Y, dataPoint);
       });
         window.addEventListener('resize', handleResize);
 
@@ -277,6 +286,7 @@ export const ChartComponent = props => {
                     <div  style={{ color: `${lineColor}`}}>
                         {positionChartLegendText}
                     </div>
+                    <div style={{ color: `${retailLineColor}` }}>{retailPositionChartLegendText}</div>
                     <div  style={{ color: `${sixMonthmovingAverageColor}`}}>
                         {sixMonthMAText}
                     </div>

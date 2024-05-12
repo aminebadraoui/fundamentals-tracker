@@ -108,7 +108,8 @@ const assets =  {
     cotType: 'nonComm',
     apiSymbol: 'EURUSD.FOREX',
     apiType: 'eod',
-    twelveDataSymbol: ``
+    twelveDataSymbol: ``,
+    isFlipped: false
   },
   
   'GBPUSD': {
@@ -118,7 +119,8 @@ const assets =  {
     cotType: 'nonComm',
     apiSymbol: 'GBPUSD.FOREX',
     apiType: 'eod',
-    twelveDataSymbol: ``
+    twelveDataSymbol: ``,
+    isFlipped: false
   },
 
   'AUDUSD': {
@@ -128,7 +130,8 @@ const assets =  {
     cotType: 'nonComm',
     apiSymbol: 'AUDUSD.FOREX',
     apiType: 'eod',
-    twelveDataSymbol: ``
+    twelveDataSymbol: ``,
+    isFlipped: false
   },
 
   'NZDUSD': {
@@ -138,7 +141,8 @@ const assets =  {
     cotType: 'nonComm',
     apiSymbol: 'NZDUSD.FOREX',
     apiType: 'eod',
-    twelveDataSymbol: ``
+    twelveDataSymbol: ``,
+    isFlipped: false
   },
 
   'USDCHF': {
@@ -148,7 +152,8 @@ const assets =  {
     ccotType: 'nonComm',
     apiSymbol: 'USDCHF.FOREX',
     apiType: 'eod',
-    twelveDataSymbol: ``
+    twelveDataSymbol: ``,
+    isFlipped: true
   },
 
   'USDJPY': {
@@ -158,7 +163,8 @@ const assets =  {
     cotType: 'nonComm',
     apiSymbol: 'USDJPY.FOREX',
     apiType: 'eod',
-    twelveDataSymbol: ``
+    twelveDataSymbol: ``,
+    isFlipped: true
   },
 
   'USDCAD': {
@@ -168,7 +174,8 @@ const assets =  {
     cotType: 'nonComm',
     apiSymbol: 'USDCAD.FOREX',
     apiType: 'eod',
-    twelveDataSymbol: ``
+    twelveDataSymbol: ``,
+    isFlipped: true
   },
   'BITCOIN': {
     countries: ["US"],
@@ -177,7 +184,8 @@ const assets =  {
     cotType: 'nonComm',
     apiSymbol: 'BTC-USD.CC',
     apiType: 'eod',
-    twelveDataSymbol: ``
+    twelveDataSymbol: ``,
+    isFlipped: false
   },
   'GOLD': {
     countries: ["US"],
@@ -186,7 +194,8 @@ const assets =  {
     cotType: 'comm',
     apiSymbol: '',
     apiType: 'openExchange',
-    twelveDataSymbol: `XAU/USD`
+    twelveDataSymbol: `XAU/USD`,
+    isFlipped: false
   },
   'SILVER': {
     countries: ["US"],
@@ -195,7 +204,8 @@ const assets =  {
     cotType: 'comm',
     apiSymbol: '',
     apiType: 'openExchange',
-    twelveDataSymbol: `XAG/USD`
+    twelveDataSymbol: `XAG/USD`,
+    isFlipped: false
   },
   'OIL': {
     countries: ["US"],
@@ -204,7 +214,8 @@ const assets =  {
     cotType: 'comm',
     apiSymbol: '',
     apiType: '',
-    twelveDataSymbol: `WTI/USD`
+    twelveDataSymbol: `WTI/USD`,
+    isFlipped: false
   },
   'NAS100': {
     countries: ["US"],
@@ -213,7 +224,8 @@ const assets =  {
     cotType: 'noncomm',
     apiSymbol: '',
     apiType: '',
-    twelveDataSymbol: `NDX`
+    twelveDataSymbol: `NDX`,
+    isFlipped: false
   },
   'US30': {
     countries: ["US"],
@@ -222,7 +234,8 @@ const assets =  {
     cotType: 'noncomm',
     apiSymbol: '',
     apiType: '',
-    twelveDataSymbol: `DJI`
+    twelveDataSymbol: `DJI`,
+    isFlipped: false
   },
   'SP500': {
     countries: ["US"],
@@ -231,7 +244,8 @@ const assets =  {
     cotType: 'noncomm',
     apiSymbol: '',
     apiType: '',
-    twelveDataSymbol: `SPX`
+    twelveDataSymbol: `SPX`,
+    isFlipped: false
   },
 }
 

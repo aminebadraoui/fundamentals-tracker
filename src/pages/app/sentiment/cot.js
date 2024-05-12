@@ -16,7 +16,7 @@ import {
 } from 'recharts';
 
 import { fetchCotData } from '@/utils/getCotData';
-import { processAssetData } from '@/utils/pair-data';
+import { processAssetData } from '@/utils/processAssetData';
 
 
 
