@@ -1,5 +1,6 @@
 import { createChart, ColorType, CrosshairMode } from 'lightweight-charts';
 import React, { useEffect, useRef, useState } from 'react';
+import { Switch } from "@/components/shadcn/switch";
 
 function calculateMovingAverage(data, period) {
   const movingAverageData = [];
@@ -62,6 +63,7 @@ export const ChartComponent = props => {
             zScoreColor6M = '#ffa500', // Purple color for the 6-month z-score line
             zScoreColor1Y =  '#008000', // Orange color for the 1-year z-score line
             zScoreColor3Y = '#800080', // Green color for the 3-year z-score line
+            inactiveColor = '#808080', // Grey color for inactive elements
         } = {},
     } = props;
 
@@ -73,6 +75,7 @@ export const ChartComponent = props => {
     const positionsChartContainerRef = useRef();
     const zScoreChartContainerRef = useRef();
 
+    const [showRetail, setShowRetail] = useState(false);
     const [priceChartLegendText, setPriceChartLegendText] = useState('');
     const [sixMonthMAText, setSixMonthMAText] = useState('');
     const [oneYearMAText, setThreeYearsMAText] = useState('');
@@ -153,14 +156,14 @@ export const ChartComponent = props => {
         weeklyPrice && candleSeries.setData(weeklyPrice);
 
         const lineSeries = positionsChart.addLineSeries({
-          color: lineColor,
+          color: showRetail ? inactiveColor : lineColor,
           lineWidth: 2,
         });
 
         lineSeries.setData(netPositions);
 
         const retailLineSeries = positionsChart.addLineSeries({
-            color: retailLineColor,
+            color: showRetail ? retailLineColor : inactiveColor,
             lineWidth: 2,
           });
       
@@ -182,9 +185,10 @@ export const ChartComponent = props => {
         });
 
         // Calculate and add the Z-scores
-        const zScoreData6M = calculateZScore(netPositions, 26);
-        const zScoreData1Y = calculateZScore(netPositions, 52);
-        const zScoreData3Y = calculateZScore(netPositions, 156);
+
+        const zScoreData6M = calculateZScore(showRetail ? retailNetPositions: netPositions, 26);
+        const zScoreData1Y = calculateZScore(showRetail ? retailNetPositions: netPositions, 52);
+        const zScoreData3Y = calculateZScore(showRetail ? retailNetPositions: netPositions, 156);
 
         zScoreSeries6M.setData(zScoreData6M);
         zScoreSeries1Y.setData(zScoreData1Y);
@@ -268,7 +272,7 @@ export const ChartComponent = props => {
             positionsChart.remove();
             zScoreChart.remove();
         };
-    }, [data, backgroundColor, upColor, downColor, borderUpColor, borderDownColor, wickUpColor, wickDownColor, lineColor]);
+    }, [data, showRetail, backgroundColor, upColor, downColor, borderUpColor, borderDownColor, wickUpColor, wickDownColor, lineColor, retailLineColor, zeroLineColor, sixMonthmovingAverageColor, oneYearMovingAverageColor, zScoreColor, zScoreColor6M, zScoreColor1Y, zScoreColor3Y, inactiveColor, symbol]);
 
     return (
       <div style={{ position: 'relative', width: '100%', height: '100%' }}>
@@ -279,14 +283,25 @@ export const ChartComponent = props => {
             </div>
           </div>
 
+          <div className="flex items-center justify-center p-8">
+                <span className={`text-lg font-medium ${!showRetail ? 'text-orange-600' : 'text-gray-400'}`}>
+                  Institutional</span>
+                <Switch
+                    checked={showRetail}
+                    onCheckedChange={setShowRetail}
+                    className="mx-3"
+                />
+                <span className={`text-lg font-medium ${showRetail ? 'text-orange-600' : 'text-gray-400'}`}>Retail</span>
+            </div>
+
           <div style={{ position: 'relative', width: '100%', height: '350px' }}>
               <div ref={positionsChartContainerRef} style={{ position: 'relative', width: '100%', height: '350px', marginTop: '4px' }} />
               <div style={{ position: 'absolute', left: '10px', top: '10px', color: '#000', zIndex: 10 }}>
                   <div className='flex flex-col'>
-                    <div  style={{ color: `${lineColor}`}}>
+                    <div  style={{ color: `${!showRetail ? lineColor : inactiveColor}`}}>
                         {positionChartLegendText}
                     </div>
-                    <div style={{ color: `${retailLineColor}` }}>{retailPositionChartLegendText}</div>
+                    <div style={{ color: `${showRetail ? retailLineColor : inactiveColor}` }}>{retailPositionChartLegendText}</div>
                     <div  style={{ color: `${sixMonthmovingAverageColor}`}}>
                         {sixMonthMAText}
                     </div>
