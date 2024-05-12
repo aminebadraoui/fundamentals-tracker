@@ -51,7 +51,7 @@ export const getEventData = async (countries = [], limit = 1000) => {
         });
       });
 
-      console.log(finalData)
+      
       return finalData;
     })
     .catch(error => {

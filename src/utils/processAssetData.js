@@ -53,6 +53,7 @@ const getInterestRateScore = (countriesEconomics) => {
 
 
 const mapCotDataToTimeValue = (cotData, cotType, netType) => {
+  // Map to calculate net positions for each date
   const dataWithParsedDates = cotData.map(item => {
     let long, short;
     const date = new Date(item.report_date_as_yyyy_mm_dd[0]);
@@ -88,11 +89,34 @@ const mapCotDataToTimeValue = (cotData, cotType, netType) => {
   const minNetPosition = Math.min(...values);
   const maxNetPosition = Math.max(...values);
 
-  // Normalize the net positions to be between -100 and +100
-  const normalizedData = uniqueData.map(item => ({
-    time: item.time,
-    value: 200 * (item.value - minNetPosition) / (maxNetPosition - minNetPosition) - 100
-  }));
+  // Normalize the net positions
+  const normalizedData = uniqueData.map(item => {
+    let normalizedValue;
+
+    if (minNetPosition < 0 && maxNetPosition > 0) {
+      // If there are both negative and positive values
+      if (item.value === 0) {
+        normalizedValue = 0;
+      } else if (item.value > 0) {
+        normalizedValue = 100 * item.value / maxNetPosition;
+      } else {
+        normalizedValue = 100 * item.value / Math.abs(minNetPosition);
+      }
+    } else if (minNetPosition >= 0) {
+      // If all values are positive or zero
+      normalizedValue = 100 * item.value / maxNetPosition;
+    } else if (maxNetPosition <= 0) {
+      // If all values are negative or zero
+      normalizedValue = 100 * item.value / Math.abs(minNetPosition);
+    }
+
+    console.log(`Date: ${item.time}, Original Value: ${item.value}, Normalized Value: ${normalizedValue}`);
+
+    return {
+      time: item.time,
+      value: normalizedValue
+    };
+  });
 
   // Return the normalized data
   return normalizedData;

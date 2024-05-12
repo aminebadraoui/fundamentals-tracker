@@ -283,15 +283,15 @@ export const ChartComponent = props => {
             </div>
           </div>
 
-          <div className="flex items-center justify-center p-8">
+          <div className="flex items-center justify-left py-8">
                 <span className={`text-lg font-medium ${!showRetail ? 'text-orange-600' : 'text-gray-400'}`}>
-                  Institutional</span>
+                  Institutional Net Positions</span>
                 <Switch
                     checked={showRetail}
                     onCheckedChange={setShowRetail}
                     className="mx-3"
                 />
-                <span className={`text-lg font-medium ${showRetail ? 'text-orange-600' : 'text-gray-400'}`}>Retail</span>
+                <span className={`text-lg font-medium ${showRetail ? 'text-orange-600' : 'text-gray-400'}`}>Retail Net Positions</span>
             </div>
 
           <div style={{ position: 'relative', width: '100%', height: '350px' }}>
