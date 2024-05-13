@@ -97,7 +97,7 @@ export const ChartComponent = props => {
                 textColor: '#000',  // Light grey text for readability
             },
             width: chartContainerRef.current.clientWidth,
-            height: 700,
+            height: 500,
             grid: {
                 vertLines: { color: 'rgba(197, 203, 206, 0.5)' },
                 horzLines: { color: 'rgba(197, 203, 206, 0.5)' },
@@ -115,7 +115,7 @@ export const ChartComponent = props => {
 
         const positionsChart = createChart(positionsChartContainerRef.current, {
           width: positionsChartContainerRef.current.clientWidth,
-          height: 350,
+          height: 200,
           layout: {
               background: { type: ColorType.Solid, color: backgroundColor },
               textColor: '#000',
@@ -130,7 +130,7 @@ export const ChartComponent = props => {
 
       const zScoreChart = createChart(zScoreChartContainerRef.current, {
         width: zScoreChartContainerRef.current.clientWidth,
-        height: 350,
+        height: 200,
         layout: {
             background: { type: ColorType.Solid, color: backgroundColor },
             textColor: '#000',
@@ -286,14 +286,14 @@ export const ChartComponent = props => {
 
     return (
       <div style={{ position: 'relative', width: '100%', height: '100%' }}>
-         <div style={{ position: 'relative', width: '100%', height: '700px', marginBottom: `4px` }}>
+         <div style={{ position: 'relative', width: '100%', height: '100%', marginBottom: `4px` }}>
             <div ref={chartContainerRef} />
             <div style={{ position: 'absolute', left: '10px', top: '10px', color: '#000', zIndex: 10 }}>
                 {priceChartLegendText}
             </div>
           </div>
 
-          <div className="flex items-center justify-left py-8">
+          <div className="flex items-center justify-left pt-8 pb-2">
                 <span className={`text-lg font-medium ${!showRetail ? 'text-orange-600' : 'text-gray-400'}`}>
                   Institutional Net Positions</span>
                 <Switch
@@ -304,26 +304,28 @@ export const ChartComponent = props => {
                 <span className={`text-lg font-medium ${showRetail ? 'text-orange-600' : 'text-gray-400'}`}>Retail Net Positions</span>
             </div>
 
-          <div style={{ position: 'relative', width: '100%', height: '350px' }}>
-              <div ref={positionsChartContainerRef} style={{ position: 'relative', width: '100%', height: '350px', marginTop: '4px' }} />
-              <div style={{ position: 'absolute', left: '10px', top: '10px', color: '#000', zIndex: 10 }}>
-                  <div className='flex flex-col'>
-                    <div  style={{ color: `${!showRetail ? lineColor : inactiveColor}`}}>
-                        {positionChartLegendText}
+          <div style={{ position: 'relative', width: '100%', height: '200' }}>
+              <div ref={positionsChartContainerRef} style={{ position: 'relative', width: '100%', height: '100%', marginTop: '4px' }} />
+
+                <div style={{ position: 'absolute', left: '10px', top: '10px', color: '#000', zIndex: 10 }}>
+                    <div className='flex flex-col'>
+                        <div  style={{ color: `${!showRetail ? lineColor : inactiveColor}`}}>
+                            {positionChartLegendText}
+                        </div>
+                        <div style={{ color: `${showRetail ? retailLineColor : inactiveColor}` }}>{retailPositionChartLegendText}</div>
+                        <div  style={{ color: `${sixMonthmovingAverageColor}`}}>
+                            {sixMonthMAText}
+                        </div>
+                        <div  style={{ color: `${oneYearMovingAverageColor}`}}>
+                            {oneYearMAText}
+                        </div>
                     </div>
-                    <div style={{ color: `${showRetail ? retailLineColor : inactiveColor}` }}>{retailPositionChartLegendText}</div>
-                    <div  style={{ color: `${sixMonthmovingAverageColor}`}}>
-                        {sixMonthMAText}
-                    </div>
-                    <div  style={{ color: `${oneYearMovingAverageColor}`}}>
-                        {oneYearMAText}
-                    </div>
-                  </div>
-              </div>
+                </div>
             </div>
 
-        <div style={{ position: 'relative', width: '100%', height: '350px' }}>
-              <div ref={zScoreChartContainerRef} style={{ height: '350px', marginTop: '4px' }} />
+
+        <div style={{ position: 'relative', width: '100%', height: '200' }}>
+              <div ref={zScoreChartContainerRef}  style={{ position: 'relative', width: '100%', height: '100%', marginTop: '4px' }}  />
 
               <div style={{ position: 'absolute', left: '10px', top: '10px', color: '#000', zIndex: 10 }}>
                 <div className='flex flex-col'>
@@ -339,7 +341,7 @@ export const ChartComponent = props => {
                   </div>
               </div>
               
-            </div>
+        </div>
       </div>
        
         

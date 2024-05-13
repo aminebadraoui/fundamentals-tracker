@@ -44,7 +44,7 @@ const interestRatesKeys = [
 ]
 
 const employmentKeys = [
-  "Unemployment Rate",
+"Unemployment Rate",
  "Employment Change",
  "Nonfarm Payrolls Private",
  "Average Hourly Earnings",
@@ -191,7 +191,7 @@ const assets =  {
     countries: ["US"],
     cotName: "GOLD",
     cotFileName: 'precious-metals',
-    cotType: 'comm',
+    cotType: 'noncomm',
     apiSymbol: '',
     apiType: 'openExchange',
     twelveDataSymbol: `XAU/USD`,
@@ -201,7 +201,7 @@ const assets =  {
     countries: ["US"],
     cotName: "SILVER",
     cotFileName: 'precious-metals',
-    cotType: 'comm',
+    cotType: 'noncomm',
     apiSymbol: '',
     apiType: 'openExchange',
     twelveDataSymbol: `XAG/USD`,
@@ -211,7 +211,7 @@ const assets =  {
     countries: ["US"],
     cotName: "WTI FINANCIAL CRUDE OIL",
     cotFileName: 'commodities',
-    cotType: 'comm',
+    cotType: 'noncomm',
     apiSymbol: '',
     apiType: '',
     twelveDataSymbol: `WTI/USD`,
