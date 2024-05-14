@@ -79,14 +79,12 @@ const Scanner = (props) => {
     try {
       const years = [2024, 2023, 2022, 2021, 2020, 2019, 2018, 2017]; // or any range of years you have data for
 
-      const [cotData, eventData, weeklyPriceData, newsSentimentData] = await Promise.all([
+      const [cotData, weeklyPriceData] = await Promise.all([
         fetchCotDataForYears(asset, years),
-        fetchDataWithRetry('/api/getEventData', { countries: assets[asset].countries.join(',') }),
         fetchDataWithRetry('/api/getWeeklyPriceData', { asset }),
-        fetchDataWithRetry('/api/getNewsSentimentData', { symbol: assets[asset].apiSymbol })
       ]);
 
-      const assetDataJson = processAssetData(asset, eventData, cotData, newsSentimentData, weeklyPriceData);
+      const assetDataJson = processAssetData(asset, null, cotData, null, weeklyPriceData);
 
       const institutionalChartData_local =  [{
           name: asset,

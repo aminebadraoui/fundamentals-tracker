@@ -67,10 +67,10 @@ const Pulse = (props) => {
       const assetPromises = Object.keys(assets).map(asset => 
         Promise.all([
           fetchCotDataForYears(asset, years),
-          fetchDataWithRetry('/api/getEventData', { countries: assets[asset].countries.join(',') }),
+          
          
-        ]).then(([cotData, eventData]) => {
-          return processAssetData(asset, eventData, cotData, null, null);
+        ]).then(([cotData]) => {
+          return processAssetData(asset, null, cotData, null, null);
         })
       );
 

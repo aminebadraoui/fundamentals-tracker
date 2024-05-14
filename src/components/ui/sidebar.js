@@ -58,17 +58,17 @@ const links = [
     ]
   },
 
-  {
-    name: 'International Economy',
-    type: 'section',
-    links: [
-      { name: 'Economic Overview', href: '/app/economic-overview' },
-      { name: 'Inflation', href: '/app/inflation' },
-      { name: 'Employment', href: '/app/employment' },
-      { name: 'Housing', href: '/app/housing' },
-      { name: 'Growth', href: '/app/growth' },
-    ]
-  },
+  // {
+  //   name: 'International Economy',
+  //   type: 'section',
+  //   links: [
+  //     { name: 'Economic Overview', href: '/app/economic-overview' },
+  //     { name: 'Inflation', href: '/app/inflation' },
+  //     { name: 'Employment', href: '/app/employment' },
+  //     { name: 'Housing', href: '/app/housing' },
+  //     { name: 'Growth', href: '/app/growth' },
+  //   ]
+  // },
   {
     name: 'Sentiment',
     type: 'section',

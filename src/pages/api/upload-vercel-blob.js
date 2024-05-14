@@ -25,6 +25,7 @@ export default async function handler(
  
         return {
           allowedContentTypes: ['application/json'],
+          addRandomSuffix: false,
           tokenPayload: JSON.stringify({
             
             // optional, sent to your server on upload completion

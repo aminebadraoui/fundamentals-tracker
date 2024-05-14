@@ -146,6 +146,7 @@ const getCountryData = (country, rawData) => {
 
 const processAssetData = (symbol, rawData, cotData, news_sentiment_data, weekly_price_data) => {
 
+  console.log("weekly_price_data ", weekly_price_data)
   const assetData = {
     
   }
