@@ -8,6 +8,7 @@ export default async function handler(
  
   try {
     const jsonResponse = await handleUpload({
+      token: process.env.BLOB_READ_WRITE_TOKEN,
       body,
       request,
       onBeforeGenerateToken: async (pathname /*, clientPayload */) => {
