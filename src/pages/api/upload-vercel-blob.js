@@ -24,7 +24,7 @@ export default async function handler(
         console.log('onBeforeGenerateToken', pathname, clientPayload);
  
         return {
-          allowedContentTypes: ['*/*'],
+          allowedContentTypes: ['application/json'],
           tokenPayload: JSON.stringify({
             
             // optional, sent to your server on upload completion
