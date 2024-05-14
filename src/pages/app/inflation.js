@@ -96,7 +96,7 @@ const Inflation = () => {
 
       const blobFile = new Blob([JSON.stringify(organizedData, null, 2)], { type: 'application/json' });
 
-      const newBlob = await upload("organizedData.json", blobFile, {
+      const newBlob = await upload("organizedData.json", JSON.stringify(organizedData, null, 2), {
         access: 'public',
         handleUploadUrl: '../api/upload-vercel-blob',
       });
