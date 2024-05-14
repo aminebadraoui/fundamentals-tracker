@@ -83,13 +83,21 @@ const Institutional = (props) => {
 
       const assetDataArray = await Promise.all(assetPromises);
 
+      console.log("assetDataArray", assetDataArray)
+
       const institutionalChartDataArray = assetDataArray.map((data, index) => {
         const asset = Object.keys(assets)[index];
         const assetLongs = data.cot.institutional.long;
         const assetShorts = data.cot.institutional.short;
+
+        // console.log("asset", asset)
+        // console.log("assetLongs", assetLongs)
+        // console.log("assetShorts", assetShorts)
+
         const totalPositions = assetLongs + assetShorts;
 
         const net = (assetLongs - assetShorts).toFixed(2);
+
 
         const longs = (assetLongs / totalPositions * 100).toFixed(2);
         const shorts = (assetShorts / totalPositions * 100).toFixed(2);

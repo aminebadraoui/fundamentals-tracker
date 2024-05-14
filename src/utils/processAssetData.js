@@ -2,6 +2,7 @@
 import { getDataSortedByTotalScore } from '@/utils/getDataSortedByTotalScore';
 import { inflationKeys, employmentKeys, interestRatesKeys, housingKeys, assets } from '@/utils/event-names';
 import { get } from 'mongoose';
+import { findLatestCotDataForAsset } from './cot-data';
 
 // HELPERS 
 
@@ -195,17 +196,18 @@ const processAssetData = (symbol, rawData, cotData, news_sentiment_data, weekly_
     }
   }
  
+  const cot_data_for_Asset = findLatestCotDataForAsset(assets[symbol].cotName, cotData)
 
-  const institutionalLong = assets[symbol].cotType === 'comm' ? parseInt(cotData[0].comm_positions_long_all[0]) : parseInt(cotData[0].noncomm_positions_long_all[0])
-  const institutionalShort = assets[symbol].cotType === 'comm' ? parseInt(cotData[0].comm_positions_short_all[0]) : parseInt(cotData[0].noncomm_positions_short_all[0])
+  const institutionalLong = assets[symbol].cotType === 'comm' ? parseInt(cot_data_for_Asset[0].comm_positions_long_all[0]) : parseInt(cot_data_for_Asset[0].noncomm_positions_long_all[0])
+  const institutionalShort = assets[symbol].cotType === 'comm' ? parseInt(cot_data_for_Asset[0].comm_positions_short_all[0]) : parseInt(cot_data_for_Asset[0].noncomm_positions_short_all[0])
 
   const institutionalLong_final = (assets[symbol].isFlipped === true ) ? institutionalShort : institutionalLong
   const institutionalShort_final = (assets[symbol].isFlipped === true ) ? institutionalLong : institutionalShort
 
   const institutionalNet = institutionalLong_final - institutionalShort_final
 
-  const institutionalLongOld = assets[symbol].cotType === 'comm' ? parseInt(cotData[1].comm_positions_long_old[0]) : parseInt(cotData[1].noncomm_positions_long_old[0])
-  const institutionalShortOld = assets[symbol].cotType === 'comm' ? parseInt(cotData[1].comm_positions_short_old[0]) : parseInt(cotData[1].noncomm_positions_short_old[0])
+  const institutionalLongOld = assets[symbol].cotType === 'comm' ? parseInt(cot_data_for_Asset[1].comm_positions_long_old[0]) : parseInt(cot_data_for_Asset[1].noncomm_positions_long_old[0])
+  const institutionalShortOld = assets[symbol].cotType === 'comm' ? parseInt(cot_data_for_Asset[1].comm_positions_short_old[0]) : parseInt(cot_data_for_Asset[1].noncomm_positions_short_old[0])
 
   const institutionalLongOld_final = (assets[symbol].isFlipped === true ) ? institutionalShortOld : institutionalLongOld
   const institutionalShortOld_final = (assets[symbol].isFlipped === true ) ? institutionalLongOld : institutionalShortOld
@@ -214,16 +216,16 @@ const processAssetData = (symbol, rawData, cotData, news_sentiment_data, weekly_
   const institutionalNetScore = (institutionalNet > 0 ? 100 : institutionalNet < 0 ? -100 : 0)
   const institutionalScore = institutionalNetScore
 
-  const retailLong = parseInt(cotData[0].nonrept_positions_long_all[0])
-  const retailShort = parseInt(cotData[0].nonrept_positions_short_all[0])
+  const retailLong = parseInt(cot_data_for_Asset[0].nonrept_positions_long_all[0])
+  const retailShort = parseInt(cot_data_for_Asset[0].nonrept_positions_short_all[0])
 
   const retail_final_long = (assets[symbol].isFlipped === true ) ? retailShort : retailLong
   const retail_final_short = (assets[symbol].isFlipped === true ) ? retailLong : retailShort
 
   const retailNet = retail_final_long - retail_final_short
 
-  const retailLongOld = parseInt(cotData[1].nonrept_positions_long_old[0])
-  const retailShortOld = parseInt(cotData[1].nonrept_positions_short_old[0])
+  const retailLongOld = parseInt(cot_data_for_Asset[1].nonrept_positions_long_old[0])
+  const retailShortOld = parseInt(cot_data_for_Asset[1].nonrept_positions_short_old[0])
 
   const retail_final_long_old = (assets[symbol].isFlipped === true ) ? retailShortOld : retailLongOld
   const retail_final_short_old = (assets[symbol].isFlipped === true ) ? retailLongOld : retailShortOld
@@ -236,7 +238,7 @@ const processAssetData = (symbol, rawData, cotData, news_sentiment_data, weekly_
   const retailScore = retailNetScore
 
   assetData.cot = {
-    cotData: cotData,
+    cotData: cot_data_for_Asset,
     institutional: {
       long: institutionalLong_final,
       short: institutionalShort_final,
