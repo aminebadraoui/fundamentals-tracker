@@ -19,8 +19,8 @@ export default async function handler(
         // Generate a client token for the browser to upload the file
         // ⚠️ Authenticate and authorize users before generating the token.
         // Otherwise, you're allowing anonymous uploads.
-        console.log("token", process.env.BLOB_READ_WRITE_TOKEN)
-        console.log("token", token)
+       
+       
         console.log('onBeforeGenerateToken', pathname, clientPayload);
  
         return {
