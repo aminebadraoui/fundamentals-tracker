@@ -1,4 +1,4 @@
-const countryList_Iso3166 = ["US", "EU", "CA", "AU", "NZ", "JP", "CH", "MX", "UK"]
+const countryList_Iso3166 = ["US"]
 const eventCategoryList = ["Inflation", "Interest Rates", "Econmic Growth"]
 
 // write array of all first day of the month and last day of the month for the last 12 months in the format of "MM-DD" in ascending order starting from january with an object key of the month name and first and last keys
@@ -17,7 +17,7 @@ const monthDates = {
   "November": {first: "11-01", last: "11-30"},
   "December": {first: "12-01", last: "12-31"},
 }
-const years = ["2020", "2021", "2022", "2023", "2024"]
+const years = ["2024"]
 
 const inflationKeys = {
   "US": ["Inflation Rate"],

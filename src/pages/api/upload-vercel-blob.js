@@ -4,21 +4,27 @@ export default async function handler(
   request,
   response,
 ) {
-  const body = (await request.json());
+  console.log("request", request.body)
+  const body = request.body
+
+
+  console.log("body", body)
  
   try {
     const jsonResponse = await handleUpload({
       token: process.env.BLOB_READ_WRITE_TOKEN,
       body,
       request,
-      onBeforeGenerateToken: async (pathname /*, clientPayload */) => {
+      onBeforeGenerateToken: async (pathname, clientPayload) => {
         // Generate a client token for the browser to upload the file
         // ⚠️ Authenticate and authorize users before generating the token.
         // Otherwise, you're allowing anonymous uploads.
+        console.log('onBeforeGenerateToken', pathname, clientPayload);
  
         return {
-          allowedContentTypes: ['application/json'],
+          allowedContentTypes: ['*/*'],
           tokenPayload: JSON.stringify({
+            
             // optional, sent to your server on upload completion
             // you could pass a user id from auth, or a value from clientPayload
           }),
