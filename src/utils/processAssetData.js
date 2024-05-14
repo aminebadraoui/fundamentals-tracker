@@ -54,6 +54,7 @@ const getInterestRateScore = (countriesEconomics) => {
 
 
 const mapCotDataToTimeValue = (cotData, cotType, netType) => {
+
   // Map to calculate net positions for each date
   const dataWithParsedDates = cotData.map(item => {
     let long, short;
@@ -70,6 +71,8 @@ const mapCotDataToTimeValue = (cotData, cotType, netType) => {
 
     const netPositions = long - short;
 
+
+
     return {
       time: formattedDate,
       value: netPositions,
@@ -85,42 +88,9 @@ const mapCotDataToTimeValue = (cotData, cotType, netType) => {
   // Sort by timestamp to ensure the data is in ascending order
   uniqueData.sort((a, b) => a.timestamp - b.timestamp);
 
-  // Find min and max for normalization
-  const values = uniqueData.map(item => item.value);
-  const minNetPosition = Math.min(...values);
-  const maxNetPosition = Math.max(...values);
-
-  // Normalize the net positions
-  const normalizedData = uniqueData.map(item => {
-    let normalizedValue;
-
-    if (minNetPosition < 0 && maxNetPosition > 0) {
-      // If there are both negative and positive values
-      if (item.value === 0) {
-        normalizedValue = 0;
-      } else if (item.value > 0) {
-        normalizedValue = 100 * item.value / maxNetPosition;
-      } else {
-        normalizedValue = 100 * item.value / Math.abs(minNetPosition);
-      }
-    } else if (minNetPosition >= 0) {
-      // If all values are positive or zero
-      normalizedValue = 100 * item.value / maxNetPosition;
-    } else if (maxNetPosition <= 0) {
-      // If all values are negative or zero
-      normalizedValue = 100 * item.value / Math.abs(minNetPosition);
-    }
-
-    console.log(`Date: ${item.time}, Original Value: ${item.value}, Normalized Value: ${normalizedValue}`);
-
-    return {
-      time: item.time,
-      value: normalizedValue
-    };
-  });
 
   // Return the normalized data
-  return normalizedData;
+  return uniqueData;
 };
 
 
@@ -263,25 +233,16 @@ const processAssetData = (symbol, rawData, cotData, news_sentiment_data, weekly_
 
   assetData.chartData = {
     weeklyPrice: weeklyPriceData,
-    netPositions: mapCotDataToTimeValue(cotData, assets[symbol].cotType, "institutional"),
-    retailPositions: mapCotDataToTimeValue(cotData, assets[symbol].cotType, "retail")
+    netPositions: mapCotDataToTimeValue(cot_data_for_Asset, assets[symbol].cotType, "institutional"),
+    retailPositions: mapCotDataToTimeValue(cot_data_for_Asset, assets[symbol].cotType, "retail")
   }
+
+  console.log("assetData.chartData ", assetData.chartData)
 
   assetData.news = {
     newsSet: [],
     score: 0
   }
-
-  // if (news_sentiment_data) {
-  //   if (news_sentiment_data[`${assets[symbol].apiSymbol}`]) {
-  //     news_sentiment_data[`${assets[symbol].apiSymbol}`].slice(0, 7).map((news) => {
-  //       assetData.news.newsSet.push({ date: news.date, count: news.count, score: (news.normalized * 100) })
-  //     })
-  
-  //     assetData.news.avgScore = assetData.news.newsSet.reduce((acc, news) => acc + news.score, 0) / assetData.news.newsSet.length
-  //     assetData.news.score = assetData.news.avgScore > 0 ? 100 : assetData.news.avgScore < 0 ? -100 : 0
-  //   }
-  // }
 
   const scores = [assetData.cot.institutional.score, assetData.cot.retail.score]
 
