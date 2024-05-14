@@ -3,7 +3,10 @@ import { getEventData } from './event-calendar';
 export default async (req, res) => {
     const countries = req.query.countries ? req.query.countries.split(',') : [];
     try {
-        const eventData = await getEventData(countries);
+        const fromDate = new Date(2021, 2, 1);
+        const toDate = new Date(2021, 2, 31);
+
+        const eventData = await getEventData(countries, 1000, fromDate, toDate);
         // console.log("eventData", eventData)
         res.status(200).json(eventData);
     } catch (error) {

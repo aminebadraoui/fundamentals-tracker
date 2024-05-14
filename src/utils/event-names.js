@@ -1,33 +1,35 @@
 const countryList_Iso3166 = ["US", "EU", "CA", "AU", "NZ", "JP", "CH", "MX", "UK"]
 const eventCategoryList = ["Inflation", "Interest Rates", "Econmic Growth"]
 
-const inflationKeys = [
-  "Inflation Rate",
-  "Core Inflation Rate",
-  "CPI",
-  "Core PCE Price Index",
-  "PCE Price Index",
-  "Core PCE Prices",
-  "PCE Prices",
-  "Core PPI",
-  "PPI",
-  "CPI Trimmed-Mean",
-  "CPI Median",
-  "Monthly CPI Indicator",
-  "RBA Interest Rate Decision",
-  "RBA Weighted Median CPI",
-  "RBA Trimmed Mean CPI",
-  "PPI Output",
-  "PPI Input",
-  "Tokyo Core CPI",
-  "Mid-month Inflation Rate",
-  "Mid-month Core Inflation Rate",
-  "Core PCE Prices QoQ Adv",
-  "Tokyo CPI",
-  "PPI Core Output",
-  "PPI Core Output"
+// write array of all first day of the month and last day of the month for the last 12 months in the format of "MM-DD" in ascending order starting from january with an object key of the month name and first and last keys
 
-]
+const monthDates = { 
+  "January": {first: "01-01", last: "01-31"},
+  "February": {first: "02-01", last: "02-28"},
+  "March": {first: "03-01", last: "03-31"},
+  "April": {first: "04-01", last: "04-30"},
+  "May": {first: "05-01", last: "05-31"},
+  "June": {first: "06-01", last: "06-30"},
+  "July": {first: "07-01", last: "07-31"},
+  "August": {first: "08-01", last: "08-31"},
+  "September": {first: "09-01", last: "09-30"},
+  "October": {first: "10-01", last: "10-31"},
+  "November": {first: "11-01", last: "11-30"},
+  "December": {first: "12-01", last: "12-31"},
+}
+const years = ["2020", "2021", "2022", "2023", "2024"]
+
+const inflationKeys = {
+  "US": ["Inflation Rate"],
+  "EU": ["Inflation Rate"],
+  "CA": ["Inflation Rate"],
+  "AU": ["Inflation Rate"],
+  "NZ": ["Inflation Rate"],
+  "JP": ["Inflation Rate" ],
+  "CH": ["Inflation Rate"], 
+  "MX": ["Inflation Rate"],
+  "UK": ["Inflation Rate"]
+}
 
 const interestRatesKeys = [
   "Fed Interest Rate Decision",
@@ -258,4 +260,6 @@ export {inflationKeys,
   flippedScoringKeys,
   majorEventsKeys,
   assets,
+  monthDates,
+  years
 }

@@ -129,7 +129,7 @@ const getCountryData = (country, rawData) => {
   const employmentData = getDataSortedByTotalScore(rawData, employmentKeys, null)[country]
   const housingData = getDataSortedByTotalScore(rawData, housingKeys, null)[country]
   const interestRateData = getDataSortedByTotalScore(rawData, interestRatesKeys, null)[country]
-  const growthData = getDataSortedByTotalScore(rawData, null, inflationKeys.concat(employmentKeys).concat(interestRatesKeys))[country]
+  const growthData = {}
 
   return {
     country,

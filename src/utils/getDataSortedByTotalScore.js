@@ -2,35 +2,18 @@ import { countryList_Iso3166, eventCategoryList, inflationKeys, flippedScoringKe
 
 const getScore = (event) => {
   let score = 0
-  const scoreStep = event.estimate ? 50 : 100 // 0.5 so score is between -1 and 1
-  if (flippedScoringKeys.includes(event.type)) {
-    if (event.estimate) {
-      if (event.actual > event.estimate) {
-        score -= scoreStep
-      }
-      if (event.actual < event.estimate) {
-        score += scoreStep
-      }
-    }
-    
+  let scoreStep = event.estimate && event.previous ? 50 : 100
 
-
-    if (event.actual > event.previous) {
-      score -= scoreStep
-    }
-    if (event.actual < event.previous) {
+  if (event.estimate)  {
+    if (event.actual > event.estimate) {
       score += scoreStep
     }
-  } else {
-    if (event.estimate)  {
-      if (event.actual > event.estimate) {
-        score += scoreStep
-      }
-      if (event.actual < event.estimate) {
-        score -= scoreStep
-      }
+    if (event.actual < event.estimate) {
+      score -= scoreStep
     }
-    
+  } 
+
+   if (event.previous){
     if (event.actual > event.previous) {
       score += scoreStep
     }
@@ -38,6 +21,7 @@ const getScore = (event) => {
       score -= scoreStep
     }
   }
+
   return score
  }
 
@@ -56,8 +40,9 @@ const getDataSortedByTotalScore = (rawData, filter, antifilter) => {
       // Filter the events
       Object.keys(eventArray).map((eventIndex) => { 
         const event = eventArray[eventIndex]
+        
 
-        if ((filter && filter.includes(event.type) || antifilter && !antifilter.includes(event.type)) && (event.actual && event.previous && event.date)) {
+        if ((filter && filter[key].includes(event.type) || antifilter && !antifilter.includes(event.type)) && (event.actual && event.previous && event.date && event.comparison != "mom" && event.comparison != "qoq") ) {
             finalData[key]["events"].push(event)
         }
       })
@@ -65,14 +50,15 @@ const getDataSortedByTotalScore = (rawData, filter, antifilter) => {
       // if there are duplicates in inflation[key], keep only the most recent event based on their date property's value
       const uniqueEvents = []
       finalData[key].events.map((event) => {
-        const existingEvent = uniqueEvents.find((uniqueEvent) => uniqueEvent.type === event.type && uniqueEvent.comparison === event.comparison)
-        if (existingEvent) {
-          if (existingEvent.date < event.date) {
-            uniqueEvents[uniqueEvents.indexOf(existingEvent)] = event
-          }
-        } else {
-          uniqueEvents.push(event)
-        }
+        uniqueEvents.push(event)
+        // const existingEvent = uniqueEvents.find((uniqueEvent) => uniqueEvent.type === event.type && uniqueEvent.comparison === event.comparison)
+        // if (existingEvent) {
+        //   if (existingEvent.date < event.date) {
+        //     uniqueEvents[uniqueEvents.indexOf(existingEvent)] = event
+        //   }
+        // } else {
+        //   uniqueEvents.push(event)
+        // }
       })
 
       // calculate the score for each event

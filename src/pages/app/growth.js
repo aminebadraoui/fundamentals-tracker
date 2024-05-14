@@ -30,7 +30,7 @@ const Growth = () => {
 
       const jsonData = await data.json()
 
-      const growthData = getDataSortedByTotalScore(jsonData, null, inflationKeys.concat(employmentKeys).concat(interestRatesKeys).concat(housingKeys))
+      const growthData = {}
       const growthChartData = getChartData(growthData)
 
       setEvents({jsonData, growthData, growthChartData});

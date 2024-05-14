@@ -1,63 +1,29 @@
 import { countryList_Iso3166 } from '@/utils/event-names';
 
 export default async (req, res) => {
-  const queryCountries = req.query.countries ? req.query.countries.split(',') : [];
+  const queryCountries = req.query.country
  
+  const fromDate = req.query.fromDate ? req.query.fromDate :  "2024-01-01"
+  const toDate = req.query.toDate ? req.query.toDate : "2024-01-31"
 
-  const eventData = await getEventData(queryCountries);
+  const eventData = await getEventData(queryCountries, 1000, fromDate, toDate);
+
 
   return res.status(200).json(eventData);
 };
 
 
-export const getEventData = async (countries = [], limit = 1000) => {
-  let countriesList = [];
-  if (countries.length > 0) {
-    countriesList = countries;
-  } else {
-    countriesList = countryList_Iso3166;
-  }
+export const getEventData = async (country, limit = 1000, fromDate, toDate) => {
+  const url = `https://eodhd.com/api/economic-events?api_token=${process.env.EOD_TOKEN}&fmt=json&country=${country}&from=${fromDate}&to=${toDate}&limit=${limit}`
+  console.log("url", url)
+  const res = await fetch(url)
 
-  const currentDate = new Date(); 
-  // Make currentDate in YYYY-MM-DD format
-  const formattedCurrentDate = currentDate.toISOString().split('T')[0];
+  const data = await res.json()
 
-  // first day of the previous quarter
-  const fromDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 3, 1);
-  // Make firstDayOfPreviousMonth in YYYY-MM-DD format
-  const formattedFromDate = fromDate.toISOString().split('T')[0];
+  // console.log("data", data)
 
-  console.log("formattedCurrentDate", formattedCurrentDate)
+return data
 
-  const promises = countriesList.map(country => fetch(`https://eodhd.com/api/economic-events?api_token=${process.env.EOD_TOKEN}&fmt=json&country=${country}&from=${formattedFromDate}&to=${formattedCurrentDate}&limit=${limit}`)
-    .then(response => response.json())
-    .then(eventsForCountryData => ({ 
-      // add significance to each event
-      [country]: eventsForCountryData.map(event => ({ ...event, significance: 1 })) }))
-    .catch(error => {
-      console.error(`Error fetching events for ${country}:`, error);
-      return { [country]: { error: 'Failed to fetch data', details: error.message } }; // Return error details for each country
-    })
-  );
-
-  return Promise.all(promises)
-    .then(dataArray => {
-      const finalData = {};
-      dataArray.forEach(data => {
-        Object.keys(data).forEach(key => {
-          data[key].significance = 1
-
-          finalData[key] = data[key];
-        });
-      });
-
-      
-      return finalData;
-    })
-    .catch(error => {
-      console.error('Error processing promises:', error);
-      return { error: 'Internal Server Error', details: 'Failed to process economic event data' };
-    });
  }
 
 

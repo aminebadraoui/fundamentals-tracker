@@ -46,7 +46,7 @@ const EconomicOverview = () => {
       console.log("inflationData", inflationData)
       const employmentData = getDataSortedByTotalScore(rawData, employmentKeys, null);
       const housingData = getDataSortedByTotalScore(rawData, housingKeys, null)
-      const growthData = getDataSortedByTotalScore(rawData, null, inflationKeys.concat(employmentKeys).concat(interestRatesKeys).concat(housingKeys));
+      const growthData = {}
       const interestRateData = getDataSortedByTotalScore(rawData, interestRatesKeys, null);
 
       const economicOverviewData_local = getEconomicOverviewData(inflationData, employmentData, growthData, housingData);
