@@ -1,3 +1,6 @@
 {
- 
+  "crons": [{
+    "path": "/api/upload-event-calendar-to-vercel?year=2024",
+    "schedule": "* /5 * * * *"
+  }]
 }

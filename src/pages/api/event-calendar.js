@@ -20,6 +20,8 @@ export const getEventData = async (country, limit = 1000, fromDate, toDate) => {
 
   const data = await res.json()
 
+  
+
   // console.log("data", data)
 
 return data
