@@ -87,6 +87,7 @@ export const SideBar = () => {
   useEffect(() => {
     const path = router.asPath;
     console.log(path)
+    console.log(path)
     const sectionIndex = links.findIndex(item => 
       item.type === 'section' && item.links.some(subItem => path.includes(subItem.href))
     );
