@@ -26,7 +26,7 @@ export const getServerSideProps = async (context) => {
   return withSession(context, async(context, session) => {
     return withSubscription(context, session, async(context) => {
       const params = context.params
-      const baseUrl = process.env.NEXT_PUBLIC_VERCEL_URL ? 'https://' + process.env.NEXT_PUBLIC_VERCEL_URL : 'http://localhost:3000'
+      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ? 'https://' + process.env.NEXT_PUBLIC_BASE_URL : 'http://localhost:3000'
      
         return { 
           props: {
