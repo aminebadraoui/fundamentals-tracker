@@ -257,56 +257,26 @@ export const ChartComponent = props => {
   }, [data, showRetail, backgroundColor, upColor, downColor, borderUpColor, borderDownColor, wickUpColor, wickDownColor, lineColor, retailLineColor, zeroLineColor, sixMonthmovingAverageColor, oneYearMovingAverageColor, zScoreColor, zScoreColor6M, zScoreColor1Y, zScoreColor3Y, inactiveColor, symbol]);
 
   return (
-    <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+    
+
       <div style={{ position: 'relative', width: '100%', height: '100%', marginBottom: `4px` }}>
         <div ref={chartContainerRef} />
-        <div style={{ position: 'absolute', left: '10px', top: '10px', color: '#000', zIndex: 10 }}>
-          {priceChartLegendText}
+        <div className="flex items-center justify-left pt-8 pb-2">
+            <span className={`text-lg font-medium ${!showRetail ? 'text-orange-600' : 'text-gray-400'}`}>
+                Institutional Net Positions</span>
+            <Switch
+            checked={showRetail}
+            onCheckedChange={setShowRetail}
+            className="mx-3"
+            />
+            <span className={`text-lg font-medium ${showRetail ? 'text-orange-600' : 'text-gray-400'}`}>Retail Net Positions</span>
         </div>
+
+        <div ref={positionsChartContainerRef}  />
+        
+        <div ref={zScoreChartContainerRef} style={{ marginTop: '4px' }} />
       </div>
-
-      <div className="flex items-center justify-left pt-8 pb-2">
-        <span className={`text-lg font-medium ${!showRetail ? 'text-orange-600' : 'text-gray-400'}`}>
-          Institutional Net Positions</span>
-        <Switch
-          checked={showRetail}
-          onCheckedChange={setShowRetail}
-          className="mx-3"
-        />
-        <span className={`text-lg font-medium ${showRetail ? 'text-orange-600' : 'text-gray-400'}`}>Retail Net Positions</span>
-      </div>
-
-      <div style={{ position: 'relative', width: '100%', height: '200' }}>
-        <div ref={positionsChartContainerRef} style={{ position: 'relative', width: '100%', height: '100%', marginTop: '4px' }} />
-
-        <div style={{ position: 'absolute', left: '100px', top: '10px', color: '#000', zIndex: 10 }}>
-          <div className='flex flex-col'>
-            <div style={{ color: `${!showRetail ? lineColor : inactiveColor}` }}>
-              {positionChartLegendText}
-            </div>
-            <div style={{ color: `${showRetail ? retailLineColor : inactiveColor}` }}>{retailPositionChartLegendText}</div>
-          </div>
-        </div>
-      </div>
-
-      <div style={{ position: 'relative', width: '100%', height: '200' }}>
-        <div ref={zScoreChartContainerRef} style={{ position: 'relative', width: '100%', height: '100%', marginTop: '4px' }} />
-
-        <div style={{ position: 'absolute', left: '10px', top: '10px', color: '#000', zIndex: 10 }}>
-          <div className='flex flex-col'>
-            <div style={{ color: `${zScoreColor6M}` }}>
-              {zScore6MLegendText}
-            </div>
-            <div style={{ color: `${zScoreColor1Y}` }}>
-              {zScore1YLegendText}
-            </div>
-            <div style={{ color: `${zScoreColor3Y}` }}>
-              {zScore3YLegendText}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+  
   );
 };
 

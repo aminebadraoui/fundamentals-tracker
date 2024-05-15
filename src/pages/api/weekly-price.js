@@ -21,9 +21,6 @@ export const getWeeklyPriceData = async (asset) => {
 
     const weekly_price_json = await weekly_price_res.json()
 
-   
-
-
   formatted_weekly_price_data = weekly_price_json.map((data) => {
       return {
         time: data.date,
@@ -42,9 +39,6 @@ export const getWeeklyPriceData = async (asset) => {
     
 
     const weekly_price_json = await weekly_price_res.json()
-
-    
-
 
     const formatted_weekly_price_data_desc = weekly_price_json.values.map((data) => {
       return {

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { DashboardLayout } from '@/components/layout/dashboard-layout'
 import { Loader } from '@/components/ui/loader'
 import { TitledCard } from '@/components/shadcn/titled-card';
@@ -7,15 +7,20 @@ import { getScoreBackgroundColor, getScoreTextColor } from '@/utils/get-score-co
 import { processAssetData } from '@/utils/processAssetData';
 import { assets } from '@/utils/event-names';
 
+import { Card } from '@/components/shadcn/card';
+
+import { filterByTypeAndCountries } from '@/utils/getEventCalendarForCountriesByType';
+
 import { ChartComponent } from '@/components/ui/chart-component';
 
-import { Bar, BarChart, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis, Cell} from 'recharts';
+import { Bar, BarChart, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis, Cell, Scatter, ComposedChart} from 'recharts';
 
 import withSession from '@/lib/withSession';
 import withSubscription from '@/lib/withSubscription';
 
 import dynamic from "next/dynamic";
 import { set } from 'mongoose';
+import { m } from 'framer-motion';
 
 export const getServerSideProps = async (context) => {
   return withSession(context, async(context, session) => {
@@ -30,6 +35,19 @@ export const getServerSideProps = async (context) => {
       })
     })
 }
+
+const CustomScatterShape = (props) => {
+  const { cx, cy, fill } = props;
+  return (
+    <circle
+      cx={cx}
+      cy={cy}
+      r={4}
+      fill={fill}
+      stroke="none"
+    />
+  );
+};
 
 
 const fetchDataWithRetry = async (url, params = {}, taskName, maxRetries = 3, retryDelay = 1000) => {
@@ -59,10 +77,72 @@ const fetchCotDataForYears = async (asset, years) => {
   const batchedCotData = await Promise.all(cotDataPromises);
   return batchedCotData.flat();
 };
+const formatInflationData = (data, countries) => {
+  const filteredYears = ['2023', '2024'];
+  const orderedMonths = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ];
 
+  const formattedData = [];
+
+  filteredYears.forEach((year) => {
+    if (data[year]) {
+      const yearData = { year };
+      orderedMonths.forEach((month) => {
+        yearData[month] = {};
+        countries.forEach(country => {
+          yearData[month][country] = { actual: null, estimate: null };
+        });
+      });
+
+      Object.keys(data[year]).forEach((country) => {
+        if (countries.includes(country)) {
+          Object.keys(data[year][country]).forEach((month) => {
+            const events = data[year][country][month];
+            if (events && events.length > 0) {
+              const latestEvent = events.reduce((latest, current) => {
+                return new Date(current.date) > new Date(latest.date) ? current : latest;
+              });
+
+              const date = new Date(latestEvent.date);
+              const formattedMonth = date.toLocaleString('default', { month: 'long' });
+              if (yearData[formattedMonth]) {
+                yearData[formattedMonth][country] = {
+                  actual: latestEvent.actual || 0,
+                  estimate: latestEvent.estimate || 0,
+                };
+              }
+            }
+          });
+        }
+      });
+
+      orderedMonths.forEach((month) => {
+        const monthData = { year, month: month.slice(0, 3) };
+        let hasData = false;
+
+        countries.forEach(country => {
+          monthData[country] = yearData[month][country].actual !== null ? yearData[month][country].actual : 0;
+          monthData[`${country}_estimate`] = yearData[month][country].estimate !== null ? yearData[month][country].estimate : 0;
+          if (yearData[month][country].actual !== null) {
+            hasData = true;
+          }
+        });
+
+        if (hasData) {
+          formattedData.push(monthData);
+        }
+      });
+    }
+  });
+
+  return formattedData;
+};
 
 const Scanner = (props) => {
   const asset = props.params.asset;
+  console.log(assets[asset].countries)
   const GaugeComponent = dynamic(() => import('react-gauge-component'), { ssr: false });
   // keep track of different arrays of events as part of one object
   const [assetData , setAssetData] = useState(null);
@@ -71,6 +151,9 @@ const Scanner = (props) => {
 
   const [retailChartData , setRetailChartData] = useState(null);
   const [retailNetChartData , setRetailNetChartData] = useState(null);
+
+  const [inflationChartData, setInflationChartData] = useState([]);
+
   const [isLoading, setLoading] = useState(false);
 
   const handleDownload = async () => {
@@ -79,10 +162,18 @@ const Scanner = (props) => {
     try {
       const years = [2024, 2023, 2022, 2021, 2020, 2019, 2018, 2017]; // or any range of years you have data for
 
-      const [cotData, weeklyPriceData] = await Promise.all([
+      const [cotData, weeklyPriceData, inflationData] = await Promise.all([
         fetchCotDataForYears(asset, years),
         fetchDataWithRetry('/api/getWeeklyPriceData', { asset }),
+        filterByTypeAndCountries( "Inflation Rate", assets[asset].countries)
       ]);
+
+      console.log(inflationData)
+
+      const formattedInflationData = formatInflationData(inflationData, assets[asset].countries);
+      setInflationChartData(formattedInflationData);
+
+      console.log("Formatted Inflation Data", formattedInflationData)
 
       const assetDataJson = processAssetData(asset, null, cotData, null, weeklyPriceData);
 
@@ -149,7 +240,7 @@ const Scanner = (props) => {
   }, [asset])
 
   const Style = {
-    Title: "flex flex-row w-full justify-between items-start" ,
+    Title: "flex flex-row w-full justify-between items-center" ,
     Wrapper : " flex flex-col w-full  ",
     InternalCard: " "
   }
@@ -164,19 +255,83 @@ const Scanner = (props) => {
           </div>
          :  
     
-         assetData && <div className={Style.Wrapper}>
-              <div className={Style.Title}>
-                <h1 className="text-secondary-foreground mb-8"> {asset} </h1>
+         assetData && <div className="grid grid-cols-3 gap-4">
+              <div className="col-span-3">
+                <div className='flex justify-between items-start'> 
+                <h1 className="text-secondary-foreground ml-8 mb-8"> {asset} </h1>
+                
+                
+                </div>
+                
               </div>
-
-              <div className='flex space-x-4' >
-              { assetData.chartData && <ChartComponent data={assetData.chartData}  symbol={asset} timeframe={'Weekly'}></ChartComponent>}
-             
               { [asset].map((asset) => {
                 return (
                   assetData && 
-                  <div className='flex w-1/2 flex-col space-y-4'>
-                    <div className='flex justify-center items-center'>
+                  <div className='grid grid-cols-3 gap-4 col-span-3' >
+                    <div className='grid col-span-2 gap-4'> 
+                    <TitledCard key="price_card" className="grid col-span-2" title="Price">
+                      { assetData.chartData && <ChartComponent data={assetData.chartData}  symbol={asset} timeframe={'Weekly'}></ChartComponent>}
+                    </TitledCard>
+
+                    <TitledCard key="inflation_card" className={Style.InternalCard} title="Inflation">
+                      <ResponsiveContainer width="100%" height={400}>
+                          <ComposedChart data={inflationChartData}>
+                            <XAxis dataKey="month" />
+                            <YAxis />
+                            <Tooltip />
+                            <Legend />
+                            {assets[asset].countries.map((country, index) => {
+                              const barColor = index === 0 ? "#8884d8" : "#82ca9d"; // Different colors for each country
+                              const scatterColor = index === 0 ? "#ff7300" : "#387908"; // Different colors for each country
+                              const barDataKey = country;
+                              const scatterDataKey = `${country}_estimate`;
+
+                              return (
+                                <React.Fragment key={country}>
+                                  <Bar dataKey={barDataKey} fill={barColor} />
+                              
+                                </React.Fragment>
+                              );
+                            })}
+                          </ComposedChart>
+                        </ResponsiveContainer>
+
+
+                        <div className='flex '>
+                        {
+                        assets[asset].countries.map((country, index) => {
+                          const barColor = index === 0 ? "#8884d8" : "#82ca9d"; // Different colors for each country
+                          const scatterColor = index === 0 ? "#ff7300" : "#387908"; // Different colors for each country
+                          const barDataKey = country;
+                          const scatterDataKey = `${country}_estimate`;
+
+                          return <ResponsiveContainer width="100%" height={400}>
+                            <ComposedChart data={inflationChartData}>
+                              <XAxis dataKey="month" />
+                              <YAxis />
+                              <Tooltip />
+                              <Legend />
+                              <Bar dataKey={barDataKey} fill={barColor} />
+                              <Scatter
+                                fill={scatterColor}
+                                dataKey={scatterDataKey}
+                                startOffset={80}
+                                
+                              />
+                            </ComposedChart>
+                        </ResponsiveContainer>
+
+                        })
+                      }
+                           </div>
+            
+
+                    
+                    </TitledCard>
+                    </div>
+                    <div className='grid col-span-1 gap-2 '> 
+
+                    <Card className=' flex items-center justify-center '>
                       <GaugeComponent
                                 value={assetData.score}  
                                 style={{  width: '75%' }}
@@ -211,114 +366,10 @@ const Scanner = (props) => {
                                   animationDelay: 0,
                                   color: '#9ea7c6',
                                 }}/>
-                      </div>
-                
-
-                    {/* <TitledCard key={`${asset}_economy_card_`} className={Style.InternalCard} title="Economy">
-                        
-                        { assetData.countries.length == 2 ? 
-                        <Table>
-                        <TableHeader>
-                          <TableRow className='hover:bg-transparent'>
-                            <TableHead className='bg-transparent border-0 hover:bg-transparent'>  </TableHead>
-                            <TableHead className='font-bold'> {assetData.economics.countriesEvents[0].country} </TableHead>
-                            <TableHead className='font-bold'> {assetData.economics.countriesEvents[1].country} </TableHead>
-                            <TableHead className='font-bold'> {`${asset}`}</TableHead>
-                          </TableRow>
-                        </TableHeader>
-
-                        <TableBody>
-                            <TableRow>
-                              <TableCell className='font-bold'> Inflation Score </TableCell>
-                              <TableCell> {assetData.economics.countriesEvents[0].inflationData.totalScore.toFixed(2)} </TableCell>
-                              <TableCell>  {assetData.economics.countriesEvents[1].inflationData.totalScore.toFixed(2)} </TableCell>
-                              <TableCell className={ `${getScoreTextColor(assetData.economics.inflationScore)}`}> {assetData.economics.inflationScore} </TableCell>
-                            </TableRow>
-                            <TableRow>
-                              <TableCell className='font-bold'> Interest Rate Score </TableCell>
-                              <TableCell> {assetData.economics.countriesEvents[0].interestRateData.totalScore.toFixed(2)} </TableCell>
-                              <TableCell>  {assetData.economics.countriesEvents[1].interestRateData.totalScore.toFixed(2)} </TableCell>
-                              <TableCell className={ `${getScoreTextColor(assetData.economics.interestRateScore)}`}> {assetData.economics.interestRateScore} </TableCell>
-                            </TableRow>
-                            <TableRow>
-                              <TableCell className='font-bold'>  Employement Score </TableCell>
-                              <TableCell> {assetData.economics.countriesEvents[0].employmentData.totalScore.toFixed(2)} </TableCell>
-                              <TableCell>  {assetData.economics.countriesEvents[1].employmentData.totalScore.toFixed(2)} </TableCell>
-                              <TableCell className={ `${getScoreTextColor(assetData.economics.employmentScore)}`}> {assetData.economics.employmentScore} </TableCell>
-                            </TableRow>
-                            <TableRow>
-                              <TableCell className='font-bold'> Housing Score </TableCell>
-                              <TableCell> {assetData.economics.countriesEvents[0].housingData.totalScore.toFixed(2)} </TableCell>
-                              <TableCell>  {assetData.economics.countriesEvents[1].housingData.totalScore.toFixed(2)} </TableCell>
-                              <TableCell className={ `${getScoreTextColor(assetData.economics.housingScore)}`}> {assetData.economics.housingScore} </TableCell>
-                            </TableRow>
-                            <TableRow>
-                              <TableCell className='font-bold'> Growth Score </TableCell>
-                              <TableCell> {assetData.economics.countriesEvents[0].growthData.totalScore.toFixed(2)} </TableCell>
-                              <TableCell>  {assetData.economics.countriesEvents[1].growthData.totalScore.toFixed(2)} </TableCell>
-                              <TableCell className={ `${getScoreTextColor(assetData.economics.growthScore)}`}> {assetData.economics.growthScore} </TableCell>
-                            </TableRow>
-                            <TableRow>
-                              <TableCell colSpan={3} className='font-bold'> Final Score </TableCell>
-                          
-                              <TableCell className={ `${getScoreBackgroundColor(assetData.economics.score)} font-bold `}> {assetData.economics.score} </TableCell>
-                            </TableRow>
-                        </TableBody>
-                        
-                        </Table>  
-                        :  <Table>
-                        <TableHeader>
-                          <TableRow className='hover:bg-transparent'>
-                            <TableHead className='bg-transparent border-0 hover:bg-transparent'>  </TableHead>
-                            <TableHead className='font-bold'> {assetData.economics.countriesEvents[0].country} </TableHead>
-                           
-                            <TableHead className='font-bold'> {`${asset}`}</TableHead>
-                          </TableRow>
-                        </TableHeader>
-
-                        <TableBody>
-                            <TableRow>
-                              <TableCell className='font-bold'> Inflation Score </TableCell>
-                              <TableCell> {assetData.economics.countriesEvents[0].inflationData.totalScore.toFixed(2)} </TableCell>
-                             
-                              <TableCell className={ `${getScoreTextColor(-assetData.economics.inflationScore)}`}> {-assetData.economics.inflationScore} </TableCell>
-                            </TableRow>
-                            <TableRow>
-                              <TableCell className='font-bold'> Interest Rate Score </TableCell>
-                              <TableCell> {assetData.economics.countriesEvents[0].interestRateData.totalScore.toFixed(2)} </TableCell>
-                              
-                              <TableCell className={ `${getScoreTextColor(-assetData.economics.interestRateScore)}`}> {-assetData.economics.interestRateScore} </TableCell>
-                            </TableRow>
-                            <TableRow>
-                              <TableCell className='font-bold'>  Employement Score </TableCell>
-                              <TableCell> {assetData.economics.countriesEvents[0].employmentData.totalScore.toFixed(2)} </TableCell>
-                              
-                              <TableCell className={ `${getScoreTextColor(-assetData.economics.employmentScore)}`}> {-assetData.economics.employmentScore} </TableCell>
-                            </TableRow>
-                            <TableRow>
-                              <TableCell className='font-bold'> Housing Score </TableCell>
-                              <TableCell> {assetData.economics.countriesEvents[0].housingData.totalScore.toFixed(2)} </TableCell>
-                
-                              <TableCell className={ `${getScoreTextColor(-assetData.economics.housingScore)}`}> {-assetData.economics.housingScore} </TableCell>
-                            </TableRow>
-                            <TableRow>
-                              <TableCell className='font-bold'> Growth Score </TableCell>
-                              <TableCell> {assetData.economics.countriesEvents[0].growthData.totalScore.toFixed(2)} </TableCell>
-                      
-                              <TableCell className={ `${getScoreTextColor(-assetData.economics.growthScore)}`}> {-assetData.economics.growthScore} </TableCell>
-                            </TableRow>
-                            <TableRow>
-                              <TableCell colSpan={2} className='font-bold'> Final Score </TableCell>
-                          
-                              <TableCell className={ `${getScoreBackgroundColor(-assetData.economics.score)} font-bold `}> {-assetData.economics.score} </TableCell>
-                            </TableRow>
-                        </TableBody>
-                        
-                        </Table>  }
-                    </TitledCard> */}
-
-                    <TitledCard key={`${asset}_institional_Positioning_card`} className={Style.InternalCard} title="Institutional Positioning">
-                      <div className='flex'>
+                </Card>
+                    
+                    <TitledCard key={`${asset}_institional_Positioning_card`} className="" title="Institutional Positioning">
+                      <div className='flex w-full'>
                       <ResponsiveContainer  height={400}>
                       <BarChart data={institutionalChartData} barCategoryGap={20} >
                         <XAxis dataKey="name" tick={{ fill: 'white' }} />
@@ -351,24 +402,7 @@ const Scanner = (props) => {
 
                         
                     </div>
-                   
-                      
-                      <Table> 
-                      <TableHeader>
-                        <TableRow className='hover:bg-transparent'>
-                          <TableHead className='font-bold'> Longs </TableHead>
-                          <TableHead className='font-bold'> Shorts </TableHead>
-                          <TableHead className='font-bold'> Final Score </TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        <TableRow>
-                          <TableCell> {assetData.cot.institutional.long} </TableCell>
-                          <TableCell> {assetData.cot.institutional.short} </TableCell>
-                          <TableCell className={ `${getScoreBackgroundColor(assetData.cot.institutional.score)} font-bold `}> {assetData.cot.institutional.score} </TableCell>
-                          </TableRow>
-                      </TableBody>
-                      </Table>   
+                
 
                     </TitledCard>
 
@@ -407,99 +441,18 @@ const Scanner = (props) => {
                         
                     </div>
                    
-                      
-                      <Table> 
-                      <TableHeader>
-                        <TableRow className='hover:bg-transparent'>
-                          <TableHead className='font-bold'> Longs </TableHead>
-                          <TableHead className='font-bold'> Shorts </TableHead>
-                          <TableHead className='font-bold'> Final Score </TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        <TableRow>
-                          <TableCell> {assetData.cot.retail.long} </TableCell>
-                          <TableCell> {assetData.cot.retail.short} </TableCell>
-                          <TableCell className={ `${getScoreBackgroundColor(assetData.cot.retail.score)} font-bold `}> {assetData.cot.retail.score} </TableCell>
-                          </TableRow>
-                      </TableBody>
-                      </Table>   
+               
 
                     </TitledCard>
-                    
-                    {/* <TitledCard key={`${asset}_retail_positioning_card`} className={Style.InternalCard} title="Retail Positioning">
-                    <Table> 
-                      <TableHeader>
-                        <TableRow className='hover:bg-transparent'>
-                          <TableHead className='font-bold'> Net Positions Current </TableHead>
-                          <TableHead className='font-bold'> Net Positions Old </TableHead>
-                          <TableHead className='font-bold'> Final Score </TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        <TableRow>
-                          <TableCell> {assetData.retail.net_positions} </TableCell>
-                          <TableCell> {assetData.retail.net_positions_old} </TableCell>
-                          <TableCell className={ `${getScoreBackgroundColor(assetData.retail.score)} font-bold `}>  {assetData.retail.score} </TableCell>
-                          </TableRow>
-                      </TableBody>
-                      </Table>
-                    </TitledCard> */}
 
-                    {/* <TitledCard key={`${asset}_news_sentiment_card`} className={Style.InternalCard} title="News Sentiment">
-                      <Table> 
-                        <TableHeader>
-                          {
-                              assetData.news.newsSet && assetData.news.newsSet.length > 0 && 
-                              <TableRow className='hover:bg-transparent'>
-                              <TableHead className='font-bold'> Date</TableHead>
-                              <TableHead className='font-bold'> Count </TableHead>
-                            <TableHead className='font-bold'> Score </TableHead>
-                          </TableRow>}
-                        </TableHeader>
-                        
-                        <TableBody>
-                        {
-                          assetData.news.newsSet &&  assetData.news.newsSet.length > 0 && assetData.news.newsSet.map((news) => {
-                              return (
-                                <TableRow>
-                                  <TableCell> {news.date} </TableCell>
-                                  <TableCell> {news.count} </TableCell>
-                                  <TableCell>  {news.score.toFixed(2)} </TableCell>
-                                </TableRow>
-                              )
-                            })
-                          }
-
-                        {
-                          assetData.news.newsSet &&  assetData.news.newsSet.length > 0 && 
-                          <TableRow>
-                            <TableCell colSpan={2} className='font-bold'> 7-Day Average Score </TableCell>
-                            <TableCell > {assetData.news.avgScore.toFixed(2)} </TableCell>
-                          </TableRow>
-                        }
-
-                        {
-                          assetData.news.newsSet &&  assetData.news.newsSet.length == 0 &&
-                          <TableRow>
-                            <TableCell colSpan={3}> No News Available </TableCell>
-                          </TableRow>
-
-                        }
-                          <TableRow>
-                            <TableCell colSpan={2} className='font-bold'> Final Score </TableCell>
-                        
-                            <TableCell className={ `${getScoreBackgroundColor(assetData.news.score)} font-bold `}> {assetData.news.score} </TableCell>
-                          </TableRow>
-                        </TableBody>
-                        </Table>
-                    </TitledCard> */}
+                   
+                    </div>
                   </div>
                 )  
               })
             }
 
-              </div>
+              
             
 
            

@@ -10,6 +10,12 @@ import withSession from '@/lib/withSession';
 import withSubscription from '@/lib/withSubscription';
 import { upload } from '@vercel/blob/client';
 
+import { list } from '@vercel/blob';
+
+import { filterByTypeAndCountries } from '@/utils/getEventCalendarForCountriesByType';
+
+
+
 export const getServerSideProps = async (context) => {
   return withSession(context, async (context, session) => {
     return withSubscription(context, session, async (context) => {
@@ -27,7 +33,15 @@ const Inflation = () => {
   const handleDownload = async () => {
     setLoading(true);
     try {
-      
+
+const typeToFilter = 'PPI'; 
+const countries = ["US", "EU"]
+const filteredData = await filterByTypeAndCountries( typeToFilter, countries);
+console.log(filteredData);
+
+
+    
+
       // let dates = {};
 
       // years.map((year) => {
@@ -97,8 +111,7 @@ const Inflation = () => {
 
       // await Promise.all(uploadPromises);
 
-      const inflationData = getDataSortedByTotalScore(responses.flatMap((res) => res.data), inflationKeys, null);
-      const inflationChartData = getChartData(inflationData);
+    
 
       setEvents({ inflationData, inflationChartData });
 
