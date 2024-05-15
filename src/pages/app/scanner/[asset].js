@@ -26,10 +26,12 @@ export const getServerSideProps = async (context) => {
   return withSession(context, async(context, session) => {
     return withSubscription(context, session, async(context) => {
       const params = context.params
+      const baseUrl = process.env.VERCEL_URL ? 'https://' + process.env.VERCEL_URL : 'http://localhost:3000'
      
         return { 
           props: {
             params, 
+            baseUrl
           } 
           };
       })
@@ -142,6 +144,8 @@ const formatInflationData = (data, countries) => {
 
 const Scanner = (props) => {
   const asset = props.params.asset;
+  const baseUrl = props.baseUrl;
+  console.log("props.baseUrl", baseUrl)
   console.log(assets[asset].countries)
   const GaugeComponent = dynamic(() => import('react-gauge-component'), { ssr: false });
   // keep track of different arrays of events as part of one object
@@ -165,7 +169,7 @@ const Scanner = (props) => {
       const [cotData, weeklyPriceData, inflationData] = await Promise.all([
         fetchCotDataForYears(asset, years),
         fetchDataWithRetry('/api/getWeeklyPriceData', { asset }),
-        filterByTypeAndCountries( "Inflation Rate", assets[asset].countries)
+        filterByTypeAndCountries( baseUrl, "Inflation Rate", assets[asset].countries)
       ]);
 
       console.log(inflationData)
@@ -274,7 +278,7 @@ const Scanner = (props) => {
                     </TitledCard>
 
                     <TitledCard key="inflation_card" className={Style.InternalCard} title="Inflation">
-                      <ResponsiveContainer width="100%" height={400}>
+                  {    assets[asset].countries.length > 1 && <ResponsiveContainer width="100%" height={400}>
                           <ComposedChart data={inflationChartData}>
                             <XAxis dataKey="month" />
                             <YAxis />
@@ -294,7 +298,7 @@ const Scanner = (props) => {
                               );
                             })}
                           </ComposedChart>
-                        </ResponsiveContainer>
+                        </ResponsiveContainer>}
 
 
                         <div className='flex '>

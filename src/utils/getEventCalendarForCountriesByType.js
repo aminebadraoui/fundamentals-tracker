@@ -9,10 +9,12 @@ import { monthDates, years } from './event-names';
 
 
 
-export const filterByTypeAndCountries = async (type, countries) => {
+export const filterByTypeAndCountries = async (baseUrl, type, countries) => {
   const promises = years.map(async (year) => {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ? process.env.NEXT_PUBLIC_BASE_URL : 'http://localhost:3000'
-    const url = `https://trendpulse.app/api/download-event-calendar?year=${year}`;
+    // const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ? process.env.NEXT_PUBLIC_BASE_URL : 'http://localhost:3000'
+    // console.log("process.env", process.env.NEXT_PUBLIC_BASE_URL)
+    
+    const url = `${baseUrl}/api/download-event-calendar?year=${year}`;
     const res = await fetch(url);
     const json = await res.json();
     return json;
