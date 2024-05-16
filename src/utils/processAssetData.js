@@ -257,7 +257,7 @@ const institutionalShortOld_final = (assets[symbol].isFlipped === true)
       longOld: retail_final_long_old,
       shortOld: retail_final_short_old,
       netOld: retailNetOld,
-      score: retailScore
+      score: isDivergent ? retailScore : 0
     }
   }
 
