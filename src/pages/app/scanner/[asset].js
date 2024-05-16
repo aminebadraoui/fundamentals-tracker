@@ -9,7 +9,7 @@ import { assets } from '@/utils/event-names';
 
 import { Card } from '@/components/shadcn/card';
 
-import { filterByTypeAndCountries } from '@/utils/getEventCalendarForCountriesByType';
+import { filterByTypeAndCountries, filterCommonEvents } from '@/utils/getEventCalendarForCountriesByType';
 
 import { ChartComponent } from '@/components/ui/chart-component';
 
@@ -79,7 +79,8 @@ const fetchCotDataForYears = async (asset, years) => {
   const batchedCotData = await Promise.all(cotDataPromises);
   return batchedCotData.flat();
 };
-const formatInflationData = (data, countries) => {
+const formatInflationData = (data, asset) => {
+  const countries = assets[asset].countries;
   const filteredYears = ['2023', '2024'];
   const orderedMonths = [
     'January', 'February', 'March', 'April', 'May', 'June',
@@ -89,7 +90,7 @@ const formatInflationData = (data, countries) => {
   const formattedData = [];
 
   filteredYears.forEach((year) => {
-    if (data[year]) {
+    if (data[year] && data[year][asset]) {
       const yearData = { year };
       orderedMonths.forEach((month) => {
         yearData[month] = {};
@@ -98,10 +99,10 @@ const formatInflationData = (data, countries) => {
         });
       });
 
-      Object.keys(data[year]).forEach((country) => {
-        if (countries.includes(country)) {
-          Object.keys(data[year][country]).forEach((month) => {
-            const events = data[year][country][month];
+      countries.forEach((country) => {
+        if (data[year][asset][country]) {
+          Object.keys(data[year][asset][country]).forEach((month) => {
+            const events = data[year][asset][country][month];
             if (events && events.length > 0) {
               const latestEvent = events.reduce((latest, current) => {
                 return new Date(current.date) > new Date(latest.date) ? current : latest;
@@ -142,11 +143,11 @@ const formatInflationData = (data, countries) => {
   return formattedData;
 };
 
+
 const Scanner = (props) => {
   const asset = props.params.asset;
-  const baseUrl = props.baseUrl;
-  console.log("props.baseUrl", baseUrl)
-  console.log(assets[asset].countries)
+  const baseUrl = "http://localhost:3000";
+
   const GaugeComponent = dynamic(() => import('react-gauge-component'), { ssr: false });
   // keep track of different arrays of events as part of one object
   const [assetData , setAssetData] = useState(null);
@@ -166,15 +167,15 @@ const Scanner = (props) => {
     try {
       const years = [2024, 2023, 2022, 2021, 2020, 2019, 2018, 2017]; // or any range of years you have data for
 
-      const [cotData, weeklyPriceData, inflationData] = await Promise.all([
+      const [cotData, weeklyPriceData, inflationData ] = await Promise.all([
         fetchCotDataForYears(asset, years),
         fetchDataWithRetry('/api/getWeeklyPriceData', { asset }),
-        filterByTypeAndCountries( baseUrl, "Inflation Rate", assets[asset].countries)
+        filterByTypeAndCountries( baseUrl, "Inflation Rate", asset),
       ]);
 
       console.log(inflationData)
 
-      const formattedInflationData = formatInflationData(inflationData, assets[asset].countries);
+      const formattedInflationData = formatInflationData(inflationData, asset);
       setInflationChartData(formattedInflationData);
 
       console.log("Formatted Inflation Data", formattedInflationData)
