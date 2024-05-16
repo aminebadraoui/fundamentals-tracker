@@ -146,7 +146,7 @@ const formatInflationData = (data, asset) => {
 
 const Scanner = (props) => {
   const asset = props.params.asset;
-  const baseUrl = "http://localhost:3000";
+  const baseUrl = "https://trendpulse.app";
 
   const GaugeComponent = dynamic(() => import('react-gauge-component'), { ssr: false });
   // keep track of different arrays of events as part of one object
