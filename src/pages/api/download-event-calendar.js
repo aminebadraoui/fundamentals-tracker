@@ -5,9 +5,7 @@ export default async (req, res) => {
   const year = req.query.year;
   const fileName = `event_calendar_${year}.json`
 
-  console.log(fileName)
 
-  console.log(response);
 
   const blobs = response.blobs
 
@@ -15,14 +13,14 @@ export default async (req, res) => {
 
   const downloadUrl = fileBlob.url;
 
-  console.log(downloadUrl);
+
 
   const fileResponse = await fetch(downloadUrl);
 
   const body = await fileResponse.json()
 
   const json = {
-    [year]: body
+    [year]: downloadUrl
   }
 
   console.log(json);

@@ -1,6 +1,6 @@
 import { assets, monthDates, years } from './event-names';
 
-const fetchJsonFiles = async (baseUrl) => {
+const fetchJsonFilesUrls = async (baseUrl) => {
   const promises = years.map(async (year) => {
     const url = `${baseUrl}/api/download-event-calendar?year=${year}`;
     const res = await fetch(url);
@@ -12,7 +12,26 @@ const fetchJsonFiles = async (baseUrl) => {
 };
 
 const mergeData = async (baseUrl) => {
-  const jsonFiles = await fetchJsonFiles(baseUrl);
+  const jsonFilesUrls = await fetchJsonFilesUrls(baseUrl);
+
+
+  const jsonFilesPromises = jsonFilesUrls.map( async (jsonUrl) => {
+    if (jsonUrl) {
+   
+      const year = Object.keys(jsonUrl)[0];
+
+      const url = jsonUrl[Object.keys(jsonUrl)[0]];
+
+      const res = await fetch(url);
+      const json = await res.json();
+      return { [year] : json}
+    }
+    return null;
+  });
+
+  const jsonFiles = await Promise.all(jsonFilesPromises);
+
+
 
   const mergedData = jsonFiles.reduce((acc, json) => {
     if (json) {
