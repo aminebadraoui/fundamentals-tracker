@@ -112,6 +112,18 @@ const getCountryData = (country, rawData) => {
   }
 }
 
+const computeInstitutionalScore = (longs, shorts) => {
+  const totalPositions = longs + shorts;
+  if (totalPositions === 0) {
+    return 0; // Handle division by zero case
+  }
+  const longPercentage = (longs / totalPositions) * 100;
+  const shortPercentage = (shorts / totalPositions) * 100;
+
+  // The score is long percentage minus short percentage, normalized to be between -100 and 100
+  return longPercentage - shortPercentage;
+};
+
 
 // asset, eventsForCountriesData, cot_for_asset, news_sentiment_json, weekly_price_data_json)
 
@@ -168,23 +180,44 @@ const processAssetData = (symbol, rawData, cotData, news_sentiment_data, weekly_
  
   const cot_data_for_Asset = findLatestCotDataForAsset(assets[symbol].cotName, cotData)
 
-  const institutionalLong = assets[symbol].cotType === 'comm' ? parseInt(cot_data_for_Asset[0].comm_positions_long_all[0]) : parseInt(cot_data_for_Asset[0].noncomm_positions_long_all[0])
-  const institutionalShort = assets[symbol].cotType === 'comm' ? parseInt(cot_data_for_Asset[0].comm_positions_short_all[0]) : parseInt(cot_data_for_Asset[0].noncomm_positions_short_all[0])
+  const institutionalLong = assets[symbol].cotType === 'comm' 
+  ? parseInt(cot_data_for_Asset[0].comm_positions_long_all[0]) 
+  : parseInt(cot_data_for_Asset[0].noncomm_positions_long_all[0]);
 
-  const institutionalLong_final = (assets[symbol].isFlipped === true ) ? institutionalShort : institutionalLong
-  const institutionalShort_final = (assets[symbol].isFlipped === true ) ? institutionalLong : institutionalShort
+const institutionalShort = assets[symbol].cotType === 'comm' 
+  ? parseInt(cot_data_for_Asset[0].comm_positions_short_all[0]) 
+  : parseInt(cot_data_for_Asset[0].noncomm_positions_short_all[0]);
 
-  const institutionalNet = institutionalLong_final - institutionalShort_final
+const institutionalLong_final = (assets[symbol].isFlipped === true) 
+  ? institutionalShort 
+  : institutionalLong;
 
-  const institutionalLongOld = assets[symbol].cotType === 'comm' ? parseInt(cot_data_for_Asset[1].comm_positions_long_old[0]) : parseInt(cot_data_for_Asset[1].noncomm_positions_long_old[0])
-  const institutionalShortOld = assets[symbol].cotType === 'comm' ? parseInt(cot_data_for_Asset[1].comm_positions_short_old[0]) : parseInt(cot_data_for_Asset[1].noncomm_positions_short_old[0])
+const institutionalShort_final = (assets[symbol].isFlipped === true) 
+  ? institutionalLong 
+  : institutionalShort;
 
-  const institutionalLongOld_final = (assets[symbol].isFlipped === true ) ? institutionalShortOld : institutionalLongOld
-  const institutionalShortOld_final = (assets[symbol].isFlipped === true ) ? institutionalLongOld : institutionalShortOld
+  const institutionalNet = institutionalLong_final - institutionalShort_final;
 
-  const institutionalNetOld = institutionalLongOld_final - institutionalShortOld_final
-  const institutionalNetScore = (institutionalNet > 0 ? 100 : institutionalNet < 0 ? -100 : 0)
-  const institutionalScore = institutionalNetScore
+ const institutionalScore = computeInstitutionalScore(institutionalLong_final, institutionalShort_final);
+
+const institutionalLongOld = assets[symbol].cotType === 'comm' 
+  ? parseInt(cot_data_for_Asset[1].comm_positions_long_old[0]) 
+  : parseInt(cot_data_for_Asset[1].noncomm_positions_long_old[0]);
+
+const institutionalShortOld = assets[symbol].cotType === 'comm' 
+  ? parseInt(cot_data_for_Asset[1].comm_positions_short_old[0]) 
+  : parseInt(cot_data_for_Asset[1].noncomm_positions_short_old[0]);
+
+const institutionalLongOld_final = (assets[symbol].isFlipped === true) 
+  ? institutionalShortOld 
+  : institutionalLongOld;
+
+const institutionalShortOld_final = (assets[symbol].isFlipped === true) 
+  ? institutionalLongOld 
+  : institutionalShortOld;
+
+ const institutionalNetOld = institutionalLongOld_final - institutionalShortOld_final;
+
 
   const retailLong = parseInt(cot_data_for_Asset[0].nonrept_positions_long_all[0])
   const retailShort = parseInt(cot_data_for_Asset[0].nonrept_positions_short_all[0])
@@ -200,12 +233,11 @@ const processAssetData = (symbol, rawData, cotData, news_sentiment_data, weekly_
   const retail_final_long_old = (assets[symbol].isFlipped === true ) ? retailShortOld : retailLongOld
   const retail_final_short_old = (assets[symbol].isFlipped === true ) ? retailLongOld : retailShortOld
 
-
   const retailNetOld = retail_final_long_old - retail_final_short_old
 
-  const retailNetScore = (((retailNet > 0) && (institutionalNet < 0)) ? -100 : ((retailNet < 0) && (institutionalNet > 0)) ? 100 : 0 )
+  const isDivergent = institutionalNet > 0 && retailNet < 0 || institutionalNet < 0 && retailNet > 0
+  const retailScore =  computeInstitutionalScore(retail_final_short, retail_final_long)
 
-  const retailScore = retailNetScore
 
   assetData.cot = {
     cotData: cot_data_for_Asset,
@@ -244,7 +276,13 @@ const processAssetData = (symbol, rawData, cotData, news_sentiment_data, weekly_
     score: 0
   }
 
-  const scores = [assetData.cot.institutional.score, assetData.cot.retail.score]
+  let scores = []
+
+  scores.push(assetData.cot.institutional.score)
+
+  if (isDivergent) {
+    scores.push(assetData.cot.retail.score)
+  }
 
   assetData.score = scores.reduce((acc, score) => acc + score, 0) / scores.length
 
