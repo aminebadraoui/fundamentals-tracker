@@ -11,7 +11,7 @@ const fetchJsonFilesUrls = async (baseUrl) => {
   return await Promise.all(promises);
 };
 
-const mergeData = async (baseUrl) => {
+const fetchAndMergeEventCalendar = async (baseUrl) => {
   const jsonFilesUrls = await fetchJsonFilesUrls(baseUrl);
 
 
@@ -78,12 +78,10 @@ const mergeData = async (baseUrl) => {
   return mergedData;
 };
 
-const filterByTypeAndCountries = async (baseUrl, type, asset) => {
-  const mergedData = await mergeData(baseUrl);
-  const countries = assets[asset].countries;
+const filterByTypeAndCountries =  (mergedData, type, asset, country) => {
 
   console.log("asset", asset);
-  console.log("countries", countries);
+  console.log("country", country);
 
   const filteredData = {};
 
@@ -92,41 +90,41 @@ const filterByTypeAndCountries = async (baseUrl, type, asset) => {
       filteredData[year] = {};
     }
 
-    if (!filteredData[year][asset]) {
-      filteredData[year][asset] = {};
+    // if (!filteredData[year][asset]) {
+    //   filteredData[year][asset] = {};
+    // }
+
+  
+    if (!filteredData[year][country]) {
+      filteredData[year][country] = {};
     }
 
-    Object.keys(mergedData[year][asset] || {}).forEach((country) => {
-      if (!countries.includes(country)) return; // Skip if the country is not in the selected countries
+    Object.keys(mergedData[year][asset][country] || {}).forEach((month) => {
+      const events = (mergedData[year][asset][country][month] || []).filter(item => item.type === type);
 
-      if (!filteredData[year][asset][country]) {
-        filteredData[year][asset][country] = {};
-      }
-
-      Object.keys(mergedData[year][asset][country] || {}).forEach((month) => {
-        const events = (mergedData[year][asset][country][month] || []).filter(item => item.type === type);
-
-        // Prioritize events based on the comparison field
-        const filteredEvents = events.filter(event => event.comparison === 'yoy');
-        if (filteredEvents.length === 0) {
-          const qoqEvents = events.filter(event => event.comparison === 'qoq');
-          if (qoqEvents.length === 0) {
-            filteredData[year][asset][country][month] = events;
-          } else {
-            filteredData[year][asset][country][month] = qoqEvents;
-          }
+      // Prioritize events based on the comparison field
+      const filteredEvents = events.filter(event => event.comparison === 'yoy');
+      if (filteredEvents.length === 0) {
+        const qoqEvents = events.filter(event => event.comparison === 'qoq');
+        if (qoqEvents.length === 0) {
+          filteredData[year][country][month] = events;
+          console.log("type", type)
+          console.log("events", events)
         } else {
-          filteredData[year][asset][country][month] = filteredEvents;
+          filteredData[year][country][month] = qoqEvents;
         }
-      });
+      } else {
+        filteredData[year][country][month] = filteredEvents;
+      }
     });
+   
   });
 
   // Reassign mismatched period data and retain only the most recent data
   Object.keys(filteredData).forEach((year) => {
-    Object.keys(filteredData[year][asset] || {}).forEach((country) => {
-      Object.keys(filteredData[year][asset][country] || {}).forEach((month) => {
-        const events = filteredData[year][asset][country][month];
+    Object.keys(filteredData[year] || {}).forEach((country) => {
+      Object.keys(filteredData[year][country] || {}).forEach((month) => {
+        const events = filteredData[year][country][month];
 
         const organizedEvents = (events || []).reduce((acc, event) => {
           const itemPeriod = event.period?.toLowerCase();
@@ -155,15 +153,17 @@ const filterByTypeAndCountries = async (baseUrl, type, asset) => {
         Object.keys(organizedEvents).forEach((organizedMonth) => {
           // Sort by date and keep only the most recent event
           const recentEvent = organizedEvents[organizedMonth].sort((a, b) => new Date(b.date) - new Date(a.date))[0];
-          filteredData[year][asset][country][organizedMonth] = [recentEvent];
+          filteredData[year][country][organizedMonth] = [recentEvent];
         });
       });
     });
   });
+
+  console.log("filteredData", filteredData);
 
   return filteredData;
 };
 
 const baseUrl = 'http://localhost:3000'; // Replace with your actual base URL
 
-export { filterByTypeAndCountries };
+export { fetchAndMergeEventCalendar, filterByTypeAndCountries };

@@ -3,6 +3,63 @@ const eventCategoryList = ["Inflation", "Interest Rates", "Econmic Growth"]
 
 // write array of all first day of the month and last day of the month for the last 12 months in the format of "MM-DD" in ascending order starting from january with an object key of the month name and first and last keys
 
+const countries = {
+  "US": {
+    inflationKey: "Inflation Rate",
+    mPMIKey: "ISM Manufacturing PMI",
+    sPMIKey: "ISM Services PMI",
+    unemploymentKey: "Unemployment Rate",
+  },
+  "EU": {
+    inflationKey: "Inflation Rate",
+    mPMIKey: "HCOB Manufacturing PMI",
+    sPMIKey: "HCOB Services PMI",
+    unemploymentKey: "Unemployment Rate",
+  },
+  "CA": {
+    inflationKey: "Inflation Rate",
+    mPMIKey: "Ivey PMI s.a",
+    sPMIKey: "Ivey PMI s.a",
+    unemploymentKey: "Unemployment Rate",
+  },
+  "AU": {
+    inflationKey: "Inflation Rate",
+    mPMIKey: "Judo Bank Manufacturing PMI",
+    sPMIKey: "Judo Bank Services PMI",
+    unemploymentKey: "Unemployment Rate",
+  },
+  "NZ": {
+    inflationKey: "Inflation Rate",
+    mPMIKey: null,
+    sPMIKey: "Business NZ PMI",
+    unemploymentKey: "Unemployment Rate",
+  },
+  "JP": {
+    inflationKey: "Inflation Rate",
+    mPMIKey: "Jibun Bank Manufacturing PMI",
+    sPMIKey: "Jibun Bank Services PMI",
+    unemploymentKey: "Unemployment Rate",
+  },
+  "CH": {
+    inflationKey: "Inflation Rate",
+    mPMIKey: "procure.ch Manufacturing PMI",
+    sPMIKey: "procure.ch Services PMI",
+    unemploymentKey: "Unemployment Rate",
+  },
+  "MX": {
+    inflationKey: "Inflation Rate",
+    mPMIKey: null,
+    sPMIKey: null,
+    unemploymentKey: "Unemployment Rate",
+  },
+  "UK": {
+    inflationKey: "Inflation Rate",
+    mPMIKey: "S&P Global/CIPS Manufacturing PMI",
+    sPMIKey: "S&P Global/CIPS UK Services PMI",
+    unemploymentKey: "Unemployment Rate",
+  }
+}
+
 const monthDates = { 
   "January": {first: "01-01", last: "01-31"},
   "February": {first: "02-01", last: "02-28"},
@@ -102,6 +159,41 @@ const majorEventsKeys = [
   "FOMC Minutes",
 ]
 
+const bonds = {
+  "US": {
+    short: "US2Y.GBOND",
+    long: "US10Y.GBOND"
+  },
+  "EU": {
+    short: "EURIBOR3M.MONEY",
+    long: "EURIBOR12M.MONEY"
+  },
+  "UK": {
+    short: "UK2Y.GBOND",
+    long: "UK10Y.GBOND"
+  },
+  "AU": {
+    short: "AU2Y.GBOND",
+    long: "AU10Y.GBOND"
+  },
+  "NZ": {
+    short: "NZ2Y.GBOND",
+    long: "NZ10Y.GBOND"
+  },
+  "CH": {
+    short: "CH10Y.GBOND",
+    long: "CH10Y.GBOND"
+  },
+  "JP": {
+    short: "JP2Y.GBOND",
+    long: "JP10Y.GBOND"
+  },
+  "CA": {
+    short: "CA2Y.GBOND",
+    long: "CA10Y.GBOND"
+  },
+}
+
 const assets =  {
   'EURUSD': {
     countries: ["EU", "US"],
@@ -111,7 +203,7 @@ const assets =  {
     apiSymbol: 'EURUSD.FOREX',
     apiType: 'eod',
     twelveDataSymbol: ``,
-    isFlipped: false
+    isFlipped: false,
   },
   
   'GBPUSD': {
@@ -251,7 +343,8 @@ const assets =  {
   },
 }
 
-export {inflationKeys,
+export {
+  inflationKeys,
   eventCategoryList, 
   countryList_Iso3166, 
   interestRatesKeys, 
@@ -261,5 +354,7 @@ export {inflationKeys,
   majorEventsKeys,
   assets,
   monthDates,
-  years
+  years,
+  bonds,
+  countries
 }

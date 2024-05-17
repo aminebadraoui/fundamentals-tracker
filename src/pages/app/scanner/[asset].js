@@ -5,11 +5,11 @@ import { TitledCard } from '@/components/shadcn/titled-card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/shadcn/table';
 import { getScoreBackgroundColor, getScoreTextColor } from '@/utils/get-score-color';
 import { processAssetData } from '@/utils/processAssetData';
-import { assets } from '@/utils/event-names';
+import { assets, countries } from '@/utils/event-names';
 
 import { Card } from '@/components/shadcn/card';
 
-import { filterByTypeAndCountries, filterCommonEvents } from '@/utils/getEventCalendarForCountriesByType';
+import { filterByTypeAndCountries, fetchAndMergeEventCalendar, filterCommonEvents } from '@/utils/getEventCalendarForCountriesByType';
 
 import { ChartComponent } from '@/components/ui/chart-component';
 
@@ -72,6 +72,16 @@ const fetchDataWithRetry = async (url, params = {}, taskName, maxRetries = 3, re
   }
 };
 
+const fetchBondData = async (baseUrl, country) => {
+  const url = `${baseUrl}/api/get-bonds`;
+  const response = await fetch(`${url}?country=${country}`);
+  if (!response.ok) {
+    throw new Error(`Failed to fetch bond data for ${country}`);
+  }
+  const data = await response.json();
+  return { country, data };
+};
+
 const fetchCotDataForYears = async (asset, years) => {
   const cotFileName = assets[asset].cotFileName
 
@@ -79,8 +89,8 @@ const fetchCotDataForYears = async (asset, years) => {
   const batchedCotData = await Promise.all(cotDataPromises);
   return batchedCotData.flat();
 };
-const formatInflationData = (data, asset) => {
-  const countries = assets[asset].countries;
+
+const formatInflationData = (data) => {
   const filteredYears = ['2023', '2024'];
   const orderedMonths = [
     'January', 'February', 'March', 'April', 'May', 'June',
@@ -90,45 +100,40 @@ const formatInflationData = (data, asset) => {
   const formattedData = [];
 
   filteredYears.forEach((year) => {
-    if (data[year] && data[year][asset]) {
+    if (data[year]) {
       const yearData = { year };
       orderedMonths.forEach((month) => {
-        yearData[month] = {};
-        countries.forEach(country => {
-          yearData[month][country] = { actual: null, estimate: null };
-        });
+        yearData[month] = { actual: null, estimate: null };
       });
 
-      countries.forEach((country) => {
-        if (data[year][asset][country]) {
-          Object.keys(data[year][asset][country]).forEach((month) => {
-            const events = data[year][asset][country][month];
-            if (events && events.length > 0) {
-              const latestEvent = events.reduce((latest, current) => {
-                return new Date(current.date) > new Date(latest.date) ? current : latest;
-              });
+      Object.keys(data[year]).forEach((country) => {
+        Object.keys(data[year][country]).forEach((month) => {
+          const events = data[year][country][month];
+          if (events && events.length > 0) {
+            const latestEvent = events.reduce((latest, current) => {
+              return new Date(current.date) > new Date(latest.date) ? current : latest;
+            });
 
-              const date = new Date(latestEvent.date);
-              const formattedMonth = date.toLocaleString('default', { month: 'long' });
-              if (yearData[formattedMonth]) {
-                yearData[formattedMonth][country] = {
-                  actual: latestEvent.actual || 0,
-                  estimate: latestEvent.estimate || 0,
-                };
-              }
+            const date = new Date(latestEvent.date);
+            const formattedMonth = date.toLocaleString('default', { month: 'long' });
+            if (yearData[formattedMonth]) {
+              yearData[formattedMonth][country] = {
+                actual: latestEvent.actual || 0,
+                estimate: latestEvent.estimate || 0,
+              };
             }
-          });
-        }
+          }
+        });
       });
 
       orderedMonths.forEach((month) => {
         const monthData = { year, month: month.slice(0, 3) };
         let hasData = false;
 
-        countries.forEach(country => {
-          monthData[country] = yearData[month][country].actual !== null ? yearData[month][country].actual : 0;
-          monthData[`${country}_estimate`] = yearData[month][country].estimate !== null ? yearData[month][country].estimate : 0;
-          if (yearData[month][country].actual !== null) {
+        Object.keys(data[year]).forEach((country) => {
+          monthData[country] = yearData[month][country]?.actual || 0;
+          monthData[`${country}_estimate`] = yearData[month][country]?.estimate || 0;
+          if (yearData[month][country]?.actual !== null) {
             hasData = true;
           }
         });
@@ -142,7 +147,6 @@ const formatInflationData = (data, asset) => {
 
   return formattedData;
 };
-
 
 const Scanner = (props) => {
   const asset = props.params.asset;
@@ -159,6 +163,11 @@ const Scanner = (props) => {
 
   const [inflationChartData, setInflationChartData] = useState([]);
 
+  const [formattedInflationData, setFormattedInflationData] = useState([]);
+  const [formattedSPMIData, setFormattedSPMIData] = useState([]);
+  const [formattedMPMIData, setFormattedMPMIData] = useState([]);
+  const [formattedUnemploymentData, setFormattedUnemploymentData] = useState([]);
+
   const [isLoading, setLoading] = useState(false);
 
   const handleDownload = async () => {
@@ -167,16 +176,69 @@ const Scanner = (props) => {
     try {
       const years = [2024, 2023, 2022, 2021, 2020, 2019, 2018, 2017]; // or any range of years you have data for
 
-      const [cotData, weeklyPriceData, inflationData ] = await Promise.all([
+      const [cotData, weeklyPriceData, eventCalendar, bondData ] = await Promise.all([
         fetchCotDataForYears(asset, years),
         fetchDataWithRetry('/api/getWeeklyPriceData', { asset }),
-        filterByTypeAndCountries( baseUrl, "Inflation Rate", asset),
+        fetchAndMergeEventCalendar( baseUrl),
+        Promise.all(assets[asset].countries.map(country => fetchBondData(baseUrl, country)))
       ]);
 
-      console.log(inflationData)
+      // const inflationData = assets[asset].countries.forEach((country) => {
+      //   getInflationDataForCountry(country, eventCalendar)
+      // })
 
-      const formattedInflationData = formatInflationData(inflationData, asset);
-      setInflationChartData(formattedInflationData);
+      // const PmiData = assets[asset].countries.forEach((country) => {
+      //   getPmiDataForCountry(country, eventCalendar)
+      // })
+
+      // const UnemploymentData = assets[asset].countries.forEach((country) => {
+      //   getUnemploymentDataForCountry(country, eventCalendar)
+      // })
+
+      // const GDPData = assets[asset].countries.forEach((country) => {
+      //   getGDPDataForCountry(country, eventCalendar)
+      // })
+
+
+      console.log("bondData", bondData )
+
+      console.log(eventCalendar)
+
+
+    
+ 
+
+
+
+      const inflationData = assets[asset].countries.map(country => {
+        return filterByTypeAndCountries(eventCalendar, countries[country].inflationKey, asset, country);
+      });
+      const formattedInflationData = inflationData.map(data => formatInflationData(data));
+      setFormattedInflationData(formattedInflationData);
+
+
+      const sPmiData = assets[asset].countries.map(country => {
+        return filterByTypeAndCountries(eventCalendar, countries[country].sPMIKey, asset, country);
+  });
+      const formattedSPmiData = sPmiData.map(data => formatInflationData(data));
+      setFormattedSPMIData(formattedSPmiData);
+
+
+      const mPmiData = assets[asset].countries.map(country => {
+        return filterByTypeAndCountries(eventCalendar, countries[country].mPMIKey, asset, country);
+      });
+      const formattedMPmiData = mPmiData.map(data => formatInflationData(data));
+      setFormattedMPMIData(formattedMPmiData);
+
+      const unemploymentData = assets[asset].countries.map(country => {
+        return filterByTypeAndCountries(eventCalendar, countries[country].unemploymentKey, asset, country);
+      });
+      const formattedUnemploymentData = unemploymentData.map(data => formatInflationData(data));
+      setFormattedUnemploymentData(formattedUnemploymentData);
+
+      console.log("unemploymentData", unemploymentData)
+
+
 
       console.log("Formatted Inflation Data", formattedInflationData)
 
@@ -279,60 +341,156 @@ const Scanner = (props) => {
                     </TitledCard>
 
                     <TitledCard key="inflation_card" className={Style.InternalCard} title="Inflation">
-                  {    assets[asset].countries.length > 1 && <ResponsiveContainer width="100%" height={400}>
-                          <ComposedChart data={inflationChartData}>
-                            <XAxis dataKey="month" />
-                            <YAxis />
-                            <Tooltip />
-                            <Legend />
-                            {assets[asset].countries.map((country, index) => {
-                              const barColor = index === 0 ? "#8884d8" : "#82ca9d"; // Different colors for each country
-                              const scatterColor = index === 0 ? "#ff7300" : "#387908"; // Different colors for each country
-                              const barDataKey = country;
-                              const scatterDataKey = `${country}_estimate`;
+                    {formattedInflationData.length > 0 && formattedInflationData.map((data, index) => (
+                      <ResponsiveContainer width="100%" height={400} key={index}>
+                        <ComposedChart data={data}>
+                          <XAxis dataKey="month" />
+                          <YAxis />
+                          <Tooltip />
+                          <Legend />
+                          {Object.keys(data[0]).filter(key => !['year', 'month'].includes(key)).map((countryKey, countryIndex) => {
+                            const isEstimate = countryKey.includes('_estimate');
+                            const country = countryKey.replace('_estimate', '');
+                            const barColor = countryIndex % 2 === 0 ? "#8884d8" : "#82ca9d";
+                            const scatterColor = countryIndex % 2 === 0 ? "#ff7300" : "#387908";
 
+                            if (isEstimate) {
                               return (
-                                <React.Fragment key={country}>
-                                  <Bar dataKey={barDataKey} fill={barColor} />
-                              
-                                </React.Fragment>
+                                <Scatter
+                                  key={`${countryKey}_${index}`}
+                                  dataKey={countryKey}
+                                  fill={scatterColor}
+                                  shape={<CustomScatterShape />}
+                                />
                               );
-                            })}
-                          </ComposedChart>
-                        </ResponsiveContainer>}
+                            } else {
+                              return (
+                                <Bar
+                                  key={`${countryKey}_${index}`}
+                                  dataKey={countryKey}
+                                  fill={barColor}
+                                />
+                              );
+                            }
+                          })}
+                        </ComposedChart>
+                      </ResponsiveContainer>
+                    ))}
+                  </TitledCard>
 
+                  <TitledCard key="sPMI_card" className={Style.InternalCard} title="Services PMI">
+                    {formattedSPMIData.length > 0 && formattedSPMIData.map((data, index) => (
+                      <ResponsiveContainer width="100%" height={400} key={index}>
+                        <ComposedChart data={data}>
+                          <XAxis dataKey="month" />
+                          <YAxis />
+                          <Tooltip />
+                          <Legend />
+                          {Object.keys(data[0]).filter(key => !['year', 'month'].includes(key)).map((countryKey, countryIndex) => {
+                            const isEstimate = countryKey.includes('_estimate');
+                            const country = countryKey.replace('_estimate', '');
+                            const barColor = countryIndex % 2 === 0 ? "#8884d8" : "#82ca9d";
+                            const scatterColor = countryIndex % 2 === 0 ? "#ff7300" : "#387908";
 
-                        <div className='flex '>
-                        {
-                        assets[asset].countries.map((country, index) => {
-                          const barColor = index === 0 ? "#8884d8" : "#82ca9d"; // Different colors for each country
-                          const scatterColor = index === 0 ? "#ff7300" : "#387908"; // Different colors for each country
-                          const barDataKey = country;
-                          const scatterDataKey = `${country}_estimate`;
+                            if (isEstimate) {
+                              return (
+                                <Scatter
+                                  key={`${countryKey}_${index}`}
+                                  dataKey={countryKey}
+                                  fill={scatterColor}
+                                  shape={<CustomScatterShape />}
+                                />
+                              );
+                            } else {
+                              return (
+                                <Bar
+                                  key={`${countryKey}_${index}`}
+                                  dataKey={countryKey}
+                                  fill={barColor}
+                                />
+                              );
+                            }
+                          })}
+                        </ComposedChart>
+                      </ResponsiveContainer>
+                    ))}
+                  </TitledCard>
 
-                          return <ResponsiveContainer width="100%" height={400}>
-                            <ComposedChart data={inflationChartData}>
-                              <XAxis dataKey="month" />
-                              <YAxis />
-                              <Tooltip />
-                              <Legend />
-                              <Bar dataKey={barDataKey} fill={barColor} />
-                              <Scatter
-                                fill={scatterColor}
-                                dataKey={scatterDataKey}
-                                startOffset={80}
-                                
-                              />
-                            </ComposedChart>
-                        </ResponsiveContainer>
+                  <TitledCard key="mPMI_card" className={Style.InternalCard} title="Manufacturing PMI">
+                    {formattedMPMIData.length > 0 && formattedMPMIData.map((data, index) => (
+                      <ResponsiveContainer width="100%" height={400} key={index}>
+                        <ComposedChart data={data}>
+                          <XAxis dataKey="month" />
+                          <YAxis />
+                          <Tooltip />
+                          <Legend />
+                          {Object.keys(data[0]).filter(key => !['year', 'month'].includes(key)).map((countryKey, countryIndex) => {
+                            const isEstimate = countryKey.includes('_estimate');
+                            const country = countryKey.replace('_estimate', '');
+                            const barColor = countryIndex % 2 === 0 ? "#8884d8" : "#82ca9d";
+                            const scatterColor = countryIndex % 2 === 0 ? "#ff7300" : "#387908";
 
-                        })
-                      }
-                           </div>
-            
+                            if (isEstimate) {
+                              return (
+                                <Scatter
+                                  key={`${countryKey}_${index}`}
+                                  dataKey={countryKey}
+                                  fill={scatterColor}
+                                  shape={<CustomScatterShape />}
+                                />
+                              );
+                            } else {
+                              return (
+                                <Bar
+                                  key={`${countryKey}_${index}`}
+                                  dataKey={countryKey}
+                                  fill={barColor}
+                                />
+                              );
+                            }
+                          })}
+                        </ComposedChart>
+                      </ResponsiveContainer>
+                    ))}
+                  </TitledCard>
 
-                    
-                    </TitledCard>
+                  <TitledCard key="unemployment_card" className={Style.InternalCard} title="Unemployment Rate">
+                    {formattedUnemploymentData.length > 0 && formattedUnemploymentData.map((data, index) => (
+                      <ResponsiveContainer width="100%" height={400} key={index}>
+                        <ComposedChart data={data}>
+                          <XAxis dataKey="month" />
+                          <YAxis />
+                          <Tooltip />
+                          <Legend />
+                          {Object.keys(data[0]).filter(key => !['year', 'month'].includes(key)).map((countryKey, countryIndex) => {
+                            const isEstimate = countryKey.includes('_estimate');
+                            const country = countryKey.replace('_estimate', '');
+                            const barColor = countryIndex % 2 === 0 ? "#8884d8" : "#82ca9d";
+                            const scatterColor = countryIndex % 2 === 0 ? "#ff7300" : "#387908";
+
+                            if (isEstimate) {
+                              return (
+                                <Scatter
+                                  key={`${countryKey}_${index}`}
+                                  dataKey={countryKey}
+                                  fill={scatterColor}
+                                  shape={<CustomScatterShape />}
+                                />
+                              );
+                            } else {
+                              return (
+                                <Bar
+                                  key={`${countryKey}_${index}`}
+                                  dataKey={countryKey}
+                                  fill={barColor}
+                                />
+                              );
+                            }
+                          })}
+                        </ComposedChart>
+                      </ResponsiveContainer>
+                    ))}
+                  </TitledCard>
                     </div>
                     <div className='grid col-span-1 gap-2 '> 
 

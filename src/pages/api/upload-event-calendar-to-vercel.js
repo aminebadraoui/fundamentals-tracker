@@ -106,7 +106,7 @@ export default async (req, res) => {
   const responses = await Promise.all(eventsPromises);
   const organizedDataByYear = organizeDataByYear(responses);
   ensureMonthsOrder(organizedDataByYear);
-  filterCommonEvents(organizedDataByYear);
+  //filterCommonEvents(organizedDataByYear);
 
   const uploadPromises = Object.keys(organizedDataByYear).map((year) => {
     const yearData = organizedDataByYear[year];
