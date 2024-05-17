@@ -167,6 +167,7 @@ const Scanner = (props) => {
   const [formattedSPMIData, setFormattedSPMIData] = useState([]);
   const [formattedMPMIData, setFormattedMPMIData] = useState([]);
   const [formattedUnemploymentData, setFormattedUnemploymentData] = useState([]);
+  const [formattedGDPData, setFormattedGDPData] = useState([]);
 
   const [isLoading, setLoading] = useState(false);
 
@@ -235,6 +236,13 @@ const Scanner = (props) => {
       });
       const formattedUnemploymentData = unemploymentData.map(data => formatInflationData(data));
       setFormattedUnemploymentData(formattedUnemploymentData);
+
+      const gdpData = assets[asset].countries.map(country => {
+        return filterByTypeAndCountries(eventCalendar, countries[country].gdpGrowthRateKey, asset, country);
+      });
+
+      const formattedGDPData = gdpData.map(data => formatInflationData(data));
+      setFormattedGDPData(formattedGDPData);
 
       console.log("unemploymentData", unemploymentData)
 
@@ -456,6 +464,44 @@ const Scanner = (props) => {
 
                   <TitledCard key="unemployment_card" className={Style.InternalCard} title="Unemployment Rate">
                     {formattedUnemploymentData.length > 0 && formattedUnemploymentData.map((data, index) => (
+                      <ResponsiveContainer width="100%" height={400} key={index}>
+                        <ComposedChart data={data}>
+                          <XAxis dataKey="month" />
+                          <YAxis />
+                          <Tooltip />
+                          <Legend />
+                          {Object.keys(data[0]).filter(key => !['year', 'month'].includes(key)).map((countryKey, countryIndex) => {
+                            const isEstimate = countryKey.includes('_estimate');
+                            const country = countryKey.replace('_estimate', '');
+                            const barColor = countryIndex % 2 === 0 ? "#8884d8" : "#82ca9d";
+                            const scatterColor = countryIndex % 2 === 0 ? "#ff7300" : "#387908";
+
+                            if (isEstimate) {
+                              return (
+                                <Scatter
+                                  key={`${countryKey}_${index}`}
+                                  dataKey={countryKey}
+                                  fill={scatterColor}
+                                  shape={<CustomScatterShape />}
+                                />
+                              );
+                            } else {
+                              return (
+                                <Bar
+                                  key={`${countryKey}_${index}`}
+                                  dataKey={countryKey}
+                                  fill={barColor}
+                                />
+                              );
+                            }
+                          })}
+                        </ComposedChart>
+                      </ResponsiveContainer>
+                    ))}
+                  </TitledCard>
+
+                  <TitledCard key="gdp_card" className={Style.InternalCard} title="GDP Growth Rate">
+                    {formattedGDPData.length > 0 && formattedGDPData.map((data, index) => (
                       <ResponsiveContainer width="100%" height={400} key={index}>
                         <ComposedChart data={data}>
                           <XAxis dataKey="month" />

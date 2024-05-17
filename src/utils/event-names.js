@@ -9,54 +9,64 @@ const countries = {
     mPMIKey: "ISM Manufacturing PMI",
     sPMIKey: "ISM Services PMI",
     unemploymentKey: "Unemployment Rate",
+    gdpGrowthRateKey: "GDP Growth Rate",  
   },
   "EU": {
     inflationKey: "Inflation Rate",
     mPMIKey: "HCOB Manufacturing PMI",
     sPMIKey: "HCOB Services PMI",
     unemploymentKey: "Unemployment Rate",
+    gdpGrowthRateKey: "GDP Growth Rate",  
+
   },
   "CA": {
     inflationKey: "Inflation Rate",
     mPMIKey: "Ivey PMI s.a",
     sPMIKey: "Ivey PMI s.a",
     unemploymentKey: "Unemployment Rate",
+    gdpGrowthRateKey: "GDP Growth Rate",  
   },
   "AU": {
     inflationKey: "Inflation Rate",
     mPMIKey: "Judo Bank Manufacturing PMI",
     sPMIKey: "Judo Bank Services PMI",
     unemploymentKey: "Unemployment Rate",
+    gdpGrowthRateKey: "GDP Growth Rate",  
   },
   "NZ": {
     inflationKey: "Inflation Rate",
     mPMIKey: null,
     sPMIKey: "Business NZ PMI",
     unemploymentKey: "Unemployment Rate",
+    gdpGrowthRateKey: "GDP Growth Rate",  
   },
   "JP": {
     inflationKey: "Inflation Rate",
     mPMIKey: "Jibun Bank Manufacturing PMI",
     sPMIKey: "Jibun Bank Services PMI",
     unemploymentKey: "Unemployment Rate",
+    gdpGrowthRateKey: "GDP Growth Rate",  
   },
   "CH": {
     inflationKey: "Inflation Rate",
     mPMIKey: "procure.ch Manufacturing PMI",
     sPMIKey: "procure.ch Services PMI",
     unemploymentKey: "Unemployment Rate",
+    gdpGrowthRateKey: "GDP Growth Rate",  
   },
   "MX": {
     inflationKey: "Inflation Rate",
     mPMIKey: null,
     sPMIKey: null,
     unemploymentKey: "Unemployment Rate",
+    gdpGrowthRateKey: "GDP Growth Rate",  
   },
   "UK": {
     inflationKey: "Inflation Rate",
     mPMIKey: "S&P Global/CIPS Manufacturing PMI",
     sPMIKey: "S&P Global/CIPS UK Services PMI",
     unemploymentKey: "Unemployment Rate",
+    gdpGrowthRateKey: "GDP Growth Rate",  
   }
 }
 
