@@ -359,8 +359,9 @@ const Scanner = (props) => {
                           {Object.keys(data[0]).filter(key => !['year', 'month'].includes(key)).map((countryKey, countryIndex) => {
                             const isEstimate = countryKey.includes('_estimate');
                             const country = countryKey.replace('_estimate', '');
-                            const barColor = countryIndex % 2 === 0 ? "#8884d8" : "#82ca9d";
-                            const scatterColor = countryIndex % 2 === 0 ? "#ff7300" : "#387908";
+                            const barColor = index % 2 === 0 ? "#8884d8" : "#a717d3";
+                            const scatterColor = "#f87315" 
+
 
                             if (isEstimate) {
                               return (
@@ -397,8 +398,8 @@ const Scanner = (props) => {
                           {Object.keys(data[0]).filter(key => !['year', 'month'].includes(key)).map((countryKey, countryIndex) => {
                             const isEstimate = countryKey.includes('_estimate');
                             const country = countryKey.replace('_estimate', '');
-                            const barColor = countryIndex % 2 === 0 ? "#8884d8" : "#82ca9d";
-                            const scatterColor = countryIndex % 2 === 0 ? "#ff7300" : "#387908";
+                            const barColor = index % 2 === 0 ? "#8884d8" : "#a717d3";
+                            const scatterColor = "#f87315" 
 
                             if (isEstimate) {
                               return (
@@ -435,8 +436,8 @@ const Scanner = (props) => {
                           {Object.keys(data[0]).filter(key => !['year', 'month'].includes(key)).map((countryKey, countryIndex) => {
                             const isEstimate = countryKey.includes('_estimate');
                             const country = countryKey.replace('_estimate', '');
-                            const barColor = countryIndex % 2 === 0 ? "#8884d8" : "#82ca9d";
-                            const scatterColor = countryIndex % 2 === 0 ? "#ff7300" : "#387908";
+                            const barColor = index % 2 === 0 ? "#8884d8" : "#a717d3";
+                            const scatterColor = "#f87315" 
 
                             if (isEstimate) {
                               return (
@@ -473,8 +474,9 @@ const Scanner = (props) => {
                           {Object.keys(data[0]).filter(key => !['year', 'month'].includes(key)).map((countryKey, countryIndex) => {
                             const isEstimate = countryKey.includes('_estimate');
                             const country = countryKey.replace('_estimate', '');
-                            const barColor = countryIndex % 2 === 0 ? "#8884d8" : "#82ca9d";
-                            const scatterColor = countryIndex % 2 === 0 ? "#ff7300" : "#387908";
+                            const barColor = index % 2 === 0 ? "#8884d8" : "#a717d3";
+                            const scatterColor = "#f87315" 
+
 
                             if (isEstimate) {
                               return (
@@ -511,8 +513,9 @@ const Scanner = (props) => {
                           {Object.keys(data[0]).filter(key => !['year', 'month'].includes(key)).map((countryKey, countryIndex) => {
                             const isEstimate = countryKey.includes('_estimate');
                             const country = countryKey.replace('_estimate', '');
-                            const barColor = countryIndex % 2 === 0 ? "#8884d8" : "#82ca9d";
-                            const scatterColor = countryIndex % 2 === 0 ? "#ff7300" : "#387908";
+                            const barColor = index % 2 === 0 ? "#8884d8" : "#a717d3";
+                            const scatterColor = "#f87315" 
+
 
                             if (isEstimate) {
                               return (
