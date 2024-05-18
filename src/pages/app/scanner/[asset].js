@@ -13,7 +13,7 @@ import { filterByTypeAndCountries, fetchAndMergeEventCalendar, filterCommonEvent
 
 import { ChartComponent } from '@/components/ui/chart-component';
 
-import { Bar, BarChart, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis, Cell, Scatter, ComposedChart} from 'recharts';
+import { Bar, BarChart, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis, Cell, Scatter, ComposedChart, LineChart, Line} from 'recharts';
 
 import withSession from '@/lib/withSession';
 import withSubscription from '@/lib/withSubscription';
@@ -90,7 +90,34 @@ const fetchCotDataForYears = async (asset, years) => {
   return batchedCotData.flat();
 };
 
-const formatInflationData = (data) => {
+const mapBondDataToChartData = (bondData) => {
+  return bondData.map((data) => {
+    const country = data.country;
+    const shortBonds = data.data[country].shortBonds.map((bond) => ({
+      date: bond.date,
+      shortBondsClose: bond.close
+    }));
+    const longBonds = data.data[country].longBonds.map((bond) => ({
+      date: bond.date,
+      longBondsClose: bond.close
+    }));
+
+    // Merge short and long bond data based on date
+    const mergedData = shortBonds.map((shortBond) => {
+      const longBond = longBonds.find((lb) => lb.date === shortBond.date);
+      return {
+        date: shortBond.date,
+        shortBondsClose: shortBond.shortBondsClose,
+        longBondsClose: longBond ? longBond.longBondsClose : null
+      };
+    });
+
+    return { country, data: mergedData };
+  });
+};
+
+
+const convertCalendarDataToChartData = (data) => {
   const filteredYears = ['2023', '2024'];
   const orderedMonths = [
     'January', 'February', 'March', 'April', 'May', 'June',
@@ -168,6 +195,7 @@ const Scanner = (props) => {
   const [formattedMPMIData, setFormattedMPMIData] = useState([]);
   const [formattedUnemploymentData, setFormattedUnemploymentData] = useState([]);
   const [formattedGDPData, setFormattedGDPData] = useState([]);
+  const [bondData, setBondData] = useState([]);
 
   const [isLoading, setLoading] = useState(false);
 
@@ -202,6 +230,8 @@ const Scanner = (props) => {
 
 
       console.log("bondData", bondData )
+      const mappedBondData = mapBondDataToChartData(bondData);
+      setBondData(mappedBondData);
 
       console.log(eventCalendar)
 
@@ -214,39 +244,37 @@ const Scanner = (props) => {
       const inflationData = assets[asset].countries.map(country => {
         return filterByTypeAndCountries(eventCalendar, countries[country].inflationKey, asset, country);
       });
-      const formattedInflationData = inflationData.map(data => formatInflationData(data));
+      const formattedInflationData = inflationData.map(data => convertCalendarDataToChartData(data));
       setFormattedInflationData(formattedInflationData);
 
 
       const sPmiData = assets[asset].countries.map(country => {
         return filterByTypeAndCountries(eventCalendar, countries[country].sPMIKey, asset, country);
   });
-      const formattedSPmiData = sPmiData.map(data => formatInflationData(data));
+      const formattedSPmiData = sPmiData.map(data => convertCalendarDataToChartData(data));
       setFormattedSPMIData(formattedSPmiData);
 
 
       const mPmiData = assets[asset].countries.map(country => {
         return filterByTypeAndCountries(eventCalendar, countries[country].mPMIKey, asset, country);
       });
-      const formattedMPmiData = mPmiData.map(data => formatInflationData(data));
+      const formattedMPmiData = mPmiData.map(data => convertCalendarDataToChartData(data));
       setFormattedMPMIData(formattedMPmiData);
 
       const unemploymentData = assets[asset].countries.map(country => {
         return filterByTypeAndCountries(eventCalendar, countries[country].unemploymentKey, asset, country);
       });
-      const formattedUnemploymentData = unemploymentData.map(data => formatInflationData(data));
+      const formattedUnemploymentData = unemploymentData.map(data => convertCalendarDataToChartData(data));
       setFormattedUnemploymentData(formattedUnemploymentData);
 
       const gdpData = assets[asset].countries.map(country => {
         return filterByTypeAndCountries(eventCalendar, countries[country].gdpGrowthRateKey, asset, country);
       });
 
-      const formattedGDPData = gdpData.map(data => formatInflationData(data));
+      const formattedGDPData = gdpData.map(data => convertCalendarDataToChartData(data));
       setFormattedGDPData(formattedGDPData);
 
       console.log("unemploymentData", unemploymentData)
-
-
 
       console.log("Formatted Inflation Data", formattedInflationData)
 
@@ -540,6 +568,24 @@ const Scanner = (props) => {
                       </ResponsiveContainer>
                     ))}
                   </TitledCard>
+
+                  <TitledCard key="bonds_card" className={Style.InternalCard} title="Bonds Data">
+                        {bondData.length > 0 && bondData.map((data, index) => (
+                          <ResponsiveContainer width="100%" height={400} key={index}>
+                            <LineChart data={data.data}>
+                              <XAxis dataKey="date" />
+                              <YAxis />
+                              <Tooltip />
+                              <Legend />
+                              <Line type="monotone" dataKey="shortBondsClose" name={
+                                `${data.country} ` + `Short-Term Yield `} dot={false} stroke="#f87315" />
+                             
+                              <Line type="monotone" dataKey="longBondsClose" name={ `${data.country} ` + `Long-Term Yield`} dot={false} stroke="#8884d8" />
+                            </LineChart>
+                          </ResponsiveContainer>
+                        ))}
+                      </TitledCard>
+
                     </div>
                     <div className='grid col-span-1 gap-2 '> 
 

@@ -108,8 +108,7 @@ const filterByTypeAndCountries =  (mergedData, type, asset, country) => {
         const qoqEvents = events.filter(event => event.comparison === 'qoq');
         if (qoqEvents.length === 0) {
           filteredData[year][country][month] = events;
-          console.log("type", type)
-          console.log("events", events)
+
         } else {
           filteredData[year][country][month] = qoqEvents;
         }
@@ -139,7 +138,7 @@ const filterByTypeAndCountries =  (mergedData, type, asset, country) => {
               if (!acc[month]) {
                 acc[month] = [];
               }
-              acc[month].push(event);
+              acc[month].push(event); 
             }
           } else {
             if (!acc[month]) {
@@ -159,7 +158,6 @@ const filterByTypeAndCountries =  (mergedData, type, asset, country) => {
     });
   });
 
-  console.log("filteredData", filteredData);
 
   return filteredData;
 };

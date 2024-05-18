@@ -2,7 +2,7 @@
 import { bonds } from "@/utils/event-names";
 const fetchBondPrices = async (bond) => {
  
-  const url = `https://eodhd.com/api/eod/${bond}?from=2024-01-01&api_token=${process.env.EOD_TOKEN}&fmt=json`; // Replace with the actual API endpoint
+  const url = `https://eodhd.com/api/eod/${bond}?from=2021-01-01&api_token=${process.env.EOD_TOKEN}&fmt=json`; // Replace with the actual API endpoint
   const response = await fetch(url);
   const data = await response.json();
  
