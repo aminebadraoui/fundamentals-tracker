@@ -16,6 +16,8 @@ import { calculateEconomicScoreForPair } from '@/utils/scoring/calculateEconomic
 import { calculateBondScoreForPair } from '@/utils/scoring/calculateBondScoreForPair';
 import { calculateCotDataScores } from '@/utils/scoring/calculateCotDataScores';
 
+import { calculateEMA } from '@/utils/calculateEMA';
+
 
 
 
@@ -96,27 +98,26 @@ const Pulse = (props) => {
   const [pulseData, setPulseData] = useState([]);
   const [isLoading, setLoading] = useState(false);
 
-  const [cotScore, setCotScore] = useState(null);
-  const [inflationScore, setInflationScore] = useState(null);
-  const [sPMIScores, setSPMIScores] = useState(null);
-  const [mPMIScores, setMPMIScores] = useState(null);
-  const [unemploymentScores, setUnemploymentScores] = useState(null);
-  const [gdpScores, setGDPScores] = useState(null);
-  const [bondScores, setBondScores] = useState(null);
-
   const handleDownload = async () => {
     setLoading(true);
     try {
       const years = [2024];
+      // get 30 days minus current date in the format YYYY-MM-DD
+      const today = new Date();
+      const last30Days = new Date(today.setDate(today.getDate() - 30));
+      const last30DaysFormatted = last30Days.toISOString().split('T')[0];
+
       const eventCalendarPromise = fetchAndMergeEventCalendar(baseUrl);
+
       const assetPromises = Object.keys(assets).map(asset => 
         Promise.all([
           fetchCotDataForYears(asset, years),
+          fetchDataWithRetry('/api/getWeeklyPriceData', { asset, startDate: last30DaysFormatted}),
           Promise.all(assets[asset].countries.map(country => fetchBondData(baseUrl, country)))
-        ]).then(([cotData, bondData]) => {
+        ]).then(([cotData, dailyPriceData, bondData]) => {
           return { 
             [asset]: {
-              cotData, bondData
+              cotData, dailyPriceData, bondData
             }
           }
         })
@@ -132,7 +133,7 @@ const Pulse = (props) => {
 
       assetDataArray.map(assetData => { 
         const asset = Object.keys(assetData)[0];
-        const { cotData, bondData } = assetData[asset];
+        const { cotData, dailyPriceData, bondData } = assetData[asset];
 
         // Data 
       const inflationData = assets[asset].countries.map(country => {
@@ -151,6 +152,18 @@ const Pulse = (props) => {
         return filterByTypeAndCountries(eventCalendar, countries[country].gdpGrowthRateKey, asset, country);
       });
 
+      const sortedLast30Prices = dailyPriceData.slice().sort((a, b) => new Date(b.time) - new Date(a.time))
+      console.log("sortedLast30Prices", sortedLast30Prices)
+      const ema = calculateEMA(sortedLast30Prices, 9);
+
+      const mostRecentPrice = sortedLast30Prices[0];
+      const mostRecentEma = ema[0];
+
+      console.log("mostRecentPrice", mostRecentPrice)
+      console.log("mostRecentEma", mostRecentEma)
+
+      const maScore = mostRecentPrice.close > mostRecentEma ? 100 : mostRecentPrice.close < mostRecentEma ? -100 : 0;
+
       // Scores
       const cotScore = calculateCotDataScores(cotData, asset)
       const inflationScore = calculateEconomicScoreForPair(inflationData)
@@ -159,6 +172,7 @@ const Pulse = (props) => {
       const unemploymentScores = calculateEconomicScoreForPair(unemploymentData,true)
       const gdpScores = calculateEconomicScoreForPair(gdpData)
       const bondScores = calculateBondScoreForPair(bondData)
+      
 
       assetData[asset].cotScore = cotScore
       assetData[asset].inflationScore = inflationScore
@@ -167,6 +181,7 @@ const Pulse = (props) => {
       assetData[asset].unemploymentScores = unemploymentScores
       assetData[asset].gdpScores = gdpScores
       assetData[asset].bondScores = bondScores
+      assetData[asset].maScore = maScore
 
     })
 
@@ -224,7 +239,12 @@ const Pulse = (props) => {
                      
                       return (
                         <TableRow key={index}>
-                          <TableCell>{assetKey}</TableCell>
+                          <TableCell className="text-primary-foreground font-bold">{
+                            <Link href={`/app/scanner/${assetKey}`}>
+                              {assetKey}
+                            </Link>
+                          }</TableCell>
+                
                           <TableCell  className={`bg-primary text-primary-foreground font-bold ${getScoreTextColor(scores.cotScore.totalScore)}`}>{scores.cotScore.totalScore.toFixed(2)}</TableCell>
                           <TableCell  className={`bg-primary text-primary-foreground font-bold ${getScoreTextColor(scores.inflationScore.totalScore)}`}>{scores.inflationScore.totalScore.toFixed(2)}</TableCell>
                           <TableCell  className={`bg-primary text-primary-foreground font-bold ${getScoreTextColor(scores.mPMIScores.totalScore)}`}>{scores.mPMIScores.totalScore.toFixed(2)}</TableCell>
@@ -232,6 +252,7 @@ const Pulse = (props) => {
                           <TableCell  className={`bg-primary text-primary-foreground font-bold ${getScoreTextColor(scores.unemploymentScores.totalScore)}`}>{scores.unemploymentScores.totalScore.toFixed(2)}</TableCell>
                           <TableCell  className={`bg-primary text-primary-foreground font-bold ${getScoreTextColor(scores.gdpScores.totalScore)}`}>{scores.gdpScores.totalScore.toFixed(2)}</TableCell>
                           <TableCell  className={`bg-primary text-primary-foreground font-bold ${getScoreTextColor(scores.bondScores.totalScore)}`}>{scores.bondScores.totalScore.toFixed(2)}</TableCell>
+                          <TableCell  className={`bg-primary text-primary-foreground font-bold ${getScoreTextColor(scores.maScore)}`}>{scores.maScore.toFixed(2)}</TableCell>
                         </TableRow>
                       );
                     })}

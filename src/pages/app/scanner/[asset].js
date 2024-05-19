@@ -26,6 +26,7 @@ import { calculateEconomicScoreForPair } from '@/utils/scoring/calculateEconomic
 import { calculateBondScoreForPair } from '@/utils/scoring/calculateBondScoreForPair';
 import { calculateCotDataScores } from '@/utils/scoring/calculateCotDataScores';
 import { getPriceChartData } from '@/utils/chartData/priceChartData';
+import { calculateEMA } from '@/utils/calculateEMA';
 
 export const getServerSideProps = async (context) => {
   return withSession(context, async(context, session) => {
@@ -59,6 +60,7 @@ const CustomScatterShape = (props) => {
 
 const fetchDataWithRetry = async (url, params = {}, taskName, maxRetries = 3, retryDelay = 1000) => {
   const queryString = new URLSearchParams(params).toString();
+  console.log("queryString", queryString)
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
       const response = await fetch(`${url}?${queryString}`);
@@ -214,14 +216,27 @@ const Scanner = (props) => {
 
     try {
       const years = [2024, 2023, 2022, 2021, 2020, 2019, 2018, 2017]; // or any range of years you have data for
+      
+      // get 30 days minus current date in the format YYYY-MM-DD
+      const today = new Date();
+      const last30Days = new Date(today.setDate(today.getDate() - 30));
+      const last30DaysFormatted = last30Days.toISOString().split('T')[0];
+
 
       const [cotData, weeklyPriceData, eventCalendar, bondData ] = await Promise.all([
         fetchCotDataForYears(asset, years),
         fetchDataWithRetry('/api/getWeeklyPriceData', { asset }),
+        // fetchDataWithRetry('/api/getWeeklyPriceData', { asset, startDate: last30DaysFormatted}),
         fetchAndMergeEventCalendar( baseUrl),
         Promise.all(assets[asset].countries.map(country => fetchBondData(baseUrl, country)))
       ]);
 
+      
+      const sortedLast30Prices = weeklyPriceData.slice().sort((a, b) => new Date(b.time) - new Date(a.time)).slice(0, 30);
+      console.log("sortedLast30Prices", sortedLast30Prices)
+      const ema = calculateEMA(sortedLast30Prices, 9);
+
+      console.log("ema", ema)
       // Data 
       const inflationData = assets[asset].countries.map(country => {
         return filterByTypeAndCountries(eventCalendar, countries[country].inflationKey, asset, country);
