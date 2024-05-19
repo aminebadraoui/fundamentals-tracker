@@ -15,7 +15,7 @@ export const getWeeklyPriceData = async (asset) => {
   
   if (apiType === "eod") {
     const symbol = asset.apiSymbol
-    url = `https://eodhd.com/api/eod/${symbol}?&period=w&from=2016-01-01&api_token=${process.env.EOD_TOKEN}&fmt=json`
+    url = `https://eodhd.com/api/eod/${symbol}?&period=d&from=2016-01-01&api_token=${process.env.EOD_TOKEN}&fmt=json`
     const weekly_price_res = await fetch(url);
     
 
@@ -34,7 +34,7 @@ export const getWeeklyPriceData = async (asset) => {
 
   } else {
     const symbol = asset.twelveDataSymbol
-    url = `https://api.twelvedata.com/time_series?apikey=${process.env.TWELVEDATA_API_KEY}&interval=1week&symbol=${symbol}&format=JSON&start_date=2016-01-01 10:42:00`
+    url = `https://api.twelvedata.com/time_series?apikey=${process.env.TWELVEDATA_API_KEY}&interval=1day&symbol=${symbol}&format=JSON&start_date=2016-01-01 10:42:00`
     const weekly_price_res = await fetch(url);
     
 

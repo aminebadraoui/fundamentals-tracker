@@ -4,7 +4,7 @@ import { Loader } from '@/components/ui/loader'
 import { TitledCard } from '@/components/shadcn/titled-card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/shadcn/table';
 import { getScoreBackgroundColor, getScoreTextColor } from '@/utils/get-score-color';
-import { processAssetData } from '@/utils/processAssetData';
+
 import { assets, countries } from '@/utils/event-names';
 
 import { Card } from '@/components/shadcn/card';
@@ -21,6 +21,11 @@ import withSubscription from '@/lib/withSubscription';
 import dynamic from "next/dynamic";
 import { set } from 'mongoose';
 import { m } from 'framer-motion';
+
+import { calculateEconomicScoreForPair } from '@/utils/scoring/calculateEconomicScoreForPair';
+import { calculateBondScoreForPair } from '@/utils/scoring/calculateBondScoreForPair';
+import { calculateCotDataScores } from '@/utils/scoring/calculateCotDataScores';
+import { getPriceChartData } from '@/utils/chartData/priceChartData';
 
 export const getServerSideProps = async (context) => {
   return withSession(context, async(context, session) => {
@@ -180,22 +185,27 @@ const Scanner = (props) => {
   const baseUrl = props.baseUrl
 
   const GaugeComponent = dynamic(() => import('react-gauge-component'), { ssr: false });
-  // keep track of different arrays of events as part of one object
-  const [assetData , setAssetData] = useState(null);
+
+  const [priceChartData , setPriceChartData] = useState(null);
   const [institutionalChartData , setInstitutionalChartData] = useState(null);
   const [institutionalNetChartData , setInstitutionalNetChartData] = useState(null);
-
   const [retailChartData , setRetailChartData] = useState(null);
   const [retailNetChartData , setRetailNetChartData] = useState(null);
+  const [inflationChartData, setChartInflationData] = useState([]);
+  const [sPMIChartData, setChartSPmiData] = useState([]);
+  const [mPMIChartData, setChartMPmiData] = useState([]);
+  const [unemploymentChartData, setChartUnemploymentData] = useState([]);
+  const [gdpChartData, setChartGDPData] = useState([]);
+  const [bondChartData, setChartBondData] = useState([]);
 
-  const [inflationChartData, setInflationChartData] = useState([]);
+  const [cotScore, setCotScore] = useState(null);
+  const [inflationScore, setInflationScore] = useState(null);
+  const [sPMIScores, setSPMIScores] = useState(null);
+  const [mPMIScores, setMPMIScores] = useState(null);
+  const [unemploymentScores, setUnemploymentScores] = useState(null);
+  const [gdpScores, setGDPScores] = useState(null);
+  const [bondScores, setBondScores] = useState(null);
 
-  const [formattedInflationData, setFormattedInflationData] = useState([]);
-  const [formattedSPMIData, setFormattedSPMIData] = useState([]);
-  const [formattedMPMIData, setFormattedMPMIData] = useState([]);
-  const [formattedUnemploymentData, setFormattedUnemploymentData] = useState([]);
-  const [formattedGDPData, setFormattedGDPData] = useState([]);
-  const [bondData, setBondData] = useState([]);
 
   const [isLoading, setLoading] = useState(false);
 
@@ -212,124 +222,106 @@ const Scanner = (props) => {
         Promise.all(assets[asset].countries.map(country => fetchBondData(baseUrl, country)))
       ]);
 
-      // const inflationData = assets[asset].countries.forEach((country) => {
-      //   getInflationDataForCountry(country, eventCalendar)
-      // })
-
-      // const PmiData = assets[asset].countries.forEach((country) => {
-      //   getPmiDataForCountry(country, eventCalendar)
-      // })
-
-      // const UnemploymentData = assets[asset].countries.forEach((country) => {
-      //   getUnemploymentDataForCountry(country, eventCalendar)
-      // })
-
-      // const GDPData = assets[asset].countries.forEach((country) => {
-      //   getGDPDataForCountry(country, eventCalendar)
-      // })
-
-
-      console.log("bondData", bondData )
-      const mappedBondData = mapBondDataToChartData(bondData);
-      setBondData(mappedBondData);
-
-      console.log(eventCalendar)
-
-
-    
- 
-
-
-
+      // Data 
       const inflationData = assets[asset].countries.map(country => {
         return filterByTypeAndCountries(eventCalendar, countries[country].inflationKey, asset, country);
       });
-      const formattedInflationData = inflationData.map(data => convertCalendarDataToChartData(data));
-      setFormattedInflationData(formattedInflationData);
-
-
       const sPmiData = assets[asset].countries.map(country => {
         return filterByTypeAndCountries(eventCalendar, countries[country].sPMIKey, asset, country);
-  });
-      const formattedSPmiData = sPmiData.map(data => convertCalendarDataToChartData(data));
-      setFormattedSPMIData(formattedSPmiData);
-
-
+      });
       const mPmiData = assets[asset].countries.map(country => {
         return filterByTypeAndCountries(eventCalendar, countries[country].mPMIKey, asset, country);
       });
-      const formattedMPmiData = mPmiData.map(data => convertCalendarDataToChartData(data));
-      setFormattedMPMIData(formattedMPmiData);
-
       const unemploymentData = assets[asset].countries.map(country => {
         return filterByTypeAndCountries(eventCalendar, countries[country].unemploymentKey, asset, country);
       });
-      const formattedUnemploymentData = unemploymentData.map(data => convertCalendarDataToChartData(data));
-      setFormattedUnemploymentData(formattedUnemploymentData);
-
       const gdpData = assets[asset].countries.map(country => {
         return filterByTypeAndCountries(eventCalendar, countries[country].gdpGrowthRateKey, asset, country);
       });
 
-      const formattedGDPData = gdpData.map(data => convertCalendarDataToChartData(data));
-      setFormattedGDPData(formattedGDPData);
+      // Scores
+      const cotScore = calculateCotDataScores(cotData, asset)
+      const inflationScore = calculateEconomicScoreForPair(inflationData)
+      const sPMIScores = calculateEconomicScoreForPair(sPmiData)
+      const mPMIScores = calculateEconomicScoreForPair(mPmiData)
+      const unemploymentScores = calculateEconomicScoreForPair(unemploymentData,true)
+      const gdpScores = calculateEconomicScoreForPair(gdpData)
+      const bondScores = calculateBondScoreForPair(bondData)
 
-      console.log("unemploymentData", unemploymentData)
+      setCotScore(cotScore)
+      setInflationScore(inflationScore) 
+      setSPMIScores(sPMIScores)
+      setMPMIScores(mPMIScores)
+      setUnemploymentScores(unemploymentScores)
+      setGDPScores(gdpScores)
+      setBondScores(bondScores)
 
-      console.log("Formatted Inflation Data", formattedInflationData)
+      console.log("inflationScore", inflationScore)
+      console.log("sPMIScores", sPMIScores)
+      console.log("mPMIScores", mPMIScores)
+      console.log("unemploymentScores", unemploymentScores)
+      console.log("gdpScores", gdpScores)
 
-      const assetDataJson = processAssetData(asset, null, cotData, null, weeklyPriceData);
+       // Charts Data
+      const priceChartData = getPriceChartData(weeklyPriceData, cotData, asset);
+      const institutionalChartData =  [{
+        name: asset,
+        long: cotScore.institutional.long,
+        short: cotScore.institutional.short
+      }]
 
-      const institutionalChartData_local =  [{
-          name: asset,
-          long: assetDataJson.cot.institutional.long,
-          short: assetDataJson.cot.institutional.short
-        }]
+      const institutionalNetChartData = [
+        { 
+          name: "Longs",
+          current: cotScore.institutional.long,
+          previous: cotScore.institutional.longOld,
+        },
+        {
+          name: "Shorts",
+          current: cotScore.institutional.short,
+          previous: cotScore.institutional.shortOld,
+        }
+      ];
 
-        const institutionalNetChartData_local = [
-          { 
-            name: "Longs",
-            current: assetDataJson.cot.institutional.long,
-            previous: assetDataJson.cot.institutional.longOld,
-          },
-          {
-            name: "Shorts",
-            current: assetDataJson.cot.institutional.short,
-            previous: assetDataJson.cot.institutional.shortOld,
-          }
-        ];
+      const retailChartData =  [{
+        name: asset,
+        long: cotScore.retail.long,
+        short: cotScore.retail.short
+      }]
 
-        const retailChartData_local =  [{
-          name: asset,
-          long: assetDataJson.cot.retail.long,
-          short: assetDataJson.cot.retail.short
-        }]
+      const retailNetChartData = [
+        { 
+          name: "Longs",
+          current: cotScore.retail.long,
+          previous: cotScore.retail.longOld,
+        },
+        {
+          name: "Shorts",
+          current: cotScore.retail.short,
+          previous: cotScore.retail.shortOld,
+        }
+      ];
 
-        const retailNetChartData_local = [
-          { 
-            name: "Longs",
-            current: assetDataJson.cot.retail.long,
-            previous: assetDataJson.cot.retail.longOld,
-          },
-          {
-            name: "Shorts",
-            current: assetDataJson.cot.retail.short,
-            previous: assetDataJson.cot.retail.shortOld,
-          }
-        ];
-  
+      const inflationChartData = inflationData.map(data => convertCalendarDataToChartData(data));
+      const sPMIChartData = sPmiData.map(data => convertCalendarDataToChartData(data));
+      const mPMIChartData = mPmiData.map(data => convertCalendarDataToChartData(data));
+      const unemploymentChartData = unemploymentData.map(data => convertCalendarDataToChartData(data));
+      const gdpChartData = gdpData.map(data => convertCalendarDataToChartData(data));
+      const bondChartData = mapBondDataToChartData(bondData);
+      
+      setPriceChartData(priceChartData);
+      setInstitutionalChartData(institutionalChartData);
+      setInstitutionalNetChartData(institutionalNetChartData);
+      setRetailChartData(retailChartData);
+      setRetailNetChartData(retailNetChartData);
+      setChartInflationData(inflationChartData);
+      setChartSPmiData(sPMIChartData);
+      setChartMPmiData(mPMIChartData);
+      setChartUnemploymentData(unemploymentChartData);
+      setChartGDPData(gdpChartData);
+      setChartBondData(bondChartData);
 
-      // set the state with the sorted data
-      setAssetData(assetDataJson);
-      setInstitutionalChartData(institutionalChartData_local);
-      setInstitutionalNetChartData(institutionalNetChartData_local);
-
-      setRetailChartData(retailChartData_local);
-      setRetailNetChartData(retailNetChartData_local);
-
-      console.log("assetDataJson", assetDataJson)
-
-      if (assetDataJson) {
+      if (priceChartData && institutionalChartData && institutionalNetChartData && retailChartData && retailNetChartData && inflationChartData && sPMIChartData && mPMIChartData && unemploymentChartData && gdpChartData && bondChartData) {
         setLoading(false);
       }
       
@@ -358,275 +350,23 @@ const Scanner = (props) => {
           </div>
          :  
     
-         assetData && <div className="grid grid-cols-3 gap-4">
+         priceChartData && <div className="grid grid-cols-3 gap-4">
               <div className="col-span-3">
                 <div className='flex justify-between items-start'> 
                 <h1 className="text-secondary-foreground ml-8 mb-8"> {asset} </h1>
-                
-                
                 </div>
                 
               </div>
               { [asset].map((asset) => {
                 return (
-                  assetData && 
+                  priceChartData && 
                   <div className='grid grid-cols-3 gap-4 col-span-3' >
                     <div className='grid col-span-2 gap-4'> 
-                    <TitledCard key="price_card" className="grid col-span-2" title="Price">
-                      { assetData.chartData && <ChartComponent data={assetData.chartData}  symbol={asset} timeframe={'Weekly'}></ChartComponent>}
-                    </TitledCard>
-
-                    <TitledCard key="inflation_card" className={Style.InternalCard} title="Inflation">
-                    {formattedInflationData.length > 0 && formattedInflationData.map((data, index) => (
-                      <ResponsiveContainer width="100%" height={400} key={index}>
-                        <ComposedChart data={data}>
-                          <XAxis dataKey="month" />
-                          <YAxis />
-                          <Tooltip />
-                          <Legend />
-                          {Object.keys(data[0]).filter(key => !['year', 'month'].includes(key)).map((countryKey, countryIndex) => {
-                            const isEstimate = countryKey.includes('_estimate');
-                            const country = countryKey.replace('_estimate', '');
-                            const barColor = index % 2 === 0 ? "#8884d8" : "#a717d3";
-                            const scatterColor = "#f87315" 
-
-
-                            if (isEstimate) {
-                              return (
-                                <Scatter
-                                  key={`${countryKey}_${index}`}
-                                  dataKey={countryKey}
-                                  fill={scatterColor}
-                                  shape={<CustomScatterShape />}
-                                />
-                              );
-                            } else {
-                              return (
-                                <Bar
-                                  key={`${countryKey}_${index}`}
-                                  dataKey={countryKey}
-                                  fill={barColor}
-                                />
-                              );
-                            }
-                          })}
-                        </ComposedChart>
-                      </ResponsiveContainer>
-                    ))}
-                  </TitledCard>
-
-                  <TitledCard key="sPMI_card" className={Style.InternalCard} title="Services PMI">
-                    {formattedSPMIData.length > 0 && formattedSPMIData.map((data, index) => (
-                      <ResponsiveContainer width="100%" height={400} key={index}>
-                        <ComposedChart data={data}>
-                          <XAxis dataKey="month" />
-                          <YAxis />
-                          <Tooltip />
-                          <Legend />
-                          {Object.keys(data[0]).filter(key => !['year', 'month'].includes(key)).map((countryKey, countryIndex) => {
-                            const isEstimate = countryKey.includes('_estimate');
-                            const country = countryKey.replace('_estimate', '');
-                            const barColor = index % 2 === 0 ? "#8884d8" : "#a717d3";
-                            const scatterColor = "#f87315" 
-
-                            if (isEstimate) {
-                              return (
-                                <Scatter
-                                  key={`${countryKey}_${index}`}
-                                  dataKey={countryKey}
-                                  fill={scatterColor}
-                                  shape={<CustomScatterShape />}
-                                />
-                              );
-                            } else {
-                              return (
-                                <Bar
-                                  key={`${countryKey}_${index}`}
-                                  dataKey={countryKey}
-                                  fill={barColor}
-                                />
-                              );
-                            }
-                          })}
-                        </ComposedChart>
-                      </ResponsiveContainer>
-                    ))}
-                  </TitledCard>
-
-                  <TitledCard key="mPMI_card" className={Style.InternalCard} title="Manufacturing PMI">
-                    {formattedMPMIData.length > 0 && formattedMPMIData.map((data, index) => (
-                      <ResponsiveContainer width="100%" height={400} key={index}>
-                        <ComposedChart data={data}>
-                          <XAxis dataKey="month" />
-                          <YAxis />
-                          <Tooltip />
-                          <Legend />
-                          {Object.keys(data[0]).filter(key => !['year', 'month'].includes(key)).map((countryKey, countryIndex) => {
-                            const isEstimate = countryKey.includes('_estimate');
-                            const country = countryKey.replace('_estimate', '');
-                            const barColor = index % 2 === 0 ? "#8884d8" : "#a717d3";
-                            const scatterColor = "#f87315" 
-
-                            if (isEstimate) {
-                              return (
-                                <Scatter
-                                  key={`${countryKey}_${index}`}
-                                  dataKey={countryKey}
-                                  fill={scatterColor}
-                                  shape={<CustomScatterShape />}
-                                />
-                              );
-                            } else {
-                              return (
-                                <Bar
-                                  key={`${countryKey}_${index}`}
-                                  dataKey={countryKey}
-                                  fill={barColor}
-                                />
-                              );
-                            }
-                          })}
-                        </ComposedChart>
-                      </ResponsiveContainer>
-                    ))}
-                  </TitledCard>
-
-                  <TitledCard key="unemployment_card" className={Style.InternalCard} title="Unemployment Rate">
-                    {formattedUnemploymentData.length > 0 && formattedUnemploymentData.map((data, index) => (
-                      <ResponsiveContainer width="100%" height={400} key={index}>
-                        <ComposedChart data={data}>
-                          <XAxis dataKey="month" />
-                          <YAxis />
-                          <Tooltip />
-                          <Legend />
-                          {Object.keys(data[0]).filter(key => !['year', 'month'].includes(key)).map((countryKey, countryIndex) => {
-                            const isEstimate = countryKey.includes('_estimate');
-                            const country = countryKey.replace('_estimate', '');
-                            const barColor = index % 2 === 0 ? "#8884d8" : "#a717d3";
-                            const scatterColor = "#f87315" 
-
-
-                            if (isEstimate) {
-                              return (
-                                <Scatter
-                                  key={`${countryKey}_${index}`}
-                                  dataKey={countryKey}
-                                  fill={scatterColor}
-                                  shape={<CustomScatterShape />}
-                                />
-                              );
-                            } else {
-                              return (
-                                <Bar
-                                  key={`${countryKey}_${index}`}
-                                  dataKey={countryKey}
-                                  fill={barColor}
-                                />
-                              );
-                            }
-                          })}
-                        </ComposedChart>
-                      </ResponsiveContainer>
-                    ))}
-                  </TitledCard>
-
-                  <TitledCard key="gdp_card" className={Style.InternalCard} title="GDP Growth Rate">
-                    {formattedGDPData.length > 0 && formattedGDPData.map((data, index) => (
-                      <ResponsiveContainer width="100%" height={400} key={index}>
-                        <ComposedChart data={data}>
-                          <XAxis dataKey="month" />
-                          <YAxis />
-                          <Tooltip />
-                          <Legend />
-                          {Object.keys(data[0]).filter(key => !['year', 'month'].includes(key)).map((countryKey, countryIndex) => {
-                            const isEstimate = countryKey.includes('_estimate');
-                            const country = countryKey.replace('_estimate', '');
-                            const barColor = index % 2 === 0 ? "#8884d8" : "#a717d3";
-                            const scatterColor = "#f87315" 
-
-
-                            if (isEstimate) {
-                              return (
-                                <Scatter
-                                  key={`${countryKey}_${index}`}
-                                  dataKey={countryKey}
-                                  fill={scatterColor}
-                                  shape={<CustomScatterShape />}
-                                />
-                              );
-                            } else {
-                              return (
-                                <Bar
-                                  key={`${countryKey}_${index}`}
-                                  dataKey={countryKey}
-                                  fill={barColor}
-                                />
-                              );
-                            }
-                          })}
-                        </ComposedChart>
-                      </ResponsiveContainer>
-                    ))}
-                  </TitledCard>
-
-                  <TitledCard key="bonds_card" className={Style.InternalCard} title="Bonds Data">
-                        {bondData.length > 0 && bondData.map((data, index) => (
-                          <ResponsiveContainer width="100%" height={400} key={index}>
-                            <LineChart data={data.data}>
-                              <XAxis dataKey="date" />
-                              <YAxis />
-                              <Tooltip />
-                              <Legend />
-                              <Line type="monotone" dataKey="shortBondsClose" name={
-                                `${data.country} ` + `Short-Term Yield `} dot={false} stroke="#f87315" />
-                             
-                              <Line type="monotone" dataKey="longBondsClose" name={ `${data.country} ` + `Long-Term Yield`} dot={false} stroke="#8884d8" />
-                            </LineChart>
-                          </ResponsiveContainer>
-                        ))}
+                      <TitledCard key="price_card" className="grid col-span-2" title="Price and Positions">
+                        { priceChartData && <ChartComponent data={priceChartData}  symbol={asset} timeframe={'Weekly'}></ChartComponent>}
                       </TitledCard>
 
-                    </div>
-                    <div className='grid col-span-1 gap-2 '> 
-
-                    <Card className=' flex items-center justify-center '>
-                      <GaugeComponent
-                                value={assetData.score}  
-                                style={{  width: '75%' }}
-                                type="radial"
-                                labels={{
-                                  valueLabel: {
-                                    matchColorWithArc: true,
-                                  },
-                                  tickLabels: {
-                                    type: "inner",
-                                    ticks: [
-                                      { value: -100 },
-                                      { value: -50 },
-                                      { value: -25 },
-                                      { value: 0 },
-                                      { value: 25 },
-                                      { value: 50 },
-                                      { value: 100 },
-                                    ]
-                                  }
-                                }}
-                                arc={{
-                                  colorArray: ['#c20b0a','#009900'],
-                                  subArcs: [{limit: -50}, {limit: -25}, {limit: 25}, {limit: 50}, {}],
-                                  padding: 0.02,
-                                  width: 0.3
-                                }}
-                                minValue={-100}
-                                maxValue={100}
-                                pointer={{
-                                  elastic: true,
-                                  animationDelay: 0,
-                                  color: '#9ea7c6',
-                                }}/>
-                </Card>
-                    
-                    <TitledCard key={`${asset}_institional_Positioning_card`} className="" title="Institutional Positioning">
+                      <TitledCard key={`${asset}_institional_Positioning_card`} className="" title="Institutional Positioning" score={cotScore.institutional.score.toFixed(2)}>
                       <div className='flex w-full'>
                       <ResponsiveContainer  height={400}>
                       <BarChart data={institutionalChartData} barCategoryGap={20} >
@@ -662,46 +402,304 @@ const Scanner = (props) => {
                     </div>
                 
 
-                    </TitledCard>
+                      </TitledCard>
 
-                    <TitledCard key={`${asset}_retail_Positioning_card`} className={Style.InternalCard} title="Retail Sentiment">
-                      <div className='flex'>
-                      <ResponsiveContainer  height={400}>
-                      <BarChart data={retailChartData} barCategoryGap={20} >
-                        <XAxis dataKey="name" tick={{ fill: 'white' }} />
-                        <YAxis domain={[0, 100]} />
-                        <Tooltip cursor={{fill: 'transparent'}} />
+                      <TitledCard key={`${asset}_retail_Positioning_card`} className={Style.InternalCard} title="Retail Sentiment" score={cotScore.retail.score.toFixed(2)}>
+                        <div className='flex'>
+                        <ResponsiveContainer  height={400}>
+                        <BarChart data={retailChartData} barCategoryGap={20} >
+                          <XAxis dataKey="name" tick={{ fill: 'white' }} />
+                          <YAxis domain={[0, 100]} />
+                          <Tooltip cursor={{fill: 'transparent'}} />
+                          
+                          <Bar dataKey="long" name="Total Longs"  fill="#009900"   />
+                          <Bar dataKey="short" name="Total Shorts"  fill="#c20b0a" />
+                        </BarChart>
+                      </ResponsiveContainer>
+                      <ResponsiveContainer height={400}>
+                        <BarChart data={retailNetChartData} barCategoryGap={20} barGap={3}>
+                          
+                          <XAxis dataKey="name" tick={{ fill: 'white' }} />
+                          <YAxis />
+                          <Tooltip cursor={{fill: 'transparent'}} />
                         
-                        <Bar dataKey="long" name="Total Longs"  fill="#009900"   />
-                        <Bar dataKey="short" name="Total Shorts"  fill="#c20b0a" />
-                      </BarChart>
-                    </ResponsiveContainer>
-                    <ResponsiveContainer height={400}>
-                      <BarChart data={retailNetChartData} barCategoryGap={20} barGap={3}>
-                        
-                        <XAxis dataKey="name" tick={{ fill: 'white' }} />
-                        <YAxis />
-                        <Tooltip cursor={{fill: 'transparent'}} />
-                       
-                        <Bar dataKey="current" name="Current" fill="#009900" stackId="a">
-                          {retailNetChartData.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={index % 2 === 0 ? '#009900' : '#c20b0a'} />
-                          ))}
-                        </Bar>
-                        <Bar dataKey="previous" name="Previous" fill="#006600" stackId="b">
-                          {retailNetChartData.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={index % 2 === 0 ? '#006600' : '#8b0000'} />
-                          ))}
-                        </Bar>
-                      </BarChart>
-                    </ResponsiveContainer>
+                          <Bar dataKey="current" name="Current" fill="#009900" stackId="a">
+                            {retailNetChartData.map((entry, index) => (
+                              <Cell key={`cell-${index}`} fill={index % 2 === 0 ? '#009900' : '#c20b0a'} />
+                            ))}
+                          </Bar>
+                          <Bar dataKey="previous" name="Previous" fill="#006600" stackId="b">
+                            {retailNetChartData.map((entry, index) => (
+                              <Cell key={`cell-${index}`} fill={index % 2 === 0 ? '#006600' : '#8b0000'} />
+                            ))}
+                          </Bar>
+                        </BarChart>
+                      </ResponsiveContainer>
 
-                        
+                          
+                      </div>
+                    
+                
+
+                      </TitledCard>
+
+                      <TitledCard key="inflation_card" className={Style.InternalCard} title="Inflation" score={inflationScore.totalScore}>
+                      {inflationChartData.length > 0 && inflationChartData.map((data, index) => (
+                        <ResponsiveContainer width="100%" height={400} key={index}>
+                          <ComposedChart data={data}>
+                            <XAxis dataKey="month" />
+                            <YAxis />
+                            <Tooltip />
+                            <Legend />
+                            {Object.keys(data[0]).filter(key => !['year', 'month'].includes(key)).map((countryKey, countryIndex) => {
+                              const isEstimate = countryKey.includes('_estimate');
+                              const country = countryKey.replace('_estimate', '');
+                              const barColor = index % 2 === 0 ? "#8884d8" : "#a717d3";
+                              const scatterColor = "#f87315" 
+
+
+                              if (isEstimate) {
+                                return (
+                                  <Scatter
+                                    key={`${countryKey}_${index}`}
+                                    dataKey={countryKey}
+                                    fill={scatterColor}
+                                    shape={<CustomScatterShape />}
+                                  />
+                                );
+                              } else {
+                                return (
+                                  <Bar
+                                    key={`${countryKey}_${index}`}
+                                    dataKey={countryKey}
+                                    fill={barColor}
+                                  />
+                                );
+                              }
+                            })}
+                          </ComposedChart>
+                        </ResponsiveContainer>
+                      ))}
+                      </TitledCard>
+
+                      <TitledCard key="sPMI_card" className={Style.InternalCard} title="Services PMI" score={sPMIScores.totalScore}>
+                        {sPMIChartData.length > 0 && sPMIChartData.map((data, index) => (
+                          <ResponsiveContainer width="100%" height={400} key={index}>
+                            <ComposedChart data={data}>
+                              <XAxis dataKey="month" />
+                              <YAxis />
+                              <Tooltip />
+                              <Legend />
+                              {Object.keys(data[0]).filter(key => !['year', 'month'].includes(key)).map((countryKey, countryIndex) => {
+                                const isEstimate = countryKey.includes('_estimate');
+                                const country = countryKey.replace('_estimate', '');
+                                const barColor = index % 2 === 0 ? "#8884d8" : "#a717d3";
+                                const scatterColor = "#f87315" 
+
+                                if (isEstimate) {
+                                  return (
+                                    <Scatter
+                                      key={`${countryKey}_${index}`}
+                                      dataKey={countryKey}
+                                      fill={scatterColor}
+                                      shape={<CustomScatterShape />}
+                                    />
+                                  );
+                                } else {
+                                  return (
+                                    <Bar
+                                      key={`${countryKey}_${index}`}
+                                      dataKey={countryKey}
+                                      fill={barColor}
+                                    />
+                                  );
+                                }
+                              })}
+                            </ComposedChart>
+                          </ResponsiveContainer>
+                        ))}
+                      </TitledCard>
+
+                      <TitledCard key="mPMI_card" className={Style.InternalCard} title="Manufacturing PMI" score={mPMIScores.totalScore}>
+                        {mPMIChartData.length > 0 && mPMIChartData.map((data, index) => (
+                          <ResponsiveContainer width="100%" height={400} key={index}>
+                            <ComposedChart data={data}>
+                              <XAxis dataKey="month" />
+                              <YAxis />
+                              <Tooltip />
+                              <Legend />
+                              {Object.keys(data[0]).filter(key => !['year', 'month'].includes(key)).map((countryKey, countryIndex) => {
+                                const isEstimate = countryKey.includes('_estimate');
+                                const country = countryKey.replace('_estimate', '');
+                                const barColor = index % 2 === 0 ? "#8884d8" : "#a717d3";
+                                const scatterColor = "#f87315" 
+
+                                if (isEstimate) {
+                                  return (
+                                    <Scatter
+                                      key={`${countryKey}_${index}`}
+                                      dataKey={countryKey}
+                                      fill={scatterColor}
+                                      shape={<CustomScatterShape />}
+                                    />
+                                  );
+                                } else {
+                                  return (
+                                    <Bar
+                                      key={`${countryKey}_${index}`}
+                                      dataKey={countryKey}
+                                      fill={barColor}
+                                    />
+                                  );
+                                }
+                              })}
+                            </ComposedChart>
+                          </ResponsiveContainer>
+                        ))}
+                      </TitledCard>
+
+                      <TitledCard key="unemployment_card" className={Style.InternalCard} title="Unemployment Rate" score={unemploymentScores.totalScore}>
+                        {unemploymentChartData.length > 0 && unemploymentChartData.map((data, index) => (
+                          <ResponsiveContainer width="100%" height={400} key={index}>
+                            <ComposedChart data={data}>
+                              <XAxis dataKey="month" />
+                              <YAxis />
+                              <Tooltip />
+                              <Legend />
+                              {Object.keys(data[0]).filter(key => !['year', 'month'].includes(key)).map((countryKey, countryIndex) => {
+                                const isEstimate = countryKey.includes('_estimate');
+                                const country = countryKey.replace('_estimate', '');
+                                const barColor = index % 2 === 0 ? "#8884d8" : "#a717d3";
+                                const scatterColor = "#f87315" 
+
+
+                                if (isEstimate) {
+                                  return (
+                                    <Scatter
+                                      key={`${countryKey}_${index}`}
+                                      dataKey={countryKey}
+                                      fill={scatterColor}
+                                      shape={<CustomScatterShape />}
+                                    />
+                                  );
+                                } else {
+                                  return (
+                                    <Bar
+                                      key={`${countryKey}_${index}`}
+                                      dataKey={countryKey}
+                                      fill={barColor}
+                                    />
+                                  );
+                                }
+                              })}
+                            </ComposedChart>
+                          </ResponsiveContainer>
+                        ))}
+                      </TitledCard>
+
+                      <TitledCard key="gdp_card" className={Style.InternalCard} title="GDP Growth Rate" score={gdpScores.totalScore}>
+                        {gdpChartData.length > 0 && gdpChartData.map((data, index) => (
+                          <ResponsiveContainer width="100%" height={400} key={index}>
+                            <ComposedChart data={data}>
+                              <XAxis dataKey="month" />
+                              <YAxis />
+                              <Tooltip />
+                              <Legend />
+                              {Object.keys(data[0]).filter(key => !['year', 'month'].includes(key)).map((countryKey, countryIndex) => {
+                                const isEstimate = countryKey.includes('_estimate');
+                                const country = countryKey.replace('_estimate', '');
+                                const barColor = index % 2 === 0 ? "#8884d8" : "#a717d3";
+                                const scatterColor = "#f87315" 
+
+
+                                if (isEstimate) {
+                                  return (
+                                    <Scatter
+                                      key={`${countryKey}_${index}`}
+                                      dataKey={countryKey}
+                                      fill={scatterColor}
+                                      shape={<CustomScatterShape />}
+                                    />
+                                  );
+                                } else {
+                                  return (
+                                    <Bar
+                                      key={`${countryKey}_${index}`}
+                                      dataKey={countryKey}
+                                      fill={barColor}
+                                    />
+                                  );
+                                }
+                              })}
+                            </ComposedChart>
+                          </ResponsiveContainer>
+                        ))}
+                      </TitledCard>
+
+                      <TitledCard key="bonds_card" className={Style.InternalCard} title="Bonds Data" score={bondScores.totalScore}>
+                            {bondChartData.length > 0 && bondChartData.map((data, index) => (
+                              <ResponsiveContainer width="100%" height={400} key={index}>
+                                <LineChart data={data.data}>
+                                  <XAxis dataKey="date" />
+                                  <YAxis />
+                                  <Tooltip />
+                                  <Legend />
+                                  <Line type="monotone" dataKey="shortBondsClose" name={
+                                    `${data.country} ` + `Short-Term Yield `} dot={false} stroke="#f87315" />
+                                
+                                  <Line type="monotone" dataKey="longBondsClose" name={ `${data.country} ` + `Long-Term Yield`} dot={false} stroke="#8884d8" />
+                                </LineChart>
+                              </ResponsiveContainer>
+                            ))}
+                      </TitledCard>
                     </div>
-                   
-               
 
-                    </TitledCard>
+                    <div className='grid col-span-1 gap-2 '> 
+                      <div className='flex flex-col space-y-2'> 
+                      <Card className=' flex items-start justify-center'>
+                          <GaugeComponent
+                                    value={cotScore.institutional.score}  
+                                    style={{  width: '75%' }}
+                                    type="radial"
+                                    labels={{
+                                      valueLabel: {
+                                        matchColorWithArc: true,
+                                      },
+                                      tickLabels: {
+                                        type: "inner",
+                                        ticks: [
+                                          { value: -100 },
+                                          { value: -50 },
+                                          { value: -25 },
+                                          { value: 0 },
+                                          { value: 25 },
+                                          { value: 50 },
+                                          { value: 100 },
+                                        ]
+                                      }
+                                    }}
+                                    arc={{
+                                      colorArray: ['#c20b0a','#009900'],
+                                      subArcs: [{limit: -50}, {limit: -25}, {limit: 25}, {limit: 50}, {}],
+                                      padding: 0.02,
+                                      width: 0.3
+                                    }}
+                                    minValue={-100}
+                                    maxValue={100}
+                                    pointer={{
+                                      elastic: true,
+                                      animationDelay: 0,
+                                      color: '#9ea7c6',
+                                    }}/>
+                        </Card>
+
+                        <TitledCard key="news_card" className="" title="Latest News">
+                          </TitledCard>
+
+                      </div>
+                     
+                    
+                  
 
                    
                     </div>

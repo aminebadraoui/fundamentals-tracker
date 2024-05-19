@@ -66,7 +66,7 @@ export const ChartComponent = props => {
     } = {},
   } = props;
 
-  const weeklyPrice = data.weeklyPrice;
+  const weeklyPrice = data.priceData;
   const netPositions = data.netPositions;
   const retailNetPositions = data.retailPositions;
 

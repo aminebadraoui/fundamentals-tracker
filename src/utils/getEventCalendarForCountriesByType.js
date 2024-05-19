@@ -80,8 +80,7 @@ const fetchAndMergeEventCalendar = async (baseUrl) => {
 
 const filterByTypeAndCountries =  (mergedData, type, asset, country) => {
 
-  console.log("asset", asset);
-  console.log("country", country);
+
 
   const filteredData = {};
 
@@ -126,26 +125,10 @@ const filterByTypeAndCountries =  (mergedData, type, asset, country) => {
         const events = filteredData[year][country][month];
 
         const organizedEvents = (events || []).reduce((acc, event) => {
-          const itemPeriod = event.period?.toLowerCase();
-          if (itemPeriod) {
-            const periodMonth = Object.keys(monthDates).find((m) => m.slice(0, 3).toLowerCase() === itemPeriod);
-            if (periodMonth && periodMonth !== month) {
-              if (!acc[periodMonth]) {
-                acc[periodMonth] = [];
-              }
-              acc[periodMonth].push(event);
-            } else {
-              if (!acc[month]) {
-                acc[month] = [];
-              }
-              acc[month].push(event); 
-            }
-          } else {
-            if (!acc[month]) {
-              acc[month] = [];
-            }
-            acc[month].push(event);
-          }
+          acc[month] = []
+          acc[month].push(event);
+          
+         
           return acc;
         }, {});
 

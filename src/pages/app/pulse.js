@@ -17,10 +17,13 @@ import withSubscription from '@/lib/withSubscription';
 export const getServerSideProps = async (context) => {
   return withSession(context, async(context, session) => {
    return withSubscription(context, session, async(context) => {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ? process.env.NEXT_PUBLIC_BASE_URL : 'http://localhost:3000'
 
 
     return { 
-      props: {} 
+      props: {
+        baseUrl
+      } 
       };
   
     })
@@ -57,6 +60,8 @@ const fetchCotDataForYears = async (asset, years) => {
 
 
 const Pulse = (props) => {
+  const baseUrl = props.baseUrl;
+  
   const [pulseData, setPulseData] = useState({});
   const [isLoading, setLoading] = useState(false);
 
@@ -67,6 +72,9 @@ const Pulse = (props) => {
       const assetPromises = Object.keys(assets).map(asset => 
         Promise.all([
           fetchCotDataForYears(asset, years),
+          fetchDataWithRetry('/api/getWeeklyPriceData', { asset }),
+          fetchAndMergeEventCalendar( baseUrl),
+          Promise.all(assets[asset].countries.map(country => fetchBondData(baseUrl, country)))
           
          
         ]).then(([cotData]) => {

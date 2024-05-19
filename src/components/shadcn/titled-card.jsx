@@ -1,5 +1,6 @@
 import React from 'react';
 import { Card } from '@/components/shadcn/card'
+import ScoreIndicator  from '@/components/ui/score-indicator'
 
 const Style = {
   InternalCard: " space-y-4 px-8 py-4 ",
@@ -7,11 +8,18 @@ const Style = {
 }
 
 
-export const TitledCard = ({title, children}) => {
+export const TitledCard = ({title, score, children}) => {
 
   return (
     <Card className={Style.InternalCard}>
-    <h2 className={Style.Heading}> { title }</h2>
+      <div className='flex justify-between items-center'> 
+      <h2 className={Style.Heading}> { title }</h2>
+      {
+      <ScoreIndicator score={score} />    
+      }
+
+      </div>
+    
       {children}
       </Card>
   );
