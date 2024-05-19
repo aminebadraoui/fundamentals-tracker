@@ -191,7 +191,7 @@ const Pulse = (props) => {
     InternalCard: " space-y-4 p-8 "
   }
 
-  const columns = ["Asset", "Positioning", "Inflation", "Manufacturing PMI", "Services PMI", "Unemployment Rate", "GDP", "Bonds"];
+  const columns = ["Asset", "Positioning", "Inflation", "Manufacturing PMI", "Services PMI", "Unemployment Rate", "GDP", "Bonds", "9-Day MA"];
 
   return (
     <div>
