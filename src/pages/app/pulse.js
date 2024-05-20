@@ -261,9 +261,15 @@ const Pulse = (props) => {
               <div className='col-span-2 grid gap-4'> 
               <h1 className="text-secondary-foreground mb-8"> The Pulse </h1>
          
-              <TitledCard title="Major Forex Pairs">
+              <TitledCard title="XUSD Forex Pairs">
                 <div>
-                  <p className='text-secondary-foreground'> These are the pairs where foreign currencies are valued against the dollar. </p>
+                  <p className='text-secondary-foreground'> These are the pairs where foreign currencies are valued against the dollar. </p><br/>
+                  <p className='text-secondary-foreground'> <span className='font-bold'> Positioning Score: </span> This is based on the Long/Short ratio of the big institutions. We generally want to be in-line with this data.</p><br/>
+                  
+                  <p className='text-secondary-foreground'> <span className='font-bold'> Inflation Score: </span> A higher inflation causes an increase in interest rates. A higher interest rate causes a stronger currency. If the country of the foreign currency shows higher inflation than the US, this suggest a stronger performance for the pair and vice versa.   </p><br/>
+                  <p className='text-secondary-foreground'> <span className='font-bold'> Economic Score: </span>  Since the currency is valued against the US dollar, a weaker US economy suggest a stronger performance for the pair.  </p><br/>
+                  <p className='text-secondary-foreground'> <span className='font-bold'> Interest Rates Score: </span> For each country we compare how the short-term bond yield performs against the long-term bond yield. If the short-term yield is higher than the long-term yield, that suggest higher interest rates in the short term for the currency hence a stronger performance for the currency.</p><br/>
+                  <p className='text-secondary-foreground'> <span className='font-bold'> 9-Day MA Score: </span> This tracks the latest price of the pair versus its average price over the 9 last days. If the currency is bullish according to the other data, want to wait until it falls below the average price so we can buy it in undervalued conditions, and vice versa for a bearish scenario. </p><br/>
                 </div>
                 <Table>
                   <TableHeader>
@@ -310,9 +316,14 @@ const Pulse = (props) => {
 
               </TitledCard>
 
-              <TitledCard title="USD* Forex Pairs">
+              <TitledCard title="USDX Forex Pairs">
                 <div>
-                  <p className='text-secondary-foreground'> These are the pairs where the dollar is valued against foreign currencies. </p>
+                  <p className='text-secondary-foreground'> These are the pairs where the dollar is valued against foreign currencies. </p><br/>
+                  <p className='text-secondary-foreground'> <span className='font-bold'> Positioning Score: </span> This is based on the Long/Short ratio of the big institutions. We generally want to be in-line with this data.</p><br/>
+                  <p className='text-secondary-foreground'> <span className='font-bold'> Inflation Score: </span> A higher inflation causes an increase in interest rates. A higher interest rate causes a stronger currency. Since these pairs are the USD valued against a foreign currency, this score will follow the performance of the inflation in the US.   </p><br/>
+                  <p className='text-secondary-foreground'> <span className='font-bold'> Economic Score: </span>  Since the US dollar is valued against a foreign currency, the performance of the pair will follow the performance of the US economy.  </p><br/>
+                  <p className='text-secondary-foreground'> <span className='font-bold'> Interest Rates Score: </span> For each country we compare how the short-term bond yield performs against the long-term bond yield. If the short-term yield is higher than the long-term yield, that suggest higher interest rates in the short term for the currency hence a stronger performance for the currency. This will follow the performance of the US interest rates.</p><br/>
+                  <p className='text-secondary-foreground'> <span className='font-bold'> 9-Day MA Score: </span> This tracks the latest price of the pair versus its average price over the 9 last days. If the currency is bullish according to the other data, want to wait until it falls below the average price so we can buy it in undervalued conditions, and vice versa for bearish scenario. </p><br/>
                 </div>
       
                 <Table>
@@ -362,7 +373,13 @@ const Pulse = (props) => {
 
               <TitledCard title="Cryptocurrencies">
                 <div>
-                  <p className='text-secondary-foreground'> Crypto currencies are valued against the US Dollar. </p>
+                  <p className='text-secondary-foreground'> Crypto currencies are valued against the US Dollar. </p><br />
+               
+                  <p className='text-secondary-foreground'> <span className='font-bold'> Positioning Score: </span> This is based on the Long/Short ratio of the big institutions. We generally want to be in-line with this data.</p><br/>
+                  <p className='text-secondary-foreground'> <span className='font-bold'> Inflation Score: </span> A higher inflation causes an increase in interest rates. This makes the US stronger and more appealing to foreign investors.   </p><br/>
+                  <p className='text-secondary-foreground'> <span className='font-bold'> Economic Score: </span>  This will be inversely correlated to the economy of the US. </p><br/>
+                  <p className='text-secondary-foreground'> <span className='font-bold'> Interest Rates Score: </span>  If the short-term yield for the US is higher than the long-term yield, that suggest higher interest rates in the short term for hence a stronger performance for the US. This will be inversely correlated to the performance of the US interest rates.</p><br/>
+                  <p className='text-secondary-foreground'> <span className='font-bold'> 9-Day MA Score: </span> This tracks the latest price of the pair versus its average price over the 9 last days. If the currency is bullish according to the other data, want to wait until it falls below the average price so we can buy it in undervalued conditions, and vice versa for bearish scenario. </p><br/>
                 </div>
                 <Table>
                   <TableHeader>
@@ -411,7 +428,13 @@ const Pulse = (props) => {
 
               <TitledCard title="Indices">
               <div>
-                  <p className='text-secondary-foreground'> These are the main US stock indices. </p>
+                  <p className='text-secondary-foreground'> These are the main US stock indices. </p><br/>
+
+                  <p className='text-secondary-foreground'> <span className='font-bold'> Positioning Score: </span> This is based on the Long/Short ratio of the big institutions. We generally want to be in-line with this data.</p><br/>
+                  <p className='text-secondary-foreground'> <span className='font-bold'> Inflation Score: </span> A higher inflation causes an increase in interest rates. Increased rates diminish the earnings of the stocks. So this score is inversely correlated to the US inflation.  </p><br/>
+                  <p className='text-secondary-foreground'> <span className='font-bold'> Economic Score: </span>  A stronger economy encourages spending which positively affect stocks. This will be positively correlated to the economy of the US. </p><br/>
+                  <p className='text-secondary-foreground'> <span className='font-bold'> Interest Rates Score: </span>  If the short-term yield for the US is higher than the long-term yield, that suggest higher interest rates in the short term. This will be inversely correlated to the performance of the US interest rates.</p><br/>
+                  <p className='text-secondary-foreground'> <span className='font-bold'> 9-Day MA Score: </span> This tracks the latest price of the pair versus its average price over the 9 last days. If the currency is bullish according to the other data, want to wait until it falls below the average price so we can buy it in undervalued conditions, and vice versa for bearish scenario. </p><br/>
                 </div>
                 <Table>
                   <TableHeader>
@@ -460,7 +483,13 @@ const Pulse = (props) => {
 
               <TitledCard title="Precious Metals">
               <div>
-                  <p className='text-secondary-foreground'> These are the main precious metals. </p>
+                  <p className='text-secondary-foreground'> These are the main precious metals. </p> <br />
+
+                  <p className='text-secondary-foreground'> <span className='font-bold'> Positioning Score: </span> This is based on the Long/Short ratio of the big institutions. We generally want to be in-line with this data.</p><br/>
+                  <p className='text-secondary-foreground'> <span className='font-bold'> Inflation Score: </span> A higher inflation causes an increase in interest rates. Increased rates make the US currency stronger making it a better investment. So this score is inversely correlated to the US inflation.  </p><br/>
+                  <p className='text-secondary-foreground'> <span className='font-bold'> Economic Score: </span>  A stronger economy encourages risk taking, so investors will priortize other assets than precious metals. This will be negatively correlated to the economy of the US. </p><br/>
+                  <p className='text-secondary-foreground'> <span className='font-bold'> Interest Rates Score: </span>  If the short-term yield for the US is higher than the long-term yield, that suggest higher interest rates in the short term. This will be inversely correlated to the performance of the US interest rates.</p><br/>
+                  <p className='text-secondary-foreground'> <span className='font-bold'> 9-Day MA Score: </span> This tracks the latest price of the pair versus its average price over the 9 last days. If the currency is bullish according to the other data, want to wait until it falls below the average price so we can buy it in undervalued conditions, and vice versa for bearish scenario. </p><br/>
                 </div>
                 <Table>
                   <TableHeader>
@@ -509,7 +538,13 @@ const Pulse = (props) => {
 
               <TitledCard title="Commodities">
                 <div>
-                  <p className='text-secondary-foreground'> These are the main commodities. </p>
+                  <p className='text-secondary-foreground'> These are the main commodities. </p> <br/>
+
+                  <p className='text-secondary-foreground'> <span className='font-bold'> Positioning Score: </span> This is based on the Long/Short ratio of the big institutions. We generally want to be in-line with this data.</p><br/>
+                  <p className='text-secondary-foreground'> <span className='font-bold'> Inflation Score: </span> A higher causes the demand for oil to weaken. This score is thus negatively correlated to US inflation. </p><br/>
+                  <p className='text-secondary-foreground'> <span className='font-bold'> Economic Score: </span>  A stronger economy will increase demand for oil. This will be positively correlated to the economy of the US. </p><br/>
+                  <p className='text-secondary-foreground'> <span className='font-bold'> Interest Rates Score: </span>  Higher interest rates will make oil more expensive but that will weaken the demand. This is score is negatively correlated to the US interest rates.</p><br/>
+                  <p className='text-secondary-foreground'> <span className='font-bold'> 9-Day MA Score: </span> This tracks the latest price of the pair versus its average price over the 9 last days. If the currency is bullish according to the other data, want to wait until it falls below the average price so we can buy it in undervalued conditions, and vice versa for bearish scenario. </p><br/>
                 </div>
                 <Table>
                   <TableHeader>

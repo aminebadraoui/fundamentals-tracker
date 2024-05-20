@@ -351,7 +351,7 @@ const assets =  {
     twelveDataSymbol: `WTI/USD`,
     isFlipped: false,
     isAgainstUS: false,
-    isAgainstUSBond: false,
+    isAgainstUSBond: true,
     assetType: "commodity"
   },
   'NAS100': {
