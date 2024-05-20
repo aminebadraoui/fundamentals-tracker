@@ -340,8 +340,8 @@ const assets =  {
     apiType: '',
     twelveDataSymbol: `WTI/USD`,
     isFlipped: false,
-    isAgainstUS: true,
-    isAgainstUSBond: true
+    isAgainstUS: false,
+    isAgainstUSBond: false
   },
   'NAS100': {
     countries: ["US"],
