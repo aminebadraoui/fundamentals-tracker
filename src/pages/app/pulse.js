@@ -305,14 +305,7 @@ const Pulse = (props) => {
                   </TableBody>
                 </Table>
       
-                <div className='mt-8'>
-                <h3 className='text-secondary-foreground mb-4'> Correlation With US Data</h3>
-                  <p className='text-primary-foreground'> <span className=''> Positioning Score: </span> <span className='font-bold text-neutral '> N/A  </span> </p><br/>
-                  <p className='text-primary-foreground'> <span className=' '> Inflation Score: </span> <span className='font-bold text-strongSell'> - </span> </p><br/>
-                  <p className='text-primary-foreground'> <span className=' '> Economic Score: </span><span className='font-bold text-strongSell'> - </span>    </p><br/>
-                  <p className='text-primary-foreground'> <span className=' '> Interest Rates Score: </span><span className='font-bold text-strongSell'> - </span>  </p><br/>
-                  <p className='text-primary-foreground'> <span className=' '> 9-Day MA Score: </span><span className='font-bold text-neutral'> N/A  </span>  </p><br/>
-                </div>
+       
 
               </TitledCard>
 
@@ -360,14 +353,7 @@ const Pulse = (props) => {
                   </TableBody>
                 </Table>
 
-                <div className='mt-8'>
-                <h3 className='text-secondary-foreground mb-4'> Correlation With US Data</h3>
-                  <p className='text-primary-foreground'> <span className=' '> Positioning Score: </span> <span className='font-bold text-neutral '> N/A  </span> </p><br/>
-                  <p className='text-primary-foreground'> <span className=' '> Inflation Score: </span> <span className='font-bold text-strongBuy'> + </span> </p><br/>
-                  <p className='text-primary-foreground'> <span className=' '> Economic Score: </span><span className='font-bold text-strongBuy'> + </span>    </p><br/>
-                  <p className='text-primary-foreground'> <span className=' '> Interest Rates Score: </span><span className='font-bold text-strongBuy'> + </span>  </p><br/>
-                  <p className='text-primary-foreground'> <span className=' '> 9-Day MA Score: </span><span className='font-bold text-neutral'> N/A  </span>  </p><br/>
-                </div>
+              
 
               </TitledCard>
 
@@ -416,14 +402,7 @@ const Pulse = (props) => {
                   </TableBody>
                 </Table>
 
-                <div className='mt-8'>
-                <h3 className='text-secondary-foreground mb-4'> Correlation With US Data</h3>
-                  <p className='text-primary-foreground'> <span className=' '> Positioning Score: </span> <span className='font-bold text-neutral '> N/A  </span> </p><br/>
-                  <p className='text-primary-foreground'> <span className=' '> Inflation Score: </span> <span className='font-bold text-strongSell'> - </span> </p><br/>
-                  <p className='text-primary-foreground'> <span className=' '> Economic Score: </span><span className='font-bold text-strongSell'> - </span>    </p><br/>
-                  <p className='text-primary-foreground'> <span className=' '> Interest Rates Score: </span><span className='font-bold text-strongSell'> - </span>  </p><br/>
-                  <p className='text-primary-foreground'> <span className=' '> 9-Day MA Score: </span><span className='font-bold text-neutral'> N/A  </span>  </p><br/>
-                </div>
+       
 
               </TitledCard>
 
@@ -471,14 +450,7 @@ const Pulse = (props) => {
                   </TableBody>
                 </Table>
 
-                <div className='mt-8'>
-                <h3 className='text-secondary-foreground mb-4'> Correlation With US Data</h3>
-                  <p className='text-primary-foreground'> <span className=' '> Positioning Score: </span> <span className='font-bold text-neutral '> N/A  </span> </p><br/>
-                  <p className='text-primary-foreground'> <span className=' '> Inflation Score: </span> <span className='font-bold text-strongSell'> - </span> </p><br/>
-                  <p className='text-primary-foreground'> <span className=' '> Economic Score: </span><span className='font-bold text-strongBuy'> + </span>    </p><br/>
-                  <p className='text-primary-foreground'> <span className=' '> Interest Rates Score: </span><span className='font-bold text-strongSell'> - </span>  </p><br/>
-                  <p className='text-primary-foreground'> <span className=' '> 9-Day MA Score: </span><span className='font-bold text-neutral'> N/A  </span>  </p><br/>
-                </div>
+       
 
               </TitledCard>
 
@@ -527,14 +499,7 @@ const Pulse = (props) => {
                   </TableBody>
                 </Table>
 
-                <div className='mt-8'>
-                  <h3 className='text-secondary-foreground mb-4'> Correlation With US Data</h3>
-                  <p className='text-primary-foreground'> <span className=' '> Positioning Score: </span> <span className='font-bold text-neutral '> N/A  </span> </p><br/>
-                  <p className='text-primary-foreground'> <span className=' '> Inflation Score: </span> <span className='font-bold text-strongSell'> - </span> </p><br/>
-                  <p className='text-primary-foreground'> <span className=''> Economic Score: </span><span className='font-bold text-strongSell'> - </span>    </p><br/>
-                  <p className='text-primary-foreground'> <span className=''> Interest Rates Score: </span><span className='font-bold text-strongSell'> - </span>  </p><br/>
-                  <p className='text-primary-foreground'> <span className=''> 9-Day MA Score: </span><span className='font-bold text-neutral'> N/A  </span>  </p><br/>
-                </div>
+
 
               </TitledCard>
 
@@ -583,14 +548,7 @@ const Pulse = (props) => {
                   </TableBody>
                 </Table>
 
-                <div className='mt-8'>
-                <h3 className='text-secondary-foreground mb-4'> Correlation With US Data</h3>
-                  <p className='text-primary-foreground'> <span className=' '> Positioning Score: </span> <span className='font-bold text-neutral '> N/A  </span> </p><br/>
-                  <p className='text-primary-foreground'> <span className=' '> Inflation Score: </span> <span className='font-bold text-strongSell'> - </span> </p><br/>
-                  <p className='text-primary-foreground'> <span className=' '> Economic Score: </span><span className='font-bold text-strongBuy'> + </span>    </p><br/>
-                  <p className='text-primary-foreground'> <span className=' '> Interest Rates Score: </span><span className='font-bold text-strongSell'> - </span>  </p><br/>
-                  <p className='text-primary-foreground'> <span className=' '> 9-Day MA Score: </span><span className='font-bold text-neutral'> N/A  </span>  </p><br/>
-                </div>
+           
 
               </TitledCard>
               </div>
