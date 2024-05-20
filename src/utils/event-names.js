@@ -215,7 +215,8 @@ const assets =  {
     twelveDataSymbol: ``,
     isFlipped: false,
     isAgainstUS: true,
-    isAgainstUSBond: true
+    isAgainstUSBond: true,
+    assetType: "normalCurrency"
   },
   
   'GBPUSD': {
@@ -228,7 +229,8 @@ const assets =  {
     twelveDataSymbol: ``,
     isFlipped: false,
     isAgainstUS: true,
-    isAgainstUSBond: true
+    isAgainstUSBond: true,
+    assetType: "normalCurrency"
   },
 
   'AUDUSD': {
@@ -241,7 +243,8 @@ const assets =  {
     twelveDataSymbol: ``,
     isFlipped: false,
     isAgainstUS: true,
-    isAgainstUSBond: true
+    isAgainstUSBond: true,
+    assetType: "normalCurrency"
   },
 
   'NZDUSD': {
@@ -254,7 +257,8 @@ const assets =  {
     twelveDataSymbol: ``,
     isFlipped: false,
     isAgainstUS: true,
-    isAgainstUSBond: true
+    isAgainstUSBond: true,
+    assetType: "normalCurrency"
   },
 
   'USDCHF': {
@@ -267,7 +271,8 @@ const assets =  {
     twelveDataSymbol: ``,
     isFlipped: true,
     isAgainstUS: false,
-    isAgainstUSBond: false
+    isAgainstUSBond: false,
+    assetType: "flippedCurrency"
   },
 
   'USDJPY': {
@@ -280,7 +285,8 @@ const assets =  {
     twelveDataSymbol: ``,
     isFlipped: true,
     isAgainstUS: false,
-    isAgainstUSBond: false
+    isAgainstUSBond: false,
+    assetType: "flippedCurrency"
   },
 
   'USDCAD': {
@@ -293,7 +299,8 @@ const assets =  {
     twelveDataSymbol: ``,
     isFlipped: true,
     isAgainstUS: false,
-    isAgainstUSBond: false
+    isAgainstUSBond: false,
+    assetType: "flippedCurrency"
   },
   'BITCOIN': {
     countries: ["US"],
@@ -305,7 +312,8 @@ const assets =  {
     twelveDataSymbol: ``,
     isFlipped: false,
     isAgainstUS: true,
-    isAgainstUSBond: true
+    isAgainstUSBond: true,
+    assetType: "crypto"
   },
   'GOLD': {
     countries: ["US"],
@@ -317,7 +325,8 @@ const assets =  {
     twelveDataSymbol: `XAU/USD`,
     isFlipped: false,
     isAgainstUS: true,
-    isAgainstUSBond: true
+    isAgainstUSBond: true,
+    assetType: "preciousMetal"
   },
   'SILVER': {
     countries: ["US"],
@@ -329,7 +338,8 @@ const assets =  {
     twelveDataSymbol: `XAG/USD`,
     isFlipped: false,
     isAgainstUS: true,
-    isAgainstUSBond: true
+    isAgainstUSBond: true,
+    assetType: "preciousMetal"
   },
   'OIL': {
     countries: ["US"],
@@ -341,7 +351,8 @@ const assets =  {
     twelveDataSymbol: `WTI/USD`,
     isFlipped: false,
     isAgainstUS: false,
-    isAgainstUSBond: false
+    isAgainstUSBond: false,
+    assetType: "commodity"
   },
   'NAS100': {
     countries: ["US"],
@@ -353,7 +364,8 @@ const assets =  {
     twelveDataSymbol: `NDX`,
     isFlipped: false,
     isAgainstUS: false,
-    isAgainstUSBond: true
+    isAgainstUSBond: true,
+    assetType: "index"
   },
   'US30': {
     countries: ["US"],
@@ -365,7 +377,8 @@ const assets =  {
     twelveDataSymbol: `DJI`,
     isFlipped: false,
     isAgainstUS: false,
-    isAgainstUSBond: true
+    isAgainstUSBond: true,
+    assetType: "index"
   },
   'SP500': {
     countries: ["US"],
@@ -377,7 +390,8 @@ const assets =  {
     twelveDataSymbol: `SPX`,
     isFlipped: false,
     isAgainstUS: false,
-    isAgainstUSBond: true
+    isAgainstUSBond: true,
+    assetType: "index"
   },
 }
 

@@ -96,6 +96,14 @@ const Pulse = (props) => {
   const baseUrl = props.baseUrl;
 
   const [pulseData, setPulseData] = useState([]);
+  const [normalCurrencyData, setNormalCurrencyData] = useState([])
+  const [flippedCurrencyData, setFlippedCurrencyData] = useState([])
+  const [preciousMetalData, setPreciousMetalData] = useState([])
+  const [commodityData, setCommodityData] = useState([])
+  const [cryptoData, setCryptoData] = useState([])
+  const [indexData, setIndexData] = useState([])
+
+  
   const [isLoading, setLoading] = useState(false);
 
   const handleDownload = async () => {
@@ -185,6 +193,38 @@ const Pulse = (props) => {
 
     })
 
+    const normalCurrenciesArray = assetDataArray.filter(assetData => assets[Object.keys(assetData)[0]].assetType == "normalCurrency")
+    const flippedCurrenciesArray = assetDataArray.filter(assetData => assets[Object.keys(assetData)[0]].assetType == "flippedCurrency")
+    const preciousMetalsArray = assetDataArray.filter(assetData => assets[Object.keys(assetData)[0]].assetType == "preciousMetal")
+    const commoditiesArray = assetDataArray.filter(assetData => assets[Object.keys(assetData)[0]].assetType == "commodity")
+    const cryptocurrenciesArray = assetDataArray.filter(assetData => assets[Object.keys(assetData)[0]].assetType == "crypto")
+    const indicesArray = assetDataArray.filter(assetData => assets[Object.keys(assetData)[0]].assetType == "index")
+
+    console.log("normalCurrenciesArray", normalCurrenciesArray)
+    console.log("flippedCurrenciesArray", flippedCurrenciesArray)
+    console.log("preciousMetalsArray", preciousMetalsArray)
+    console.log("commoditiesArray", commoditiesArray)
+    console.log("cryptocurrenciesArray", cryptocurrenciesArray)
+    console.log("indicesArray", indicesArray)
+
+    const sortedNormalCurrencies = sortByCotScore(normalCurrenciesArray)
+    const sortedFlippedCurrencies = sortByCotScore(flippedCurrenciesArray)
+    const sortedPreciousMetals = sortByCotScore(preciousMetalsArray)
+    const sortedCommodities = sortByCotScore(commoditiesArray)
+    const sortedCryptocurrencies = sortByCotScore(cryptocurrenciesArray)
+    const sortedIndices = sortByCotScore(indicesArray)
+
+    setNormalCurrencyData(sortedNormalCurrencies)
+    setFlippedCurrencyData(sortedFlippedCurrencies)
+    setPreciousMetalData(sortedPreciousMetals)
+    setCommodityData(sortedCommodities)
+    setCryptoData(sortedCryptocurrencies)
+    setIndexData(sortedIndices)
+
+
+
+
+
     console.log("assetDataArray withScores", assetDataArray)
 
     const sortedData = sortByCotScore(assetDataArray)
@@ -218,10 +258,13 @@ const Pulse = (props) => {
           </div>
          :  
             <div className={Style.Wrapper}>
-              <div className='col-span-2'> 
+              <div className='col-span-2 grid gap-4'> 
               <h1 className="text-secondary-foreground mb-8"> The Pulse </h1>
          
-              <TitledCard title="Scores">
+              <TitledCard title="Major Forex Pairs">
+                <div>
+                  <p className='text-secondary-foreground'> These are the pairs where foreign currencies are valued against the dollar. </p>
+                </div>
                 <Table>
                   <TableHeader>
                     <TableRow>
@@ -232,7 +275,253 @@ const Pulse = (props) => {
                   </TableHeader>
 
                   <TableBody>
-                    {pulseData.map((assetData, index) => {
+                    {normalCurrencyData.map((assetData, index) => {
+                      const assetKey = Object.keys(assetData)[0];
+                      const scores = assetData[assetKey];
+
+                     
+                      return (
+                        <TableRow key={index}>
+                          <TableCell className="text-primary-foreground font-bold">{
+                            <Link href={`/app/scanner/${assetKey}`}>
+                              {assetKey}
+                            </Link>
+                          }</TableCell>
+                
+                          <TableCell  className={`bg-primary text-primary-foreground font-bold ${getScoreTextColor(scores.cotScore.totalScore)}`}>{scores.cotScore.totalScore.toFixed(2)}</TableCell>
+                          <TableCell  className={`bg-primary text-primary-foreground font-bold ${getScoreTextColor(scores.inflationScore.totalScore)}`}>{scores.inflationScore.totalScore.toFixed(2)}</TableCell>
+                          <TableCell  className={`bg-primary text-primary-foreground font-bold ${getScoreTextColor(scores.mPMIScores.totalScore)}`}>{scores.mPMIScores.totalScore.toFixed(2)}</TableCell>
+                          <TableCell  className={`bg-primary text-primary-foreground font-bold ${getScoreTextColor(scores.sPMIScores.totalScore)}`}>{scores.sPMIScores.totalScore.toFixed(2)}</TableCell>
+                          <TableCell  className={`bg-primary text-primary-foreground font-bold ${getScoreTextColor(scores.unemploymentScores.totalScore)}`}>{scores.unemploymentScores.totalScore.toFixed(2)}</TableCell>
+                          <TableCell  className={`bg-primary text-primary-foreground font-bold ${getScoreTextColor(scores.gdpScores.totalScore)}`}>{scores.gdpScores.totalScore.toFixed(2)}</TableCell>
+                          <TableCell  className={`bg-primary text-primary-foreground font-bold ${getScoreTextColor(scores.bondScores.totalScore)}`}>{scores.bondScores.totalScore.toFixed(2)}</TableCell>
+                          <TableCell  className={`bg-primary text-primary-foreground font-bold ${getScoreTextColor(scores.maScore)}`}>{scores.maScore.toFixed(2)}</TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                  
+
+                  
+                  <TableBody>
+                   
+                  </TableBody>
+                </Table>
+
+              </TitledCard>
+
+              <TitledCard title="USD* Forex Pairs">
+                <div>
+                  <p className='text-secondary-foreground'> These are the pairs where the dollar is valued against foreign currencies. </p>
+                </div>
+      
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      {columns.map((column, index) => (
+                        <TableHead key={index}>{column}</TableHead>
+                      ))}
+                    </TableRow>
+                  </TableHeader>
+
+                  <TableBody>
+                    {flippedCurrencyData.map((assetData, index) => {
+                      const assetKey = Object.keys(assetData)[0];
+                      const scores = assetData[assetKey];
+
+                     
+                      return (
+                        <TableRow key={index}>
+                          <TableCell className="text-primary-foreground font-bold">{
+                            <Link href={`/app/scanner/${assetKey}`}>
+                              {assetKey}
+                            </Link>
+                          }</TableCell>
+                
+                          <TableCell  className={`bg-primary text-primary-foreground font-bold ${getScoreTextColor(scores.cotScore.totalScore)}`}>{scores.cotScore.totalScore.toFixed(2)}</TableCell>
+                          <TableCell  className={`bg-primary text-primary-foreground font-bold ${getScoreTextColor(scores.inflationScore.totalScore)}`}>{scores.inflationScore.totalScore.toFixed(2)}</TableCell>
+                          <TableCell  className={`bg-primary text-primary-foreground font-bold ${getScoreTextColor(scores.mPMIScores.totalScore)}`}>{scores.mPMIScores.totalScore.toFixed(2)}</TableCell>
+                          <TableCell  className={`bg-primary text-primary-foreground font-bold ${getScoreTextColor(scores.sPMIScores.totalScore)}`}>{scores.sPMIScores.totalScore.toFixed(2)}</TableCell>
+                          <TableCell  className={`bg-primary text-primary-foreground font-bold ${getScoreTextColor(scores.unemploymentScores.totalScore)}`}>{scores.unemploymentScores.totalScore.toFixed(2)}</TableCell>
+                          <TableCell  className={`bg-primary text-primary-foreground font-bold ${getScoreTextColor(scores.gdpScores.totalScore)}`}>{scores.gdpScores.totalScore.toFixed(2)}</TableCell>
+                          <TableCell  className={`bg-primary text-primary-foreground font-bold ${getScoreTextColor(scores.bondScores.totalScore)}`}>{scores.bondScores.totalScore.toFixed(2)}</TableCell>
+                          <TableCell  className={`bg-primary text-primary-foreground font-bold ${getScoreTextColor(scores.maScore)}`}>{scores.maScore.toFixed(2)}</TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                  
+
+                  
+                  <TableBody>
+                   
+                  </TableBody>
+                </Table>
+
+              </TitledCard>
+
+              <TitledCard title="Cryptocurrencies">
+                <div>
+                  <p className='text-secondary-foreground'> Crypto currencies are valued against the US Dollar. </p>
+                </div>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      {columns.map((column, index) => (
+                        <TableHead key={index}>{column}</TableHead>
+                      ))}
+                    </TableRow>
+                  </TableHeader>
+
+                  <TableBody>
+                    {cryptoData.map((assetData, index) => {
+                      const assetKey = Object.keys(assetData)[0];
+                      const scores = assetData[assetKey];
+
+                     
+                      return (
+                        <TableRow key={index}>
+                          <TableCell className="text-primary-foreground font-bold">{
+                            <Link href={`/app/scanner/${assetKey}`}>
+                              {assetKey}
+                            </Link>
+                          }</TableCell>
+                
+                          <TableCell  className={`bg-primary text-primary-foreground font-bold ${getScoreTextColor(scores.cotScore.totalScore)}`}>{scores.cotScore.totalScore.toFixed(2)}</TableCell>
+                          <TableCell  className={`bg-primary text-primary-foreground font-bold ${getScoreTextColor(scores.inflationScore.totalScore)}`}>{scores.inflationScore.totalScore.toFixed(2)}</TableCell>
+                          <TableCell  className={`bg-primary text-primary-foreground font-bold ${getScoreTextColor(scores.mPMIScores.totalScore)}`}>{scores.mPMIScores.totalScore.toFixed(2)}</TableCell>
+                          <TableCell  className={`bg-primary text-primary-foreground font-bold ${getScoreTextColor(scores.sPMIScores.totalScore)}`}>{scores.sPMIScores.totalScore.toFixed(2)}</TableCell>
+                          <TableCell  className={`bg-primary text-primary-foreground font-bold ${getScoreTextColor(scores.unemploymentScores.totalScore)}`}>{scores.unemploymentScores.totalScore.toFixed(2)}</TableCell>
+                          <TableCell  className={`bg-primary text-primary-foreground font-bold ${getScoreTextColor(scores.gdpScores.totalScore)}`}>{scores.gdpScores.totalScore.toFixed(2)}</TableCell>
+                          <TableCell  className={`bg-primary text-primary-foreground font-bold ${getScoreTextColor(scores.bondScores.totalScore)}`}>{scores.bondScores.totalScore.toFixed(2)}</TableCell>
+                          <TableCell  className={`bg-primary text-primary-foreground font-bold ${getScoreTextColor(scores.maScore)}`}>{scores.maScore.toFixed(2)}</TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                  
+
+                  
+                  <TableBody>
+                   
+                  </TableBody>
+                </Table>
+
+              </TitledCard>
+
+              <TitledCard title="Indices">
+              <div>
+                  <p className='text-secondary-foreground'> These are the main US stock indices. </p>
+                </div>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      {columns.map((column, index) => (
+                        <TableHead key={index}>{column}</TableHead>
+                      ))}
+                    </TableRow>
+                  </TableHeader>
+
+                  <TableBody>
+                    {indexData.map((assetData, index) => {
+                      const assetKey = Object.keys(assetData)[0];
+                      const scores = assetData[assetKey];
+
+                     
+                      return (
+                        <TableRow key={index}>
+                          <TableCell className="text-primary-foreground font-bold">{
+                            <Link href={`/app/scanner/${assetKey}`}>
+                              {assetKey}
+                            </Link>
+                          }</TableCell>
+                
+                          <TableCell  className={`bg-primary text-primary-foreground font-bold ${getScoreTextColor(scores.cotScore.totalScore)}`}>{scores.cotScore.totalScore.toFixed(2)}</TableCell>
+                          <TableCell  className={`bg-primary text-primary-foreground font-bold ${getScoreTextColor(scores.inflationScore.totalScore)}`}>{scores.inflationScore.totalScore.toFixed(2)}</TableCell>
+                          <TableCell  className={`bg-primary text-primary-foreground font-bold ${getScoreTextColor(scores.mPMIScores.totalScore)}`}>{scores.mPMIScores.totalScore.toFixed(2)}</TableCell>
+                          <TableCell  className={`bg-primary text-primary-foreground font-bold ${getScoreTextColor(scores.sPMIScores.totalScore)}`}>{scores.sPMIScores.totalScore.toFixed(2)}</TableCell>
+                          <TableCell  className={`bg-primary text-primary-foreground font-bold ${getScoreTextColor(scores.unemploymentScores.totalScore)}`}>{scores.unemploymentScores.totalScore.toFixed(2)}</TableCell>
+                          <TableCell  className={`bg-primary text-primary-foreground font-bold ${getScoreTextColor(scores.gdpScores.totalScore)}`}>{scores.gdpScores.totalScore.toFixed(2)}</TableCell>
+                          <TableCell  className={`bg-primary text-primary-foreground font-bold ${getScoreTextColor(scores.bondScores.totalScore)}`}>{scores.bondScores.totalScore.toFixed(2)}</TableCell>
+                          <TableCell  className={`bg-primary text-primary-foreground font-bold ${getScoreTextColor(scores.maScore)}`}>{scores.maScore.toFixed(2)}</TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                  
+
+                  
+                  <TableBody>
+                   
+                  </TableBody>
+                </Table>
+
+              </TitledCard>
+
+              <TitledCard title="Precious Metals">
+              <div>
+                  <p className='text-secondary-foreground'> These are the main precious metals. </p>
+                </div>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      {columns.map((column, index) => (
+                        <TableHead key={index}>{column}</TableHead>
+                      ))}
+                    </TableRow>
+                  </TableHeader>
+
+                  <TableBody>
+                    {preciousMetalData.map((assetData, index) => {
+                      const assetKey = Object.keys(assetData)[0];
+                      const scores = assetData[assetKey];
+
+                     
+                      return (
+                        <TableRow key={index}>
+                          <TableCell className="text-primary-foreground font-bold">{
+                            <Link href={`/app/scanner/${assetKey}`}>
+                              {assetKey}
+                            </Link>
+                          }</TableCell>
+                
+                          <TableCell  className={`bg-primary text-primary-foreground font-bold ${getScoreTextColor(scores.cotScore.totalScore)}`}>{scores.cotScore.totalScore.toFixed(2)}</TableCell>
+                          <TableCell  className={`bg-primary text-primary-foreground font-bold ${getScoreTextColor(scores.inflationScore.totalScore)}`}>{scores.inflationScore.totalScore.toFixed(2)}</TableCell>
+                          <TableCell  className={`bg-primary text-primary-foreground font-bold ${getScoreTextColor(scores.mPMIScores.totalScore)}`}>{scores.mPMIScores.totalScore.toFixed(2)}</TableCell>
+                          <TableCell  className={`bg-primary text-primary-foreground font-bold ${getScoreTextColor(scores.sPMIScores.totalScore)}`}>{scores.sPMIScores.totalScore.toFixed(2)}</TableCell>
+                          <TableCell  className={`bg-primary text-primary-foreground font-bold ${getScoreTextColor(scores.unemploymentScores.totalScore)}`}>{scores.unemploymentScores.totalScore.toFixed(2)}</TableCell>
+                          <TableCell  className={`bg-primary text-primary-foreground font-bold ${getScoreTextColor(scores.gdpScores.totalScore)}`}>{scores.gdpScores.totalScore.toFixed(2)}</TableCell>
+                          <TableCell  className={`bg-primary text-primary-foreground font-bold ${getScoreTextColor(scores.bondScores.totalScore)}`}>{scores.bondScores.totalScore.toFixed(2)}</TableCell>
+                          <TableCell  className={`bg-primary text-primary-foreground font-bold ${getScoreTextColor(scores.maScore)}`}>{scores.maScore.toFixed(2)}</TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                  
+
+                  
+                  <TableBody>
+                   
+                  </TableBody>
+                </Table>
+
+              </TitledCard>
+
+              <TitledCard title="Commodities">
+                <div>
+                  <p className='text-secondary-foreground'> These are the main commodities. </p>
+                </div>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      {columns.map((column, index) => (
+                        <TableHead key={index}>{column}</TableHead>
+                      ))}
+                    </TableRow>
+                  </TableHeader>
+
+                  <TableBody>
+                    {commodityData.map((assetData, index) => {
                       const assetKey = Object.keys(assetData)[0];
                       const scores = assetData[assetKey];
 
