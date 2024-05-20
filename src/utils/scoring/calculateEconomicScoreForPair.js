@@ -1,6 +1,6 @@
+import { assets } from '../event-names'
 
-
-const calculateEconomicScoreForPair = (economicData, isFlipped=false) => {
+const calculateEconomicScoreForPair = (economicData, asset, isFlipped=false) => {
   const individualEconomicScores = economicData.map(data => calculateIndividualEconomicScore(data, isFlipped));
       console.log("individualInflationScores", individualEconomicScores)
 
@@ -15,6 +15,10 @@ const calculateEconomicScoreForPair = (economicData, isFlipped=false) => {
         
         const countryKeys = Object.keys(individualEconomicScores[0])
         totalScore = individualEconomicScores[0][countryKeys[0]];
+
+        if (assets[asset].isAgainstUS) {
+          totalScore = -totalScore;
+        }
 
         console.log("countryKeys", countryKeys)
       }
@@ -79,22 +83,22 @@ const calculateIndividualEconomicScore = (inflationData, isFlipped) => {
     let score = 0;
 
     if (actual > currentEstimate) {
-      score += !isFlipped ? 50 : -50;
+      score += !isFlipped ? 100 : -100;
     } else if (actual < currentEstimate) {
-      score -= !isFlipped ? 50 : -50;
+      score -= !isFlipped ? 100 : -100;
     }
 
-    if (currentEstimate > previousEstimate) {
-      score += !isFlipped ? 50 : -50;
-    } else if (currentEstimate < previousEstimate) {
-      score -= !isFlipped ? 50 : -50;
-    }
+    // if (currentEstimate > previousEstimate) {
+    //   score += !isFlipped ? 50 : -50;
+    // } else if (currentEstimate < previousEstimate) {
+    //   score -= !isFlipped ? 50 : -50;
+    // }
 
-    if (actual > previousActual) {
-      score += !isFlipped ? 50 : -50;
-    } else if (actual < previousActual) {
-      score -= !isFlipped ? 50 : -50;
-    }
+    // if (actual > previousActual) {
+    //   score += !isFlipped ? 50 : -50;
+    // } else if (actual < previousActual) {
+    //   score -= !isFlipped ? 50 : -50;
+    // }
 
     // Ensure the score is within the range of -100 to 100
     score = Math.max(-100, Math.min(100, score));

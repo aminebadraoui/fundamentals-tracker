@@ -1,4 +1,6 @@
-const calculateBondScoreForPair = (bondData) => {
+import { assets } from "../event-names";
+
+const calculateBondScoreForPair = (bondData, asset) => {
   const bondScores = bondData.map((data) => {
     const { country, data: bondDetails } = data;
     const shortBonds = bondDetails[country].shortBonds;
@@ -23,7 +25,12 @@ const calculateBondScoreForPair = (bondData) => {
   if (bondScores.length == 2) {
     totalScore = (bondScores[0].score - bondScores[1].score) / 2
     } else if (bondScores.length == 1) {
-    totalScore = bondScores[0].score
+
+      if (assets[asset].isAgainstUSBond) {
+        totalScore = -bondScores[0].score 
+      } else {
+        totalScore = bondScores[0].score
+      }
   }
 
   

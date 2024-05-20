@@ -256,12 +256,12 @@ const Scanner = (props) => {
 
       // Scores
       const cotScore = calculateCotDataScores(cotData, asset)
-      const inflationScore = calculateEconomicScoreForPair(inflationData)
-      const sPMIScores = calculateEconomicScoreForPair(sPmiData)
-      const mPMIScores = calculateEconomicScoreForPair(mPmiData)
-      const unemploymentScores = calculateEconomicScoreForPair(unemploymentData,true)
-      const gdpScores = calculateEconomicScoreForPair(gdpData)
-      const bondScores = calculateBondScoreForPair(bondData)
+      const inflationScore = calculateEconomicScoreForPair(inflationData, asset)
+      const sPMIScores = calculateEconomicScoreForPair(sPmiData, asset)
+      const mPMIScores = calculateEconomicScoreForPair(mPmiData, asset)
+      const unemploymentScores = calculateEconomicScoreForPair(unemploymentData, asset, true)
+      const gdpScores = calculateEconomicScoreForPair(gdpData, asset)
+      const bondScores = calculateBondScoreForPair(bondData, asset)
 
       setCotScore(cotScore)
       setInflationScore(inflationScore) 
