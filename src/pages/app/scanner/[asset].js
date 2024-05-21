@@ -27,6 +27,7 @@ import { calculateBondScoreForPair } from '@/utils/scoring/calculateBondScoreFor
 import { calculateCotDataScores } from '@/utils/scoring/calculateCotDataScores';
 import { getPriceChartData } from '@/utils/chartData/priceChartData';
 import { calculateEMA } from '@/utils/calculateEMA';
+import Link from 'next/link';
 
 export const getServerSideProps = async (context) => {
   return withSession(context, async(context, session) => {
@@ -199,6 +200,7 @@ const Scanner = (props) => {
   const [unemploymentChartData, setChartUnemploymentData] = useState([]);
   const [gdpChartData, setChartGDPData] = useState([]);
   const [bondChartData, setChartBondData] = useState([]);
+  const [newsData, setNewsData] = useState([]);
 
   const [cotScore, setCotScore] = useState(null);
   const [inflationScore, setInflationScore] = useState(null);
@@ -223,12 +225,12 @@ const Scanner = (props) => {
       const last30DaysFormatted = last30Days.toISOString().split('T')[0];
 
 
-      const [cotData, weeklyPriceData, eventCalendar, bondData ] = await Promise.all([
+      const [cotData, weeklyPriceData, eventCalendar, bondData, newsData ] = await Promise.all([
         fetchCotDataForYears(asset, years),
         fetchDataWithRetry('/api/getWeeklyPriceData', { asset }),
-        // fetchDataWithRetry('/api/getWeeklyPriceData', { asset, startDate: last30DaysFormatted}),
         fetchAndMergeEventCalendar( baseUrl),
-        Promise.all(assets[asset].countries.map(country => fetchBondData(baseUrl, country)))
+        Promise.all(assets[asset].countries.map(country => fetchBondData(baseUrl, country))),
+        fetchDataWithRetry('/api/getNews', { asset }),
       ]);
 
       
@@ -253,6 +255,9 @@ const Scanner = (props) => {
       const gdpData = assets[asset].countries.map(country => {
         return filterByTypeAndCountries(eventCalendar, countries[country].gdpGrowthRateKey, asset, country);
       });
+
+      console.log("newsData", newsData)
+     
 
       // Scores
       const cotScore = calculateCotDataScores(cotData, asset)
@@ -335,8 +340,20 @@ const Scanner = (props) => {
       setChartUnemploymentData(unemploymentChartData);
       setChartGDPData(gdpChartData);
       setChartBondData(bondChartData);
+      setNewsData(newsData)
 
-      if (priceChartData && institutionalChartData && institutionalNetChartData && retailChartData && retailNetChartData && inflationChartData && sPMIChartData && mPMIChartData && unemploymentChartData && gdpChartData && bondChartData) {
+      if (priceChartData 
+        && institutionalChartData 
+        && institutionalNetChartData 
+        && retailChartData 
+        && retailNetChartData 
+        && inflationChartData
+        && sPMIChartData 
+        && mPMIChartData 
+        && unemploymentChartData 
+        && gdpChartData 
+        && bondChartData
+        && newsData) {
         setLoading(false);
       }
       
@@ -709,6 +726,24 @@ const Scanner = (props) => {
                         </Card>
 
                         <TitledCard key="news_card" className="" title="Latest News">
+
+                          <div className='flex flex-col space-y-8'> 
+
+
+                          { newsData && Array.isArray(newsData) && newsData.map((news, index) => {
+                            return (
+                              <div key={index} className='flex flex-col space-y-2'> 
+                                <Link href={news.link} passHref>
+                                  <h3 className='text-secondary-foreground'> {news.title} </h3>
+                                  <p className='text-orange-500'> {news.date.split('T')[0]} </p>
+                                </Link>
+                              </div>
+                            )
+                          })
+                          }
+
+
+                          </div>
                           </TitledCard>
 
                       </div>

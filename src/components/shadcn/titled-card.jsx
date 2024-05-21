@@ -4,7 +4,7 @@ import ScoreIndicator  from '@/components/ui/score-indicator'
 
 const Style = {
   InternalCard: " space-y-4 px-8 py-4 ",
-  Heading: 'text-secondary-foreground '
+  Heading: 'text-primary-foreground '
 }
 
 
