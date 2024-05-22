@@ -7,7 +7,8 @@ const getPriceChartData = (priceData, cotData, asset) => {
   const chartData = {
     priceData: priceData,
     netPositions: mapCotDataToTimeValue(cot_data_for_Asset, assets[asset].cotType, "institutional"),
-    retailPositions: mapCotDataToTimeValue(cot_data_for_Asset, assets[asset].cotType, "retail")
+    retailPositions: mapCotDataToTimeValue(cot_data_for_Asset, assets[asset].cotType, "retail"),
+    openInterest: mapCotDataToTimeValue(cot_data_for_Asset, assets[asset].cotType, "openInterest")
   }
 
   return chartData
@@ -26,9 +27,12 @@ const mapCotDataToTimeValue = (cotData, cotType, netType) => {
     if (netType === "institutional") {
       long = cotType === 'comm' ? parseInt(item.comm_positions_long_all[0]) : parseInt(item.noncomm_positions_long_all[0]);
       short = cotType === 'comm' ? parseInt(item.comm_positions_short_all[0]) : parseInt(item.noncomm_positions_short_all[0]);
-    } else {
+    } else if (netType === "retail"){
       long = parseInt(item.nonrept_positions_long_all[0]);
       short = parseInt(item.nonrept_positions_short_all[0]);
+    } else if (netType === "openInterest") {
+      long = parseInt(item.open_interest_all[0]);
+      short = 0;
     }
 
     const netPositions = long - short;

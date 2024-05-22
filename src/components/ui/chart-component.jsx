@@ -63,16 +63,20 @@ export const ChartComponent = props => {
       zScoreColor1Y = '#008000', // Orange color for the 1-year z-score line
       zScoreColor3Y = '#800080', // Green color for the 3-year z-score line
       inactiveColor = '#808080', // Grey color for inactive elements
+      openInterestColor = '#800080', // Purple color for the open interest line
     } = {},
   } = props;
 
   const weeklyPrice = data.priceData;
   const netPositions = data.netPositions;
   const retailNetPositions = data.retailPositions;
+  const openInterest = data.openInterest
 
   const chartContainerRef = useRef();
   const positionsChartContainerRef = useRef();
   const zScoreChartContainerRef = useRef();
+  const openInterestChartContainerRef = useRef();
+  const openInterestZscoreChartContainerRef = useRef();
 
   const [showRetail, setShowRetail] = useState(false);
   const [priceChartLegendText, setPriceChartLegendText] = useState('');
@@ -90,6 +94,7 @@ export const ChartComponent = props => {
       positionsChart.applyOptions({ width: positionsChartContainerRef.current.clientWidth });
     };
 
+    // PRICE CHART
     const chart = createChart(chartContainerRef.current, {
       layout: {
         background: { type: ColorType.Solid, color: backgroundColor },
@@ -112,6 +117,19 @@ export const ChartComponent = props => {
       },
     });
 
+    const candleSeries = chart.addCandlestickSeries({
+        upColor: upColor,
+        downColor: downColor,
+        borderDownColor: borderDownColor,
+        borderUpColor: borderUpColor,
+        wickDownColor: wickDownColor,
+        wickUpColor: wickUpColor,
+      });
+  
+      weeklyPrice && candleSeries.setData(weeklyPrice);
+
+    // NET POSITION CHART
+
     const positionsChart = createChart(positionsChartContainerRef.current, {
       width: positionsChartContainerRef.current.clientWidth,
       height: 200,
@@ -129,9 +147,34 @@ export const ChartComponent = props => {
         visible: true,
     },
     leftPriceScale: {
-        visible: true,
+        visible: false,
     },
     });
+
+    const lineSeries = positionsChart.addLineSeries({
+        color: showRetail ? retailLineColor : lineColor,
+        lineWidth: 2,
+        
+        visible: true
+      });
+
+    const chartPositions = showRetail ? retailNetPositions : netPositions;
+
+    lineSeries.setData(chartPositions);
+
+    const zeroLineSeries = positionsChart.addLineSeries({
+        color: zeroLineColor,
+        lineWidth: 1,
+      });
+  
+      const zeroLineData = chartPositions.map(point => ({
+        time: point.time,
+        value: 0,
+      }));
+  
+      zeroLineSeries.setData(zeroLineData);
+
+    // ZSCORE CHART
 
     const zScoreChart = createChart(zScoreChartContainerRef.current, {
       width: zScoreChartContainerRef.current.clientWidth,
@@ -148,69 +191,90 @@ export const ChartComponent = props => {
       },
     });
 
-    const candleSeries = chart.addCandlestickSeries({
-      upColor: upColor,
-      downColor: downColor,
-      borderDownColor: borderDownColor,
-      borderUpColor: borderUpColor,
-      wickDownColor: wickDownColor,
-      wickUpColor: wickUpColor,
-    });
-
-    weeklyPrice && candleSeries.setData(weeklyPrice);
-
-    const lineSeries = positionsChart.addLineSeries({
-      color: showRetail ? inactiveColor : lineColor,
-      lineWidth: 2,
-      priceScaleId: 'right',
-      visible: true
-    });
-
-    lineSeries.setData(netPositions);
-
-    const retailLineSeries = positionsChart.addLineSeries({
-      color: showRetail ? retailLineColor : inactiveColor,
-      lineWidth: 2,
-      priceScaleId: 'left', // Use a separate price scale
-      visible: true
-    });
-
-    retailLineSeries.setData(retailNetPositions);
-
     const zScoreSeries6M = zScoreChart.addLineSeries({
-      color: zScoreColor6M,
-      lineWidth: 2,
-    });
+        color: zScoreColor6M,
+        lineWidth: 2,
+      });
+  
+      const zScoreSeries1Y = zScoreChart.addLineSeries({
+        color: zScoreColor1Y,
+        lineWidth: 2,
+      });
+  
+      const zScoreSeries3Y = zScoreChart.addLineSeries({
+        color: zScoreColor3Y,
+        lineWidth: 2,
+      });
+  
+      const zScoreData6M = calculateZScore(showRetail ? retailNetPositions : netPositions, 26);
+      const zScoreData1Y = calculateZScore(showRetail ? retailNetPositions : netPositions, 52);
+      const zScoreData3Y = calculateZScore(showRetail ? retailNetPositions : netPositions, 156);
+  
+      zScoreSeries6M.setData(zScoreData6M);
+      zScoreSeries1Y.setData(zScoreData1Y);
+      zScoreSeries3Y.setData(zScoreData3Y);
 
-    const zScoreSeries1Y = zScoreChart.addLineSeries({
-      color: zScoreColor1Y,
-      lineWidth: 2,
-    });
+    // OPEN INTEREST CHART
+  
+    const openInterestChart = createChart(openInterestChartContainerRef.current, {
+        width: openInterestChartContainerRef.current.clientWidth,
+        height: 200,
+        layout: {
+          background: { type: ColorType.Solid, color: backgroundColor },
+          textColor: '#000',
+        },
+        crosshair: {
+          mode: CrosshairMode.Normal,
+        },
+        timeScale: {
+          borderColor: 'rgba(197, 203, 206, 0.8)',
+        },
+        rightPriceScale: {
+          visible: true,
+      },
+      leftPriceScale: {
+          visible: false,
+      },
+      });
 
-    const zScoreSeries3Y = zScoreChart.addLineSeries({
-      color: zScoreColor3Y,
-      lineWidth: 2,
-    });
+      const openInterestSeries = openInterestChart.addLineSeries({
+        color: openInterestColor,
+        lineWidth: 2,
+      });
 
-    const zScoreData6M = calculateZScore(showRetail ? retailNetPositions : netPositions, 26);
-    const zScoreData1Y = calculateZScore(showRetail ? retailNetPositions : netPositions, 52);
-    const zScoreData3Y = calculateZScore(showRetail ? retailNetPositions : netPositions, 156);
+    openInterestSeries.setData(openInterest);
 
-    zScoreSeries6M.setData(zScoreData6M);
-    zScoreSeries1Y.setData(zScoreData1Y);
-    zScoreSeries3Y.setData(zScoreData3Y);
+    // OPEN INTEREST 6Month Z-Score
 
-    const zeroLineSeries = positionsChart.addLineSeries({
-      color: zeroLineColor,
-      lineWidth: 1,
-    });
+    const openInterestZscoreChart = createChart(openInterestZscoreChartContainerRef.current, {
+        width: openInterestZscoreChartContainerRef.current.clientWidth,
+        height: 200,
+        layout: {
+          background: { type: ColorType.Solid, color: backgroundColor },
+          textColor: '#000',
+        },
+        crosshair: {
+          mode: CrosshairMode.Normal,
+        },
+        timeScale: {
+          borderColor: 'rgba(197, 203, 206, 0.8)',
+        },
+        rightPriceScale: {
+          visible: true,
+      },
+      leftPriceScale: {
+          visible: false,
+      },
+      });
 
-    const zeroLineData = netPositions.map(point => ({
-      time: point.time,
-      value: 0,
-    }));
+      const openInterestZscoreSeries = openInterestZscoreChart.addLineSeries({
+        color: zScoreColor6M,
+        lineWidth: 2,
+      });
 
-    zeroLineSeries.setData(zeroLineData);
+    const openInterest6MZscore = calculateZScore(openInterest, 26);
+
+    openInterestZscoreSeries.setData(openInterest6MZscore);
 
     setPriceChartLegendText(`${symbol} - Weekly`);
     setPositionChartLegendText(`Weekly Net Positions (Longs-Shorts)`);
@@ -220,41 +284,72 @@ export const ChartComponent = props => {
     setZScore3YLegendText(`3-Year Z-Score`);
 
     chart.subscribeCrosshairMove(param => {
-      const dataPoint = getCrosshairDataPoint(candleSeries, param);
-      syncCrosshair(positionsChart, lineSeries, dataPoint);
-      syncCrosshair(zScoreChart, zScoreSeries6M, dataPoint);
-      syncCrosshair(zScoreChart, zScoreSeries1Y, dataPoint);
-      syncCrosshair(zScoreChart, zScoreSeries3Y, dataPoint);
+        const dataPoint = getCrosshairDataPoint(candleSeries, param);
+        syncCrosshair(positionsChart, lineSeries, dataPoint);
+        syncCrosshair(zScoreChart, zScoreSeries6M, dataPoint);
+        syncCrosshair(zScoreChart, zScoreSeries1Y, dataPoint);
+        syncCrosshair(zScoreChart, zScoreSeries3Y, dataPoint);
+        syncCrosshair(openInterestChart, openInterestSeries, dataPoint);
+        syncCrosshair(openInterestZscoreChart, openInterestZscoreSeries, dataPoint);
     });
 
     chart.timeScale().subscribeVisibleTimeRangeChange(() => {
-      positionsChart.timeScale().setVisibleRange(chart.timeScale().getVisibleRange());
-      zScoreChart.timeScale().setVisibleRange(chart.timeScale().getVisibleRange());
+        positionsChart.timeScale().setVisibleRange(chart.timeScale().getVisibleRange());
+        zScoreChart.timeScale().setVisibleRange(chart.timeScale().getVisibleRange());
+        openInterestChart.timeScale().setVisibleRange(chart.timeScale().getVisibleRange());
+        openInterestZscoreChart.timeScale().setVisibleRange(chart.timeScale().getVisibleRange());
     });
 
     positionsChart.subscribeCrosshairMove(param => {
-      const dataPoint = getCrosshairDataPoint(lineSeries, param);
-      syncCrosshair(chart, candleSeries, dataPoint);
-      syncCrosshair(zScoreChart, zScoreSeries6M, dataPoint);
-      syncCrosshair(zScoreChart, zScoreSeries1Y, dataPoint);
-      syncCrosshair(zScoreChart, zScoreSeries3Y, dataPoint);
+        const dataPoint = getCrosshairDataPoint(lineSeries, param);
+        syncCrosshair(chart, candleSeries, dataPoint);
+        syncCrosshair(zScoreChart, zScoreSeries6M, dataPoint);
+        syncCrosshair(zScoreChart, zScoreSeries1Y, dataPoint);
+        syncCrosshair(zScoreChart, zScoreSeries3Y, dataPoint);
+        syncCrosshair(openInterestChart, openInterestSeries, dataPoint);
+        syncCrosshair(openInterestZscoreChart, openInterestZscoreSeries, dataPoint);
     });
 
     zScoreChart.subscribeCrosshairMove(param => {
-      const dataPoint = getCrosshairDataPoint(zScoreSeries6M, param);
-      syncCrosshair(chart, candleSeries, dataPoint);
-      syncCrosshair(positionsChart, lineSeries, dataPoint);
+        const dataPoint = getCrosshairDataPoint(zScoreSeries6M, param);
+        syncCrosshair(chart, candleSeries, dataPoint);
+        syncCrosshair(positionsChart, lineSeries, dataPoint);
+        syncCrosshair(openInterestChart, openInterestSeries, dataPoint);
+        syncCrosshair(openInterestZscoreChart, openInterestZscoreSeries, dataPoint);
     });
 
     window.addEventListener('resize', handleResize);
 
     return () => {
-      window.removeEventListener('resize', handleResize);
-      chart.remove();
-      positionsChart.remove();
-      zScoreChart.remove();
+        window.removeEventListener('resize', handleResize);
+        chart.remove();
+        positionsChart.remove();
+        zScoreChart.remove();
+        openInterestChart.remove();
+        openInterestZscoreChart.remove();
+
     };
-  }, [data, showRetail, backgroundColor, upColor, downColor, borderUpColor, borderDownColor, wickUpColor, wickDownColor, lineColor, retailLineColor, zeroLineColor, sixMonthmovingAverageColor, oneYearMovingAverageColor, zScoreColor, zScoreColor6M, zScoreColor1Y, zScoreColor3Y, inactiveColor, symbol]);
+  }, [data, 
+    showRetail, 
+    backgroundColor,
+     upColor, 
+     downColor, 
+     borderUpColor, 
+     borderDownColor, 
+     wickUpColor, 
+     wickDownColor, 
+     lineColor, 
+     retailLineColor, 
+     zeroLineColor, 
+     sixMonthmovingAverageColor, 
+     oneYearMovingAverageColor, 
+     zScoreColor, 
+     zScoreColor6M, 
+     zScoreColor1Y, 
+     zScoreColor3Y, 
+     inactiveColor, 
+     openInterestColor,
+     symbol]);
 
   return (
     
@@ -275,6 +370,10 @@ export const ChartComponent = props => {
         <div ref={positionsChartContainerRef}  />
         
         <div ref={zScoreChartContainerRef} style={{ marginTop: '4px' }} />
+
+        <div ref={openInterestChartContainerRef} style={{ marginTop: '4px' }} />
+
+        <div ref={openInterestZscoreChartContainerRef} style={{ marginTop: '4px' }} />
       </div>
   
   );

@@ -93,6 +93,8 @@ const institutionalShortOld_final = (assets[symbol].isFlipped === true)
       score: isDivergent ? retailScore : 0
     },
 
+    openInterest: parseInt(cot_data_for_Asset[0].open_interest_all[0]),
+
     totalScore: totalScore
   }
 

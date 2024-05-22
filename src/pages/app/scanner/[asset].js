@@ -191,6 +191,7 @@ const Scanner = (props) => {
 
   const [priceChartData , setPriceChartData] = useState(null);
   const [institutionalChartData , setInstitutionalChartData] = useState(null);
+  const [institutionalOIChartData , setInstitutionalOIChartData] = useState(null);
   const [institutionalNetChartData , setInstitutionalNetChartData] = useState(null);
   const [retailChartData , setRetailChartData] = useState(null);
   const [retailNetChartData , setRetailNetChartData] = useState(null);
@@ -321,6 +322,9 @@ const Scanner = (props) => {
           previous: cotScore.retail.shortOld,
         }
       ];
+
+   
+      
 
       const inflationChartData = inflationData.map(data => convertCalendarDataToChartData(data));
       const sPMIChartData = sPmiData.map(data => convertCalendarDataToChartData(data));
